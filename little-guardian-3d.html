@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<title>Little Guardian — 3D</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #02040b; }
+  body {
+    font-family: ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    background:
+      radial-gradient(circle at 50% 18%, rgba(55,76,132,.22), transparent 35%),
+      radial-gradient(circle at 50% 105%, rgba(20,31,62,.5), transparent 45%),
+      linear-gradient(#040712, #010208 70%);
+  }
+  #stage { position: fixed; inset: 0; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .vignette {
+    pointer-events: none;
+    position: fixed; inset: 0;
+    box-shadow: inset 0 0 12vmin rgba(0,0,0,.55), inset 0 -10vmin 18vmin rgba(0,0,0,.5);
+  }
+  .hint {
+    pointer-events: none;
+    position: fixed;
+    left: 50%; bottom: max(18px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    padding: 8px 12px;
+    border: 1px solid rgba(190,205,255,.16);
+    border-radius: 999px;
+    color: rgba(226,233,255,.62);
+    background: rgba(4,7,18,.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-size: 12px;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    transition: opacity 1.2s ease;
+  }
+  .hint.hide { opacity: 0; }
+  .fallback {
+    display: none;
+    place-items: center;
+    position: fixed; inset: 0;
+    padding: 28px;
+    text-align: center;
+    color: #dbe4ff;
+    line-height: 1.5;
+    background: #03050c;
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div class="vignette"></div>
+<div class="hint" id="hint">drag to look around · tap the guardian</div>
+<div class="fallback" id="fallback">This little guardian needs WebGL enabled in the browser.</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const stage = document.getElementById('stage');
+const hint = document.getElementById('hint');
+const fallback = document.getElementById('fallback');
+
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+} catch (e) {
+  fallback.style.display = 'grid';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x03050c, 0.028);
+
+const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0.55, 7.15);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0.4, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.enablePan = false;
+controls.minDistance = 5.4;
+controls.maxDistance = 9.2;
+controls.minPolarAngle = Math.PI * 0.24;
+controls.maxPolarAngle = Math.PI * 0.72;
+controls.rotateSpeed = 0.72;
+controls.zoomSpeed = 0.72;
+controls.touches.ONE = THREE.TOUCH.ROTATE;
+controls.touches.TWO = THREE.TOUCH.DOLLY_ROTATE;
+
+// Soft night lighting.
+scene.add(new THREE.HemisphereLight(0x7d95d6, 0x070812, 1.25));
+const moonLight = new THREE.DirectionalLight(0xb9caff, 2.0);
+moonLight.position.set(-4.5, 7, 4);
+moonLight.castShadow = true;
+moonLight.shadow.mapSize.set(1024, 1024);
+scene.add(moonLight);
+const blueFill = new THREE.PointLight(0x5f78ff, 16, 13, 2);
+blueFill.position.set(3.5, 1.5, 3.8);
+scene.add(blueFill);
+
+// A moon behind the guardian.
+const moon = new THREE.Mesh(
+  new THREE.SphereGeometry(0.72, 48, 32),
+  new THREE.MeshBasicMaterial({ color: 0xdde6ff })
+);
+moon.position.set(-3.3, 4.4, -8.5);
+scene.add(moon);
+const moonHalo = new THREE.PointLight(0xa9c1ff, 45, 24, 2);
+moonHalo.position.copy(moon.position);
+scene.add(moonHalo);
+
+// Star field.
+const starCount = 520;
+const starPos = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount; i++) {
+  const r = 13 + Math.random() * 15;
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(THREE.MathUtils.lerp(-0.08, 0.92, Math.random()));
+  starPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+  starPos[i * 3 + 1] = Math.abs(r * Math.cos(phi)) - 1.5;
+  starPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta) - 6;
+}
+const starGeo = new THREE.BufferGeometry();
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
+  color: 0xcbd7ff, size: 0.055, transparent: true, opacity: 0.72,
+  sizeAttenuation: true, depthWrite: false
+}));
+scene.add(stars);
+
+// Observatory-like floor: a dark circular platform with faint celestial rings.
+const floor = new THREE.Mesh(
+  new THREE.CircleGeometry(8.5, 96),
+  new THREE.MeshStandardMaterial({ color: 0x060912, roughness: 0.36, metalness: 0.25 })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -1.62;
+floor.receiveShadow = true;
+scene.add(floor);
+
+for (const r of [1.7, 2.45, 3.4, 4.8, 6.5]) {
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(r, 0.009, 8, 128),
+    new THREE.MeshBasicMaterial({ color: 0x53679f, transparent: true, opacity: r < 4 ? 0.34 : 0.17 })
+  );
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = -1.603;
+  scene.add(ring);
+}
+
+// Tall dim arcs suggest the inside of an observatory dome without cluttering the character.
+for (let i = 0; i < 4; i++) {
+  const arc = new THREE.Mesh(
+    new THREE.TorusGeometry(6.6 + i * 0.36, 0.018, 8, 160),
+    new THREE.MeshBasicMaterial({ color: 0x314064, transparent: true, opacity: 0.13 })
+  );
+  arc.rotation.set(Math.PI / 2, i * 0.34, i * 0.53);
+  arc.position.set(0, 2.3, -5.8);
+  scene.add(arc);
+}
+
+// ---- The little guardian ----
+const guardian = new THREE.Group();
+guardian.position.y = -0.12;
+scene.add(guardian);
+
+const bodyMat = new THREE.MeshStandardMaterial({
+  color: 0x090c18,
+  roughness: 0.78,
+  metalness: 0.04
+});
+const headMat = new THREE.MeshStandardMaterial({
+  color: 0x070a13,
+  roughness: 0.67,
+  metalness: 0.06
+});
+const edgeMat = new THREE.MeshBasicMaterial({ color: 0x252d4b, transparent: true, opacity: 0.42 });
+
+// Simple tapered cloak/body: deliberately almost geometric rather than human.
+const body = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 1.17, 2.42, 64, 1, false), bodyMat);
+body.position.y = -0.26;
+body.castShadow = true;
+body.receiveShadow = true;
+guardian.add(body);
+
+const hem = new THREE.Mesh(new THREE.TorusGeometry(1.14, 0.035, 10, 80), edgeMat);
+hem.rotation.x = Math.PI / 2;
+hem.position.y = -1.45;
+guardian.add(hem);
+
+// Round head, with no hair, face, limbs or human anatomy.
+const headPivot = new THREE.Group();
+headPivot.position.y = 1.35;
+guardian.add(headPivot);
+const head = new THREE.Mesh(new THREE.SphereGeometry(0.99, 64, 48), headMat);
+head.scale.set(1.01, 0.98, 0.95);
+head.castShadow = true;
+headPivot.add(head);
+
+function makeGlowTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(64, 64, 4, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(.18, 'rgba(226,236,255,.96)');
+  g.addColorStop(.42, 'rgba(150,180,255,.48)');
+  g.addColorStop(1, 'rgba(90,120,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,128,128);
+  return new THREE.CanvasTexture(c);
+}
+const glowTexture = makeGlowTexture();
+
+const eyeMat = new THREE.MeshBasicMaterial({ color: 0xf8fbff, toneMapped: false });
+const eyeGeo = new THREE.SphereGeometry(0.205, 40, 28);
+const eyes = [];
+const eyeGlows = [];
+for (const x of [-0.34, 0.34]) {
+  const eye = new THREE.Mesh(eyeGeo, eyeMat.clone());
+  eye.position.set(x, 0.08, 0.885);
+  eye.scale.z = 0.42;
+  headPivot.add(eye);
+  eyes.push(eye);
+
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowTexture,
+    color: 0xbfd2ff,
+    transparent: true,
+    opacity: 0.78,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  }));
+  glow.position.set(x, 0.08, 0.94);
+  glow.scale.set(0.86, 0.86, 1);
+  headPivot.add(glow);
+  eyeGlows.push(glow);
+}
+const eyeLight = new THREE.PointLight(0xc6d8ff, 10, 4.2, 2);
+eyeLight.position.set(0, 0.05, 1.12);
+headPivot.add(eyeLight);
+
+// A faint aura at the feet.
+const aura = new THREE.Mesh(
+  new THREE.RingGeometry(1.2, 1.55, 64),
+  new THREE.MeshBasicMaterial({ color: 0x6379bd, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false })
+);
+aura.rotation.x = -Math.PI / 2;
+aura.position.y = -1.48;
+guardian.add(aura);
+
+// Tap-reaction sparkles, kept invisible until needed.
+const sparkles = [];
+for (let i = 0; i < 9; i++) {
+  const s = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.055 + Math.random() * 0.035, 0),
+    new THREE.MeshBasicMaterial({ color: 0xdde7ff, transparent: true, opacity: 0 })
+  );
+  s.userData.a = (i / 9) * Math.PI * 2;
+  s.position.y = 1.3;
+  guardian.add(s);
+  sparkles.push(s);
+}
+
+const shadow = new THREE.Mesh(
+  new THREE.CircleGeometry(1.18, 64),
+  new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.34, depthWrite: false })
+);
+shadow.rotation.x = -Math.PI / 2;
+shadow.position.set(0, -1.598, 0.16);
+scene.add(shadow);
+
+const clock = new THREE.Clock();
+let nextBlink = 1.6 + Math.random() * 2.8;
+let blinkStart = -100;
+let reactionStart = -100;
+let reacting = false;
+
+function triggerReaction() {
+  const now = clock.getElapsedTime();
+  reactionStart = now;
+  reacting = true;
+  blinkStart = now + 0.04;
+  nextBlink = now + 3.0 + Math.random() * 2;
+  hint.classList.add('hide');
+}
+
+function smoothstep01(x) { return x * x * (3 - 2 * x); }
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const dt = Math.min(clock.getDelta(), 0.05);
+
+  // Idle: tiny breathing and a slow, slightly curious sway.
+  const breath = 1 + Math.sin(t * 1.45) * 0.012;
+  guardian.scale.y = breath;
+  guardian.rotation.z = Math.sin(t * 0.62) * 0.022;
+  guardian.rotation.y = Math.sin(t * 0.42) * 0.045;
+  guardian.position.y = -0.12 + Math.sin(t * 1.45) * 0.016;
+  aura.material.opacity = 0.09 + (Math.sin(t * 1.25) * 0.5 + 0.5) * 0.045;
+
+  // Natural irregular blinking.
+  if (t > nextBlink) {
+    blinkStart = t;
+    nextBlink = t + 3.2 + Math.random() * 4.0;
+  }
+  const bp = t - blinkStart;
+  let blinkScale = 1;
+  if (bp >= 0 && bp < 0.16) {
+    const x = bp / 0.16;
+    blinkScale = 1 - Math.sin(x * Math.PI) * 0.92;
+  }
+  for (const eye of eyes) eye.scale.y = blinkScale;
+  for (const glow of eyeGlows) glow.scale.y = 0.86 * Math.max(0.24, blinkScale);
+
+  // Cute tap response: little hop, head tilt, brighter lamps, tiny star-burst.
+  if (reacting) {
+    const rp = (t - reactionStart) / 0.92;
+    if (rp >= 1) {
+      reacting = false;
+      headPivot.rotation.z = 0;
+      headPivot.scale.setScalar(1);
+      eyeLight.intensity = 10;
+      for (const e of eyes) e.material.color.set(0xf8fbff);
+      for (const s of sparkles) s.material.opacity = 0;
+    } else if (rp >= 0) {
+      const hop = Math.sin(rp * Math.PI) * 0.34;
+      guardian.position.y += hop;
+      headPivot.rotation.z = Math.sin(rp * Math.PI) * -0.18;
+      const surprise = Math.sin(Math.min(1, rp * 1.7) * Math.PI);
+      headPivot.scale.setScalar(1 + surprise * 0.055);
+      eyeLight.intensity = 10 + Math.sin(rp * Math.PI) * 15;
+      for (const e of eyes) e.material.color.set(rp < 0.58 ? 0xfff4cf : 0xf8fbff);
+      sparkles.forEach((s, i) => {
+        const spread = smoothstep01(Math.min(1, rp * 1.35));
+        const r = 1.12 + spread * 0.85;
+        s.position.set(Math.cos(s.userData.a) * r, 1.34 + Math.sin(s.userData.a) * r * 0.58, 0.35 + Math.sin(i * 2.1) * 0.35);
+        s.rotation.x += dt * 2.2;
+        s.rotation.y += dt * 2.6;
+        s.material.opacity = Math.sin(rp * Math.PI) * 0.8;
+      });
+    }
+  }
+
+  // Slow sky movement.
+  stars.rotation.y = t * 0.004;
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// Distinguish a tap from a drag, then raycast so the guardian reacts when touched.
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let press = null;
+renderer.domElement.addEventListener('pointerdown', e => {
+  press = { x: e.clientX, y: e.clientY, t: performance.now() };
+}, { passive: true });
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!press) return;
+  const moved = Math.hypot(e.clientX - press.x, e.clientY - press.y);
+  const elapsed = performance.now() - press.t;
+  press = null;
+  if (moved > 9 || elapsed > 520) return;
+  pointer.x = (e.clientX / innerWidth) * 2 - 1;
+  pointer.y = -(e.clientY / innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects([body, head, ...eyes], true);
+  if (hits.length) triggerReaction();
+}, { passive: true });
+
+renderer.domElement.addEventListener('pointercancel', () => { press = null; }, { passive: true });
+
+// Fade the instruction once the user starts exploring.
+let interacted = false;
+controls.addEventListener('start', () => {
+  if (!interacted) {
+    interacted = true;
+    setTimeout(() => hint.classList.add('hide'), 900);
+  }
+});
+
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  camera.aspect = w / h;
+  // Keep the guardian large on tall phone screens, but avoid clipping on landscape.
+  camera.fov = h > w ? 40 : 34;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h, false);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+}
+window.addEventListener('resize', resize, { passive: true });
+resize();
+animate();
+</script>
+</body>
+</html>
