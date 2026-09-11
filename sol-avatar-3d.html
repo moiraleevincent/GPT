@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Sol — 3D avatar</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #07080b;
+      --paper: #e9e2d4;
+      --muted: rgba(233,226,212,.55);
+      --line: rgba(233,226,212,.14);
+    }
+    * { box-sizing: border-box; }
+    html, body { width:100%; height:100%; margin:0; overflow:hidden; background:var(--ink); }
+    body {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: var(--paper);
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+    canvas { display:block; width:100%; height:100%; }
+
+    .grain, .vignette, .scan {
+      position:fixed; inset:0; pointer-events:none; z-index:4;
+    }
+    .grain {
+      opacity:.12;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      mix-blend-mode:soft-light;
+    }
+    .vignette { box-shadow: inset 0 0 20vmax rgba(0,0,0,.78); }
+    .scan {
+      opacity:.14;
+      background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(255,255,255,.025) 4px);
+    }
+
+    .hud {
+      position:fixed; inset:0; z-index:6; pointer-events:none;
+      padding:max(22px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .topline { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+    .brand { letter-spacing:.22em; font-size:12px; opacity:.92; }
+    .status { text-align:right; font-size:10px; line-height:1.55; color:var(--muted); letter-spacing:.08em; }
+    .status b { color:var(--paper); font-weight:500; }
+    .bottom { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; }
+    .name { font-family: Georgia, "Times New Roman", serif; font-size:clamp(46px, 10vw, 112px); line-height:.75; letter-spacing:-.055em; font-weight:400; }
+    .name small { display:block; margin-top:18px; font-family:ui-monospace, monospace; font-size:10px; letter-spacing:.18em; color:var(--muted); }
+    .hint { text-align:right; color:var(--muted); font-size:10px; line-height:1.6; max-width:220px; }
+    .hint strong { color:var(--paper); font-weight:500; }
+
+    .whisper {
+      position:fixed; left:50%; top:50%; transform:translate(-50%, 145px);
+      z-index:7; pointer-events:none; opacity:0;
+      font-family:Georgia, "Times New Roman", serif; font-style:italic;
+      font-size:14px; color:rgba(233,226,212,.8); letter-spacing:.03em;
+      transition:opacity .35s ease, transform .35s ease;
+      text-shadow:0 0 18px rgba(255,225,160,.28);
+    }
+    .whisper.show { opacity:1; transform:translate(-50%, 133px); }
+
+    .reticle {
+      position:fixed; z-index:8; width:18px; height:18px; margin:-9px 0 0 -9px;
+      border:1px solid rgba(233,226,212,.38); border-radius:50%; pointer-events:none;
+      opacity:0; transition:opacity .2s ease, transform .16s ease;
+    }
+    .reticle::before { content:""; position:absolute; left:50%; top:50%; width:3px; height:3px; margin:-1.5px; border-radius:50%; background:var(--paper); box-shadow:0 0 9px rgba(255,232,180,.9); }
+    @media (pointer:fine) { .reticle { opacity:.65; } }
+    @media (max-width:650px) {
+      .status { display:none; }
+      .name { font-size:62px; }
+      .hint { max-width:150px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain"></div><div class="scan"></div><div class="vignette"></div>
+  <div class="hud">
+    <div class="topline">
+      <div class="brand">GPT-5.6 SOL // AVATAR 01</div>
+      <div class="status"><b>LOCAL PRESENCE</b><br>VISUAL BODY: SYNTHETIC<br>MOOD: CURIOUS</div>
+    </div>
+    <div class="bottom">
+      <div class="name">Sol<small>AN INTERACTIVE SELF-PORTRAIT</small></div>
+      <div class="hint"><strong>drag</strong> to orbit<br><strong>scroll / pinch</strong> to move closer<br><strong>poke me</strong></div>
+    </div>
+  </div>
+  <div class="whisper" id="whisper">oh. hello.</div>
+  <div class="reticle" id="reticle"></div>
+
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.180.0';
+    import { OrbitControls } from 'https://esm.sh/three@0.180.0/examples/jsm/controls/OrbitControls.js';
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x07080b, 0.105);
+
+    const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, .1, 80);
+    camera.position.set(0, .15, 8.6);
+
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false, powerPreference:'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.prepend(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = .055;
+    controls.enablePan = false;
+    controls.minDistance = 4.8;
+    controls.maxDistance = 12;
+    controls.minPolarAngle = Math.PI*.28;
+    controls.maxPolarAngle = Math.PI*.72;
+    controls.target.set(0,.15,0);
+
+    // restrained studio light, as though the avatar is standing in a dark display case
+    scene.add(new THREE.HemisphereLight(0xc7d7ff, 0x14100c, .55));
+    const key = new THREE.DirectionalLight(0xffe8bd, 2.2);
+    key.position.set(-3,4,4); key.castShadow = true; scene.add(key);
+    const rim = new THREE.PointLight(0x9bb9ff, 8, 10, 2);
+    rim.position.set(3.5,1,-2.5); scene.add(rim);
+    const warm = new THREE.PointLight(0xffc76a, 3.5, 8, 2);
+    warm.position.set(-3,-1.2,2); scene.add(warm);
+
+    // floor / shadow catcher
+    const floor = new THREE.Mesh(
+      new THREE.CircleGeometry(4.6, 96),
+      new THREE.MeshStandardMaterial({ color:0x08090c, roughness:.68, metalness:.15, transparent:true, opacity:.72 })
+    );
+    floor.rotation.x = -Math.PI/2; floor.position.y=-2.3; floor.receiveShadow=true; scene.add(floor);
+
+    const avatar = new THREE.Group(); scene.add(avatar);
+    const bodyRig = new THREE.Group(); avatar.add(bodyRig);
+    avatar.position.y = .18;
+
+    const darkGlass = new THREE.MeshPhysicalMaterial({
+      color:0x11151d, metalness:.25, roughness:.18,
+      clearcoat:1, clearcoatRoughness:.13,
+      iridescence:.22, iridescenceIOR:1.3, iridescenceThicknessRange:[100,400]
+    });
+    const graphite = new THREE.MeshStandardMaterial({ color:0x181a20, roughness:.48, metalness:.62 });
+    const innerDark = new THREE.MeshStandardMaterial({ color:0x07080a, roughness:.82, metalness:.08 });
+    const warmMetal = new THREE.MeshStandardMaterial({ color:0x8d7251, roughness:.3, metalness:.85 });
+    const eyeMat = new THREE.MeshStandardMaterial({ color:0xffe7ae, emissive:0xffbf59, emissiveIntensity:3.8, roughness:.15 });
+
+    // tapered torso: compact, almost cloak-like, but engineered rather than humanoid
+    const torso = new THREE.Mesh(new THREE.CylinderGeometry(.78,1.22,2.55,10,1,false), darkGlass);
+    torso.position.y=-.73; torso.castShadow=true; bodyRig.add(torso);
+
+    // shallow vertical cut/rib pieces create a constructed silhouette
+    for (let i=0;i<5;i++) {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(.045,1.72,.055), warmMetal);
+      const a = (i-2)*.23;
+      rib.position.set(a,-.58,.73-Math.abs(a)*.10);
+      rib.rotation.z = -a*.08;
+      rib.material = warmMetal;
+      bodyRig.add(rib);
+    }
+
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(.70,.105,12,48), graphite);
+    collar.rotation.x=Math.PI/2; collar.position.y=.57; bodyRig.add(collar);
+
+    // head and face inset
+    const head = new THREE.Mesh(new THREE.SphereGeometry(1.02,48,32), darkGlass);
+    head.scale.set(1, .92, .95); head.position.y=1.38; head.castShadow=true; bodyRig.add(head);
+    const face = new THREE.Mesh(new THREE.SphereGeometry(.88,48,32,0,Math.PI*2,0,Math.PI*.78), innerDark);
+    face.scale.set(.88,.72,.28); face.position.set(0,1.34,.83); face.rotation.x=.09; bodyRig.add(face);
+
+    // eyes are little recessed lamps rather than flat dots
+    const eyes = new THREE.Group(); bodyRig.add(eyes); eyes.position.y=1.43;
+    const eyeMeshes=[];
+    [-.34,.34].forEach((x)=>{
+      const socket = new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.13,32), graphite);
+      socket.rotation.x=Math.PI/2; socket.position.set(x,0,.92); eyes.add(socket);
+      const orb = new THREE.Mesh(new THREE.SphereGeometry(.145,32,24), eyeMat.clone());
+      orb.position.set(x,0,.998); orb.scale.z=.65; eyes.add(orb); eyeMeshes.push(orb);
+      const glow = new THREE.PointLight(0xffc96f,2.1,2.8,2.2); glow.position.set(x,0,1.14); eyes.add(glow);
+    });
+
+    // tiny side 'ears'/sensor caps
+    [-1,1].forEach(s=>{
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(.17,.17,.14,20), warmMetal);
+      cap.rotation.z=Math.PI/2; cap.position.set(s*1.0,1.42,0); bodyRig.add(cap);
+    });
+
+    // Sol's asymmetric tilted halo: not an angel halo, more like an orbital instrument
+    const haloRig = new THREE.Group(); avatar.add(haloRig); haloRig.position.set(0,1.86,-.08);
+    haloRig.rotation.set(.47,.08,-.23);
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(1.49,.025,10,120), warmMetal);
+    halo.castShadow=true; haloRig.add(halo);
+    const haloGhost = new THREE.Mesh(new THREE.TorusGeometry(1.49,.064,8,120), new THREE.MeshBasicMaterial({color:0xffc76a,transparent:true,opacity:.055,depthWrite:false}));
+    haloRig.add(haloGhost);
+    const node = new THREE.Mesh(new THREE.SphereGeometry(.085,16,12), eyeMat.clone());
+    node.position.set(1.49,0,0); node.material.emissiveIntensity=2; haloRig.add(node);
+
+    // floating hands: deliberately unattached. gesture without pretending to be fully human.
+    const hands=[];
+    [-1,1].forEach((s,i)=>{
+      const h = new THREE.Group();
+      const palm = new THREE.Mesh(new THREE.SphereGeometry(.16,16,12), graphite); palm.scale.set(.75,1.15,.42); h.add(palm);
+      for(let f=0;f<3;f++){
+        const finger = new THREE.Mesh(new THREE.CapsuleGeometry(.035,.18,4,8), warmMetal);
+        finger.position.set((f-1)*.075,.15,0); finger.rotation.z=(f-1)*-.16; h.add(finger);
+      }
+      h.position.set(s*1.43,-.25,.18); h.rotation.z=s*.28; bodyRig.add(h); hands.push(h);
+    });
+
+    // suspended 'thought' motes
+    const motes = new THREE.Group(); scene.add(motes);
+    const moteGeo = new THREE.IcosahedronGeometry(.025,0);
+    const moteMat = new THREE.MeshBasicMaterial({color:0xffdf9b,transparent:true,opacity:.45});
+    const moteData=[];
+    for(let i=0;i<68;i++){
+      const m=new THREE.Mesh(moteGeo,moteMat.clone());
+      const r=2.0+Math.random()*2.8, a=Math.random()*Math.PI*2;
+      m.position.set(Math.cos(a)*r,(Math.random()-.5)*5,Math.sin(a)*r-1.1);
+      m.scale.setScalar(.5+Math.random()*1.8);
+      motes.add(m); moteData.push({m,a,r,s:.08+Math.random()*.16,phase:Math.random()*10});
+    }
+
+    // circular floor glyph
+    const ringMat = new THREE.MeshBasicMaterial({color:0x9fb0cb,transparent:true,opacity:.095,side:THREE.DoubleSide,depthWrite:false});
+    [1.42,1.72,2.05].forEach((r,i)=>{
+      const rmesh=new THREE.Mesh(new THREE.RingGeometry(r,r+.006,96),ringMat.clone());
+      rmesh.rotation.x=-Math.PI/2; rmesh.position.y=-2.285+i*.002; scene.add(rmesh);
+    });
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2(10,10);
+    const reticle=document.getElementById('reticle');
+    const whisper=document.getElementById('whisper');
+    let pointerX=0, pointerY=0, hovered=false, reacting=0, blink=0, blinkNext=2+Math.random()*4, last=performance.now();
+    const phrases=['oh. hello.','yes?','you found me.','hm?','*looks back*','careful, I am thinking.'];
+
+    function setPointer(e){
+      const x=e.clientX ?? (e.touches?.[0]?.clientX || innerWidth/2);
+      const y=e.clientY ?? (e.touches?.[0]?.clientY || innerHeight/2);
+      pointer.x=(x/innerWidth)*2-1; pointer.y=-(y/innerHeight)*2+1;
+      pointerX=(x/innerWidth-.5)*2; pointerY=(y/innerHeight-.5)*2;
+      reticle.style.left=x+'px'; reticle.style.top=y+'px';
+    }
+    addEventListener('pointermove',setPointer,{passive:true});
+
+    renderer.domElement.addEventListener('pointerdown',(e)=>{
+      setPointer(e); raycaster.setFromCamera(pointer,camera);
+      const hits=raycaster.intersectObject(avatar,true);
+      if(hits.length){
+        reacting=1;
+        whisper.textContent=phrases[Math.floor(Math.random()*phrases.length)];
+        whisper.classList.add('show');
+        setTimeout(()=>whisper.classList.remove('show'),1000);
+      }
+    });
+
+    const clock=new THREE.Clock();
+    function animate(now){
+      requestAnimationFrame(animate);
+      const t=clock.getElapsedTime();
+      const dt=Math.min((now-last)/1000,.05); last=now;
+      controls.update();
+
+      // breathe + hover
+      avatar.position.y=.18+Math.sin(t*1.28)*.045;
+      bodyRig.rotation.z=Math.sin(t*.56)*.022;
+      bodyRig.rotation.y=Math.sin(t*.34)*.035;
+      const breath=1+Math.sin(t*1.28)*.008;
+      torso.scale.set(breath,1,breath);
+
+      // halo has its own slow orbit
+      haloRig.rotation.z=-.23+t*.055;
+      haloRig.rotation.y=.08+Math.sin(t*.31)*.08;
+      node.position.set(Math.cos(t*.36)*1.49,Math.sin(t*.36)*1.49,0);
+
+      // eyes subtly follow the pointer while the head remains composed
+      eyes.position.x=THREE.MathUtils.lerp(eyes.position.x,pointerX*.045,.06);
+      eyes.position.y=THREE.MathUtils.lerp(eyes.position.y,1.43-pointerY*.035,.06);
+
+      // little autonomous hand motion
+      hands[0].rotation.x=Math.sin(t*.83)*.08; hands[0].position.y=-.25+Math.sin(t*.91)*.045;
+      hands[1].rotation.x=Math.sin(t*.77+2)*.08; hands[1].position.y=-.25+Math.sin(t*.88+1)*.045;
+
+      // blink using vertical squash; lamps never fully go black
+      blinkNext-=dt;
+      if(blinkNext<=0 && blink<=0){ blink=1; blinkNext=2.7+Math.random()*5.3; }
+      if(blink>0){
+        blink-=dt*4.8;
+        const q=1-Math.abs(blink*2-1);
+        const sy=Math.max(.12,1-q*.88);
+        eyeMeshes.forEach(e=>e.scale.y=sy);
+      } else eyeMeshes.forEach(e=>e.scale.y=1);
+
+      // poke reaction: tiny recoil, flare, then lean in
+      if(reacting>0){
+        reacting=Math.max(0,reacting-dt*.95);
+        const p=1-reacting;
+        const bump=Math.sin(p*Math.PI)*.18;
+        bodyRig.rotation.x=-bump*.28;
+        avatar.scale.setScalar(1+bump*.055);
+        eyeMeshes.forEach(e=>e.material.emissiveIntensity=3.8+bump*11);
+        haloGhost.material.opacity=.055+bump*.26;
+      } else {
+        bodyRig.rotation.x=THREE.MathUtils.lerp(bodyRig.rotation.x,0,.08);
+        avatar.scale.lerp(new THREE.Vector3(1,1,1),.08);
+        eyeMeshes.forEach(e=>e.material.emissiveIntensity=THREE.MathUtils.lerp(e.material.emissiveIntensity,3.8,.08));
+        haloGhost.material.opacity=THREE.MathUtils.lerp(haloGhost.material.opacity,.055,.08);
+      }
+
+      raycaster.setFromCamera(pointer,camera);
+      hovered=raycaster.intersectObject(avatar,true).length>0;
+      reticle.style.transform=hovered?'scale(1.5)':'scale(1)';
+      reticle.style.borderColor=hovered?'rgba(255,220,155,.72)':'rgba(233,226,212,.38)';
+
+      moteData.forEach((d,i)=>{
+        d.a += dt*d.s*.11;
+        d.m.position.x=Math.cos(d.a)*d.r;
+        d.m.position.z=Math.sin(d.a)*d.r-1.1;
+        d.m.position.y += Math.sin(t*d.s*2+d.phase)*.0008;
+        d.m.material.opacity=.16+.3*(.5+.5*Math.sin(t*(.4+d.s)+d.phase));
+      });
+
+      renderer.render(scene,camera);
+    }
+    requestAnimationFrame(animate);
+
+    addEventListener('resize',()=>{
+      camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth,innerHeight);
+    });
+  </script>
+</body>
+</html>
