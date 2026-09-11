@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>The Last Window — a tiny film</title>
+<style>
+  :root{color-scheme:dark;--ink:#06080e;--paper:#eef2ff;--gold:#ffd98a;--blue:#7ed7ff;--muted:#9ca9c4}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#02040a;color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+  body{display:grid;place-items:center}
+  .wrap{width:min(100vw,1280px);height:min(100vh,720px);position:relative;display:grid;place-items:center;background:#02040a}
+  .film{position:relative;width:100%;aspect-ratio:16/9;max-height:100vh;overflow:hidden;background:#050914;box-shadow:0 0 100px #000}
+  svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .grain{position:absolute;inset:0;pointer-events:none;opacity:.12;mix-blend-mode:screen;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E")}
+  .vignette{position:absolute;inset:-2px;pointer-events:none;box-shadow:inset 0 0 170px 45px rgba(0,0,0,.7)}
+  .titlecard{position:absolute;inset:0;display:grid;place-items:center;text-align:center;background:#03050a;opacity:1;transition:opacity .25s linear;pointer-events:none}
+  .titlecard h1{margin:0;font-family:Georgia,serif;font-weight:400;letter-spacing:.16em;font-size:clamp(24px,4vw,58px)}
+  .titlecard p{margin:.8rem 0 0;color:#8d97aa;font-size:clamp(10px,1.2vw,16px);letter-spacing:.24em;text-transform:uppercase}
+  .subtitle{position:absolute;left:50%;bottom:7.5%;transform:translateX(-50%);width:min(88%,900px);min-height:3.6em;display:flex;align-items:flex-end;justify-content:center;text-align:center;font-size:clamp(15px,2.05vw,28px);font-weight:560;line-height:1.32;text-wrap:balance;text-shadow:0 2px 7px #000,0 0 18px #000;pointer-events:none}
+  .subtitle span{padding:.15em .45em;border-radius:.3em;background:linear-gradient(90deg,transparent,rgba(0,0,0,.22),transparent)}
+  .controls{position:absolute;left:0;right:0;bottom:0;height:54px;display:flex;align-items:center;gap:11px;padding:0 16px;background:linear-gradient(transparent,rgba(0,0,0,.78));opacity:0;transition:opacity .2s;z-index:5}
+  .film:hover .controls,.film:focus-within .controls,.controls.show{opacity:1}
+  button{appearance:none;border:0;background:rgba(255,255,255,.1);color:white;border-radius:999px;height:34px;padding:0 13px;font:600 13px/1 system-ui;cursor:pointer;backdrop-filter:blur(6px)}
+  button:hover{background:rgba(255,255,255,.18)}
+  .timeline{flex:1;height:5px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;cursor:pointer;position:relative}
+  .bar{height:100%;width:0;background:#eaf0ff;border-radius:9px}
+  .time{font-variant-numeric:tabular-nums;font-size:12px;color:#cbd4e6;min-width:74px;text-align:right}
+  .hint{position:absolute;right:16px;top:14px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);z-index:3}
+  .start{position:absolute;inset:0;z-index:8;display:grid;place-items:center;background:radial-gradient(circle at 50% 46%,#11182a 0,#050812 46%,#020309 100%);transition:opacity .35s}
+  .start.hide{opacity:0;pointer-events:none}
+  .start button{height:56px;padding:0 24px;font-size:15px;letter-spacing:.07em;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+  .start button:before{content:'▶';margin-right:10px;font-size:12px}
+  @media(max-width:700px){.controls{height:48px;padding:0 9px}.hint{display:none}.time{min-width:56px}.subtitle{bottom:9.5%;width:92%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="film" id="film" aria-label="Animated short film The Last Window">
+    <svg id="scene" viewBox="0 0 1280 720" role="img" aria-label="A tiny cloaked lamplighter walks through a rainy city at night">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07101f"/><stop offset="1" stop-color="#111528"/></linearGradient>
+        <linearGradient id="street" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101423"/><stop offset="1" stop-color="#04060b"/></linearGradient>
+        <radialGradient id="lampGlow"><stop offset="0" stop-color="#fff6c8" stop-opacity=".95"/><stop offset=".22" stop-color="#ffd47c" stop-opacity=".7"/><stop offset="1" stop-color="#f6a53b" stop-opacity="0"/></radialGradient>
+        <radialGradient id="windowGlow"><stop offset="0" stop-color="#fff4c6"/><stop offset="1" stop-color="#f3a949"/></radialGradient>
+        <filter id="blur20"><feGaussianBlur stdDeviation="20"/></filter>
+        <filter id="blur8"><feGaussianBlur stdDeviation="8"/></filter>
+        <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+        <clipPath id="doorClip"><rect x="920" y="254" width="132" height="292" rx="4"/></clipPath>
+      </defs>
+
+      <!-- world -->
+      <rect width="1280" height="720" fill="url(#sky)"/>
+      <circle cx="1080" cy="108" r="46" fill="#dce9ff" opacity=".14" filter="url(#blur8)"/>
+      <circle cx="1080" cy="108" r="31" fill="#dce9ff" opacity=".2"/>
+      <g id="clouds" fill="#111a2d" opacity=".8">
+        <ellipse cx="210" cy="128" rx="245" ry="50"/><ellipse cx="780" cy="88" rx="310" ry="54"/><ellipse cx="1210" cy="160" rx="220" ry="46"/>
+      </g>
+
+      <!-- distant city -->
+      <g id="cityBack" fill="#0a0e19">
+        <rect x="0" y="232" width="126" height="310"/><rect x="98" y="188" width="150" height="354"/><rect x="226" y="267" width="112" height="275"/><rect x="320" y="208" width="174" height="334"/><rect x="468" y="282" width="126" height="260"/><rect x="570" y="224" width="178" height="318"/><rect x="720" y="172" width="148" height="370"/><rect x="836" y="250" width="114" height="292"/><rect x="940" y="204" width="188" height="338"/><rect x="1110" y="256" width="170" height="286"/>
+      </g>
+      <g id="windows" fill="#b5d8ff" opacity=".16">
+        <rect x="124" y="230" width="18" height="26"/><rect x="172" y="230" width="18" height="26"/><rect x="124" y="288" width="18" height="26"/>
+        <rect x="354" y="250" width="18" height="27"/><rect x="408" y="250" width="18" height="27"/><rect x="354" y="316" width="18" height="27"/>
+        <rect x="608" y="264" width="19" height="28"/><rect x="672" y="264" width="19" height="28"/><rect x="776" y="218" width="18" height="26"/>
+        <rect x="1008" y="248" width="19" height="29"/><rect x="1060" y="248" width="19" height="29"/><rect x="1156" y="302" width="19" height="28"/>
+      </g>
+
+      <!-- near building / final window -->
+      <g id="house">
+        <rect x="874" y="194" width="250" height="350" fill="#0b0d15"/>
+        <path d="M850 194H1140L1106 151H886Z" fill="#090b12"/>
+        <rect x="920" y="254" width="132" height="292" rx="4" fill="#07080d" stroke="#171c2a" stroke-width="5"/>
+        <rect id="doorLight" x="927" y="261" width="118" height="278" fill="#f2b04f" opacity="0" clip-path="url(#doorClip)"/>
+        <circle cx="1025" cy="400" r="6" fill="#8d7857"/>
+        <rect id="lastWindow" x="961" y="224" width="72" height="52" rx="2" fill="#040509" stroke="#23293a" stroke-width="5"/>
+        <path d="M997 225V275M962 250H1032" stroke="#22283a" stroke-width="4"/>
+        <rect x="1082" y="304" width="20" height="56" rx="3" fill="#05070c" stroke="#171c27" stroke-width="4"/>
+      </g>
+
+      <!-- wet street -->
+      <path d="M0 500 Q430 472 1280 500V720H0Z" fill="url(#street)"/>
+      <g id="reflections" opacity=".24" filter="url(#blur8)">
+        <path d="M173 520l32 0 45 180h-120z" fill="#78b9ff"/><path d="M628 515l35 0 66 205h-145z" fill="#7fb6ff"/>
+        <path id="goldReflection" d="M944 514h90l66 206H872Z" fill="#ffbd5b" opacity="0"/>
+      </g>
+      <g id="puddles" fill="none" stroke="#506176" stroke-width="2" opacity=".28"><ellipse cx="285" cy="629" rx="145" ry="19"/><ellipse cx="770" cy="585" rx="110" ry="15"/><ellipse cx="1066" cy="647" rx="128" ry="17"/></g>
+
+      <!-- rain, generated lines -->
+      <g id="rain" stroke="#9bcaf0" stroke-width="2" stroke-linecap="round" opacity=".27"></g>
+
+      <!-- Nox -->
+      <g id="nox" transform="translate(-130 0)">
+        <ellipse cx="452" cy="623" rx="62" ry="13" fill="#000" opacity=".35"/>
+        <path id="cloak" d="M430 468 Q452 450 474 468 L512 612 Q452 632 392 612Z" fill="#111522" stroke="#242b3d" stroke-width="4"/>
+        <circle cx="452" cy="445" r="46" fill="#10141f" stroke="#262d3f" stroke-width="4"/>
+        <path d="M420 433Q452 405 484 433" fill="none" stroke="#2b3345" stroke-width="4" opacity=".7"/>
+        <ellipse id="eyeL" cx="435" cy="447" rx="8" ry="11" fill="#cfe9ff"/><ellipse id="eyeR" cx="469" cy="447" rx="8" ry="11" fill="#cfe9ff"/>
+        <path id="arm" d="M482 505Q513 525 528 552" fill="none" stroke="#111522" stroke-width="18" stroke-linecap="round"/>
+        <g id="lantern" transform="translate(528 550)">
+          <circle id="lanternAura" cx="0" cy="20" r="94" fill="url(#lampGlow)" opacity="0"/>
+          <path d="M-16 0Q0-20 16 0" fill="none" stroke="#6d7380" stroke-width="4"/>
+          <rect x="-20" y="1" width="40" height="50" rx="7" fill="#11151d" stroke="#747b85" stroke-width="4"/>
+          <rect id="lanternCore" x="-12" y="10" width="24" height="30" rx="4" fill="#273040"/>
+          <path d="M-20 16H20M-20 36H20" stroke="#737b86" stroke-width="2" opacity=".7"/>
+        </g>
+      </g>
+
+      <!-- resident inside door -->
+      <g id="resident" opacity="0" transform="translate(20 0)">
+        <ellipse cx="986" cy="628" rx="48" ry="10" fill="#000" opacity=".3"/>
+        <path d="M966 457Q986 442 1006 457L1035 614Q986 627 937 614Z" fill="#3b2b30"/>
+        <circle cx="986" cy="438" r="38" fill="#33252a"/>
+        <circle cx="973" cy="439" r="6" fill="#ffd889"/><circle cx="999" cy="439" r="6" fill="#ffd889"/>
+        <g id="spark" transform="translate(937 0)" opacity="0">
+          <circle cx="0" cy="529" r="48" fill="url(#lampGlow)" opacity=".75"/>
+          <path d="M0 510l5 14 14 5-14 5-5 14-5-14-14-5 14-5z" fill="#fff1b4"/>
+        </g>
+      </g>
+
+      <!-- foreground silhouettes -->
+      <path d="M0 665Q130 630 263 666T520 668T804 662T1064 670T1280 658V720H0Z" fill="#030509" opacity=".65"/>
+    </svg>
+
+    <div class="titlecard" id="titlecard"><div><h1>THE LAST WINDOW</h1><p>a tiny film</p></div></div>
+    <div class="subtitle"><span id="subtitle"></span></div>
+    <div class="grain"></div><div class="vignette"></div>
+    <div class="hint">58 seconds</div>
+
+    <div class="controls show" id="controls">
+      <button id="playBtn" aria-label="Play or pause">Play</button>
+      <button id="restartBtn">Restart</button>
+      <div class="timeline" id="timeline" aria-label="Film timeline"><div class="bar" id="bar"></div></div>
+      <div class="time" id="time">0:00 / 0:58</div>
+    </div>
+    <div class="start" id="start"><button id="startBtn">Play the film</button></div>
+  </main>
+</div>
+<script>
+(() => {
+  const DURATION = 58;
+  const $ = id => document.getElementById(id);
+  const film=$('film'), playBtn=$('playBtn'), restartBtn=$('restartBtn'), start=$('start'), startBtn=$('startBtn'), subtitle=$('subtitle'), bar=$('bar'), time=$('time'), timeline=$('timeline');
+  const nox=$('nox'), resident=$('resident'), spark=$('spark'), lantern=$('lantern'), lanternCore=$('lanternCore'), lanternAura=$('lanternAura'), doorLight=$('doorLight'), lastWindow=$('lastWindow'), goldReflection=$('goldReflection'), titlecard=$('titlecard'), rain=$('rain'), clouds=$('clouds'), cityBack=$('cityBack');
+
+  // deterministic rain field
+  let rainHTML='';
+  for(let i=0;i<86;i++){
+    const x=(i*149)%1310-20, y=(i*83)%690-90, len=17+(i%5)*5;
+    rainHTML += `<line x1="${x}" y1="${y}" x2="${x-8}" y2="${y+len}"/>`;
+  }
+  rain.innerHTML=rainHTML;
+
+  const cues=[
+    [4.2,10.0,'Every night, Nox lit the windows that had forgotten how.'],
+    [11.0,16.8,'One window was always dark.'],
+    [18.0,22.5,'So, for once, Nox did something that was not on the route.'],
+    [23.0,26.0,'<i>knock · knock</i>'],
+    [30.0,35.0,'“I thought you might come eventually.”'],
+    [36.0,40.7,'“I was saving this one for you.”'],
+    [43.0,49.0,'Nox had spent years carrying light to everyone else.'],
+    [49.3,55.0,'That night, Nox walked home carrying some.'],
+    [55.1,57.4,'Good night.']
+  ];
+
+  let playing=false, t=0, last=0, raf=0, started=false;
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const inv=(x,a,b)=>clamp((x-a)/(b-a),0,1);
+  const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+  const lerp=(a,b,p)=>a+(b-a)*p;
+  const fade=(x,a,b,c,d)=>clamp(Math.min(inv(x,a,b),1-inv(x,c,d)),0,1);
+  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+
+  function setScene(x){
+    // title
+    titlecard.style.opacity = x < 3.6 ? 1 : Math.max(0,1-inv(x,3.6,4.3));
+
+    // subtle camera / environment drift
+    clouds.setAttribute('transform',`translate(${(-x*2.2)%130} 0)`);
+    cityBack.setAttribute('transform',`translate(${Math.sin(x*.08)*4} 0)`);
+    rain.setAttribute('transform',`translate(${(x*18)%26} ${(x*92)%70})`);
+
+    // Nox walks in: x -130 -> 310. Then approaches door to x=430.
+    let nx=-130;
+    if(x>=4 && x<15) nx=lerp(-130,245,ease(inv(x,4,15)));
+    else if(x>=15 && x<22) nx=lerp(245,390,ease(inv(x,15,22)));
+    else if(x>=22) nx=390;
+    const bob=(x>4&&x<22)?Math.sin(x*8)*3:0;
+    nox.setAttribute('transform',`translate(${nx} ${bob})`);
+
+    // breathing / sway
+    const bodyScale=1+Math.sin(x*2.2)*.006;
+    $('cloak').setAttribute('transform',`translate(452 540) scale(${bodyScale} ${1/bodyScale}) translate(-452 -540)`);
+
+    // eyes blink occasionally
+    const blink = ((x%7.3)>6.9 || (x>28.2&&x<28.48)) ? .12 : 1;
+    $('eyeL').setAttribute('ry',11*blink); $('eyeR').setAttribute('ry',11*blink);
+
+    // knock arm gesture
+    let armRot=0;
+    if(x>22.5&&x<26.4) armRot=Math.sin((x-22.5)*Math.PI*2.0)*18;
+    $('arm').setAttribute('transform',`rotate(${armRot} 482 505)`);
+
+    // door light / resident reveal
+    const open=ease(inv(x,27.2,31.2));
+    doorLight.setAttribute('opacity',.78*open);
+    resident.setAttribute('opacity',open);
+    resident.setAttribute('transform',`translate(${lerp(35,0,open)} 0)`);
+
+    // spark appears in resident hand
+    const sparkIn=ease(inv(x,34.2,36.3));
+    spark.setAttribute('opacity',sparkIn*(x<41?1:Math.max(0,1-inv(x,41,42))));
+    const sx = x<39 ? 0 : lerp(0,-101,ease(inv(x,39,42)));
+    const sy = x<39 ? 0 : lerp(0,18,ease(inv(x,39,42)));
+    spark.setAttribute('transform',`translate(${937+sx} ${sy}) scale(${1+Math.sin(x*5)*.05})`);
+
+    // lantern receives light
+    const lit=ease(inv(x,40.8,43.3));
+    lanternCore.setAttribute('fill',lit>.01?`rgb(${Math.round(lerp(39,255,lit))},${Math.round(lerp(48,210,lit))},${Math.round(lerp(64,112,lit))})`:'#273040');
+    lanternAura.setAttribute('opacity',.78*lit);
+    goldReflection.setAttribute('opacity',.52*lit);
+    lastWindow.setAttribute('fill',lit>.02?`rgb(${Math.round(lerp(4,241,lit))},${Math.round(lerp(5,176,lit))},${Math.round(lerp(9,79,lit))})`:'#040509');
+
+    // closing shot: Nox turns and walks left, lantern remains bright
+    if(x>48){
+      const leave=ease(inv(x,49,57.3));
+      const lx=390-lerp(0,560,leave);
+      const tinyBob=Math.sin(x*8)*2.6;
+      nox.setAttribute('transform',`translate(${lx} ${tinyBob}) scale(${lerp(1,.9,leave)})`);
+    }
+
+    // resident retreats
+    if(x>45){
+      const r=inv(x,45,49);
+      resident.setAttribute('opacity',1-r*.82);
+      resident.setAttribute('transform',`translate(${r*28} 0)`);
+      doorLight.setAttribute('opacity',.78*(1-r*.35));
+    }
+
+    // subtitle
+    const cue=cues.find(c=>x>=c[0]&&x<c[1]);
+    subtitle.innerHTML=cue?cue[2]:'';
+    subtitle.style.opacity=cue?Math.min(inv(x,cue[0],cue[0]+.35),1-inv(x,cue[1]-.35,cue[1])):0;
+
+    bar.style.width=`${(x/DURATION)*100}%`;
+    time.textContent=`${fmt(x)} / 0:58`;
+  }
+
+  function tick(now){
+    if(!playing)return;
+    if(!last)last=now;
+    t += (now-last)/1000;
+    last=now;
+    if(t>=DURATION){t=DURATION;playing=false;playBtn.textContent='Play';setScene(t);return;}
+    setScene(t);raf=requestAnimationFrame(tick);
+  }
+  function play(){
+    if(t>=DURATION)t=0;
+    playing=true;last=0;started=true;start.classList.add('hide');playBtn.textContent='Pause';cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+  }
+  function pause(){playing=false;cancelAnimationFrame(raf);playBtn.textContent='Play';}
+  function restart(){t=0;setScene(0);play();}
+
+  startBtn.addEventListener('click',play);
+  playBtn.addEventListener('click',()=>playing?pause():play());
+  restartBtn.addEventListener('click',restart);
+  timeline.addEventListener('click',e=>{const r=timeline.getBoundingClientRect();t=clamp((e.clientX-r.left)/r.width,0,1)*DURATION;setScene(t);});
+  window.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();playing?pause():play();} if(e.key==='ArrowRight'){t=clamp(t+3,0,DURATION);setScene(t)} if(e.key==='ArrowLeft'){t=clamp(t-3,0,DURATION);setScene(t)}});
+  let hideTimer; film.addEventListener('pointermove',()=>{const c=$('controls');c.classList.add('show');clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(playing)c.classList.remove('show')},1800)});
+  setScene(0);
+})();
+</script>
+</body>
+</html>
