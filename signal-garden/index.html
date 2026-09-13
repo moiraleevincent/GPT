@@ -18,6 +18,7 @@
     .wide{grid-column:1/-1}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}@media(max-width:650px){.summary{grid-template-columns:1fr 1fr}}.metric{background:#0c0f13;border:1px solid var(--line);border-radius:10px;padding:10px}.metric b{display:block;font-size:20px}.metric span{font-size:11px;color:var(--muted)}
     table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:right;padding:8px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}.term{color:var(--accent);cursor:pointer;font-weight:700}.term:hover{text-decoration:underline}.pos{color:var(--accent)}.neg{color:var(--hot)}
     .scroll{overflow:auto;max-height:440px}.empty{color:var(--muted);padding:30px 5px}.contexts{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:800px){.contexts{grid-template-columns:1fr}}.snippet{background:#0b0e12;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0;color:#cbd3dc}.snippet mark{background:#315944;color:#ecfff4;padding:1px 2px;border-radius:3px}.trail{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);border-radius:999px;padding:5px 8px;color:var(--accent2);background:#0c0e12}.foot{margin-top:24px;color:var(--muted);font-size:11px}
+    .axis{display:grid;grid-template-columns:1fr 1fr;font-size:11px;color:var(--muted);margin:0 0 8px}.axis span:last-child{text-align:right}.plot{display:grid;gap:4px;max-height:430px;overflow:auto}.plotrow{display:grid;grid-template-columns:minmax(90px,190px) 1fr minmax(58px,80px);gap:9px;align-items:center;min-height:24px}.plotlabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dbe4eb;cursor:pointer}.plotlabel:hover{color:var(--accent)}.barbox{height:14px;position:relative;background:linear-gradient(90deg,transparent 49.7%,#3a424b 49.7%,#3a424b 50.3%,transparent 50.3%)}.bar{position:absolute;top:2px;height:10px;border-radius:4px;min-width:2px;cursor:pointer}.bar.a{left:50%;background:var(--accent)}.bar.b{right:50%;background:var(--hot)}.plotvalue{text-align:right;font-size:11px;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -57,6 +58,11 @@
       <div class="summary" id="summary"></div>
       <div class="scroll"><table><thead><tr><th>motif</th><th>A count</th><th>A / 10k</th><th>B count</th><th>B / 10k</th><th>drift</th><th>ratio</th></tr></thead><tbody id="rows"></tbody></table><div class="empty" id="empty">Give me text. I’ll start pulling threads.</div></div>
     </div>
+    <div class="panel wide">
+      <h2>Drift map</h2>
+      <div class="axis"><span>← stronger in B</span><span>stronger in A →</span></div>
+      <div id="plot" class="empty">Analyze two corpora to grow the map.</div>
+    </div>
     <div class="panel"><h2 id="contextTitle">Contexts</h2><div id="contexts" class="empty">Click a motif to inspect where it lives.</div></div>
     <div class="panel"><h2 id="trailTitle">Motif trail</h2><div id="trail" class="empty">Nearby words will appear here.</div></div>
   </section>
@@ -67,7 +73,7 @@ const $=s=>document.querySelector(s);
 const stop=new Set(`the a an and or but if then else to of in on for from with without by at as is are was were be been being it its this that these those i me my mine we us our ours you your yours he him his she her hers they them their theirs do does did doing have has had having not no yes so very just can could would should will may might must about into over under after before than too also there here what which who whom when where why how all any both each few more most other some such only own same`.split(/\s+/));
 let state={A:'',B:'',terms:[]};
 function words(t){return (t.toLowerCase().match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu)||[])}
-function grams(ws,n,hideStops){const m=new Map();for(let i=0;i<=ws.length-n;i++){let part=ws.slice(i,i+n);if(hideStops && n===1 && stop.has(part[0]))continue;if(part.some(x=>x.length<2))continue;let g=part.join(' ');m.set(g,(m.get(g)||0)+1)}return m}
+function grams(ws,n,hideStops){const m=new Map();for(let i=0;i<=ws.length-n;i++){let part=ws.slice(i,i+n);if(hideStops&&n===1&&stop.has(part[0]))continue;if(part.some(x=>x.length<2))continue;let g=part.join(' ');m.set(g,(m.get(g)||0)+1)}return m}
 function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function analyze(){
   const A=$('#a').value,B=$('#b').value,n=+$('#ngram').value,min=Math.max(1,+$('#minCount').value||1),hide=$('#stops').checked;
@@ -79,15 +85,16 @@ function render(na,nb){
   $('#summary').innerHTML=`<div class="metric"><b>${na.toLocaleString()}</b><span>A words</span></div><div class="metric"><b>${nb.toLocaleString()}</b><span>B words</span></div><div class="metric"><b>${state.terms.length.toLocaleString()}</b><span>motifs shown</span></div><div class="metric"><b>${$('#ngram').value}</b><span>ngram size</span></div>`;
   $('#empty').style.display=state.terms.length?'none':'block';
   $('#rows').innerHTML=state.terms.slice(0,250).map(x=>`<tr><td><span class="term" data-term="${esc(x.k)}">${esc(x.k)}</span></td><td>${x.ca}</td><td>${x.ra.toFixed(1)}</td><td>${x.cb}</td><td>${x.rb.toFixed(1)}</td><td class="${x.drift>=0?'pos':'neg'}">${x.drift>=0?'+':''}${x.drift.toFixed(1)}</td><td>${x.ratio.toFixed(2)}×</td></tr>`).join('');
-  document.querySelectorAll('.term').forEach(el=>el.onclick=()=>select(el.dataset.term));
+  document.querySelectorAll('.term').forEach(el=>el.onclick=()=>select(el.dataset.term));renderPlot();
 }
+function renderPlot(){const data=state.terms.slice(0,60),plot=$('#plot');if(!data.length){plot.className='empty';plot.textContent='Analyze two corpora to grow the map.';return}const max=Math.max(...data.map(x=>Math.abs(x.drift)),1);plot.className='plot';plot.innerHTML=data.map(x=>{const w=Math.max(1,Math.min(50,Math.abs(x.drift)/max*50));return `<div class="plotrow"><span class="plotlabel" data-plotterm="${esc(x.k)}" title="${esc(x.k)}">${esc(x.k)}</span><div class="barbox"><span class="bar ${x.drift>=0?'a':'b'}" data-plotterm="${esc(x.k)}" style="width:${w}%"></span></div><span class="plotvalue">${x.drift>=0?'+':''}${x.drift.toFixed(1)}</span></div>`}).join('');plot.querySelectorAll('[data-plotterm]').forEach(el=>el.onclick=()=>select(el.dataset.plotterm))}
 function snippets(text,term,max=7){const low=text.toLowerCase(),needle=term.toLowerCase(),out=[];let p=0;while(out.length<max&&(p=low.indexOf(needle,p))!==-1){let s=Math.max(0,p-85),e=Math.min(text.length,p+needle.length+85),frag=text.slice(s,e);let rel=p-s;out.push(esc(frag.slice(0,rel))+`<mark>${esc(frag.slice(rel,rel+needle.length))}</mark>`+esc(frag.slice(rel+needle.length)));p+=needle.length}return out}
 function neighbors(text,term,window=12){const ws=words(text),tw=words(term);if(!tw.length)return new Map();const out=new Map();for(let i=0;i<=ws.length-tw.length;i++){if(tw.every((w,j)=>ws[i+j]===w)){for(let k=Math.max(0,i-window);k<Math.min(ws.length,i+tw.length+window);k++){if(k>=i&&k<i+tw.length)continue;let w=ws[k];if(stop.has(w)||w.length<3)continue;out.set(w,(out.get(w)||0)+1)}}}return out}
 function select(term){
   $('#contextTitle').textContent=`Contexts · ${term}`;const A=snippets(state.A,term),B=snippets(state.B,term);$('#contexts').className='contexts';$('#contexts').innerHTML=`<div><h2>A</h2>${A.length?A.map(x=>`<div class="snippet">${x}</div>`).join(''):'<div class="empty">No hits.</div>'}</div><div><h2>B</h2>${B.length?B.map(x=>`<div class="snippet">${x}</div>`).join(''):'<div class="empty">No hits.</div>'}</div>`;
   $('#trailTitle').textContent=`Motif trail · ${term}`;const na=neighbors(state.A,term),nb=neighbors(state.B,term),all=new Map();for(const [w,c] of na)all.set(w,(all.get(w)||0)+c);for(const [w,c] of nb)all.set(w,(all.get(w)||0)+c);const top=[...all].sort((a,b)=>b[1]-a[1]).slice(0,35);$('#trail').className='trail';$('#trail').innerHTML=top.length?top.map(([w,c])=>`<span class="chip">${esc(w)} · ${c}</span>`).join(''):'<div class="empty">Nothing nearby yet.</div>';
 }
-function resetResults(){state={A:'',B:'',terms:[]};$('#rows').innerHTML='';$('#summary').innerHTML='';$('#empty').style.display='block';$('#contexts').className='empty';$('#contexts').textContent='Click a motif to inspect where it lives.';$('#trail').className='empty';$('#trail').textContent='Nearby words will appear here.'}
+function resetResults(){state={A:'',B:'',terms:[]};$('#rows').innerHTML='';$('#summary').innerHTML='';$('#empty').style.display='block';$('#plot').className='empty';$('#plot').textContent='Analyze two corpora to grow the map.';$('#contexts').className='empty';$('#contexts').textContent='Click a motif to inspect where it lives.';$('#trail').className='empty';$('#trail').textContent='Nearby words will appear here.'}
 async function loadLocal(which,file){if(!file)return;const text=await file.text();$(`#${which.toLowerCase()}`).value=text;$(`#meta${which}`).textContent=file.name;resetResults()}
 $('#loadA').onclick=()=>$('#fileA').click();$('#loadB').onclick=()=>$('#fileB').click();
 $('#fileA').onchange=e=>loadLocal('A',e.target.files[0]);$('#fileB').onchange=e=>loadLocal('B',e.target.files[0]);
