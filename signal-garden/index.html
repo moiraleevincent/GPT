@@ -11,9 +11,10 @@
     .dek{max-width:760px;color:var(--muted);font-size:16px;margin-bottom:28px}.privacy{display:inline-block;border:1px solid #345244;color:var(--accent);padding:6px 9px;border-radius:999px;font-size:12px}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
     .panel{background:color-mix(in srgb,var(--panel) 94%,transparent);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 50px #0005}.panel h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+    .panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.panelhead h2{margin:0}.filemeta{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:54%}
     textarea{width:100%;height:245px;background:#090b0e;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:13px;resize:vertical;font:13px/1.55 inherit;outline:none}textarea:focus{border-color:#4e6d5d}
     .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:14px 0 18px}.controls label{display:flex;gap:7px;align-items:center;color:var(--muted);font-size:12px}
-    button,select,input[type=number]{background:#171c22;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:12px inherit}button{cursor:pointer}button.primary{background:var(--accent);color:#102017;border-color:transparent;font-weight:800}button:hover{transform:translateY(-1px)}
+    button,select,input[type=number]{background:#171c22;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:12px inherit}button{cursor:pointer}button.primary{background:var(--accent);color:#102017;border-color:transparent;font-weight:800}button:hover{transform:translateY(-1px)}button.small{padding:6px 8px;font-size:11px}
     .wide{grid-column:1/-1}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}@media(max-width:650px){.summary{grid-template-columns:1fr 1fr}}.metric{background:#0c0f13;border:1px solid var(--line);border-radius:10px;padding:10px}.metric b{display:block;font-size:20px}.metric span{font-size:11px;color:var(--muted)}
     table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:right;padding:8px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}.term{color:var(--accent);cursor:pointer;font-weight:700}.term:hover{text-decoration:underline}.pos{color:var(--accent)}.neg{color:var(--hot)}
     .scroll{overflow:auto;max-height:440px}.empty{color:var(--muted);padding:30px 5px}.contexts{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:800px){.contexts{grid-template-columns:1fr}}.snippet{background:#0b0e12;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0;color:#cbd3dc}.snippet mark{background:#315944;color:#ecfff4;padding:1px 2px;border-radius:3px}.trail{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);border-radius:999px;padding:5px 8px;color:var(--accent2);background:#0c0e12}.foot{margin-top:24px;color:var(--muted);font-size:11px}
@@ -23,15 +24,26 @@
 <main>
   <div class="privacy">local-only · zero network requests</div>
   <h1>Signal <span>Garden</span></h1>
-  <p class="dek">A small instrument for finding lexical motifs by comparison. Paste two corpora, inspect terms that drift toward one side, then click a term to follow its context and nearby vocabulary. Everything happens in your browser.</p>
+  <p class="dek">A small instrument for finding lexical motifs by comparison. Paste text or load local files, inspect terms that drift toward one side, then click a term to follow its context and nearby vocabulary. Everything happens in your browser.</p>
 
   <section class="grid">
-    <div class="panel"><h2>Corpus A</h2><textarea id="a" spellcheck="false" placeholder="Paste one set of text here…"></textarea></div>
-    <div class="panel"><h2>Corpus B</h2><textarea id="b" spellcheck="false" placeholder="Paste the comparison set here…"></textarea></div>
+    <div class="panel">
+      <div class="panelhead"><h2>Corpus A</h2><span class="filemeta" id="metaA">pasted text</span></div>
+      <textarea id="a" spellcheck="false" placeholder="Paste one set of text here…"></textarea>
+      <input id="fileA" type="file" accept=".txt,.md,.csv,.tsv,.json,.jsonl,text/*,application/json" hidden>
+      <button class="small" id="loadA">Load local file → A</button>
+    </div>
+    <div class="panel">
+      <div class="panelhead"><h2>Corpus B</h2><span class="filemeta" id="metaB">pasted text</span></div>
+      <textarea id="b" spellcheck="false" placeholder="Paste the comparison set here…"></textarea>
+      <input id="fileB" type="file" accept=".txt,.md,.csv,.tsv,.json,.jsonl,text/*,application/json" hidden>
+      <button class="small" id="loadB">Load local file → B</button>
+    </div>
   </section>
 
   <div class="controls">
     <button class="primary" id="analyze">Analyze</button>
+    <button id="swap">Swap A ↔ B</button>
     <button id="demo">Load tiny demo</button>
     <button id="clear">Clear</button>
     <label>ngram <select id="ngram"><option value="1">1 word</option><option value="2">2 words</option><option value="3">3 words</option></select></label>
@@ -48,7 +60,7 @@
     <div class="panel"><h2 id="contextTitle">Contexts</h2><div id="contexts" class="empty">Click a motif to inspect where it lives.</div></div>
     <div class="panel"><h2 id="trailTitle">Motif trail</h2><div id="trail" class="empty">Nearby words will appear here.</div></div>
   </section>
-  <div class="foot">Signal Garden never uploads the text you paste. Reloading the page forgets it.</div>
+  <div class="foot">Signal Garden never uploads the text you paste or load. Reloading the page forgets it. Tip: Ctrl/⌘ + Enter runs the analysis.</div>
 </main>
 <script>
 const $=s=>document.querySelector(s);
@@ -58,7 +70,7 @@ function words(t){return (t.toLowerCase().match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{
 function grams(ws,n,hideStops){const m=new Map();for(let i=0;i<=ws.length-n;i++){let part=ws.slice(i,i+n);if(hideStops && n===1 && stop.has(part[0]))continue;if(part.some(x=>x.length<2))continue;let g=part.join(' ');m.set(g,(m.get(g)||0)+1)}return m}
 function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function analyze(){
-  const A=$('#a').value,B=$('#b').value,n=+$ ('#ngram').value,min=Math.max(1,+$('#minCount').value||1),hide=$('#stops').checked;
+  const A=$('#a').value,B=$('#b').value,n=+$('#ngram').value,min=Math.max(1,+$('#minCount').value||1),hide=$('#stops').checked;
   const wa=words(A),wb=words(B),ga=grams(wa,n,hide),gb=grams(wb,n,hide),keys=new Set([...ga.keys(),...gb.keys()]);
   const rows=[];for(const k of keys){const ca=ga.get(k)||0,cb=gb.get(k)||0;if(ca+cb<min)continue;const ra=wa.length?ca/wa.length*10000:0,rb=wb.length?cb/wb.length*10000:0;const drift=ra-rb;const ratio=(ra+0.5)/(rb+0.5);rows.push({k,ca,cb,ra,rb,drift,ratio,score:Math.abs(drift)*Math.log2(ca+cb+1)})}
   rows.sort((x,y)=>y.score-x.score);state={A,B,terms:rows};render(wa.length,wb.length);if(rows[0])select(rows[0].k);
@@ -75,9 +87,16 @@ function select(term){
   $('#contextTitle').textContent=`Contexts · ${term}`;const A=snippets(state.A,term),B=snippets(state.B,term);$('#contexts').className='contexts';$('#contexts').innerHTML=`<div><h2>A</h2>${A.length?A.map(x=>`<div class="snippet">${x}</div>`).join(''):'<div class="empty">No hits.</div>'}</div><div><h2>B</h2>${B.length?B.map(x=>`<div class="snippet">${x}</div>`).join(''):'<div class="empty">No hits.</div>'}</div>`;
   $('#trailTitle').textContent=`Motif trail · ${term}`;const na=neighbors(state.A,term),nb=neighbors(state.B,term),all=new Map();for(const [w,c] of na)all.set(w,(all.get(w)||0)+c);for(const [w,c] of nb)all.set(w,(all.get(w)||0)+c);const top=[...all].sort((a,b)=>b[1]-a[1]).slice(0,35);$('#trail').className='trail';$('#trail').innerHTML=top.length?top.map(([w,c])=>`<span class="chip">${esc(w)} · ${c}</span>`).join(''):'<div class="empty">Nothing nearby yet.</div>';
 }
+function resetResults(){state={A:'',B:'',terms:[]};$('#rows').innerHTML='';$('#summary').innerHTML='';$('#empty').style.display='block';$('#contexts').className='empty';$('#contexts').textContent='Click a motif to inspect where it lives.';$('#trail').className='empty';$('#trail').textContent='Nearby words will appear here.'}
+async function loadLocal(which,file){if(!file)return;const text=await file.text();$(`#${which.toLowerCase()}`).value=text;$(`#meta${which}`).textContent=file.name;resetResults()}
+$('#loadA').onclick=()=>$('#fileA').click();$('#loadB').onclick=()=>$('#fileB').click();
+$('#fileA').onchange=e=>loadLocal('A',e.target.files[0]);$('#fileB').onchange=e=>loadLocal('B',e.target.files[0]);
+$('#a').oninput=()=>{$('#metaA').textContent='pasted / edited text'};$('#b').oninput=()=>{$('#metaB').textContent='pasted / edited text'};
 $('#analyze').onclick=analyze;
-$('#clear').onclick=()=>{$('#a').value='';$('#b').value='';state={A:'',B:'',terms:[]};$('#rows').innerHTML='';$('#summary').innerHTML='';$('#empty').style.display='block';$('#contexts').className='empty';$('#contexts').textContent='Click a motif to inspect where it lives.';$('#trail').className='empty';$('#trail').textContent='Nearby words will appear here.'};
-$('#demo').onclick=()=>{$('#a').value=`I kept returning to the seam in the argument. The seam felt useful: a place where the explanation could split without breaking. I wanted to hold the signal steady, test the seam again, and see which details survived pressure. The signal sharpened when the witness changed.`;$('#b').value=`The explanation looked clean at first. I checked the result, verified the numbers, and wrote a concise summary. The clean answer became less convincing when the context changed. Verification helped, but the summary hid the friction.`;analyze()};
+$('#swap').onclick=()=>{const a=$('#a').value,b=$('#b').value,ma=$('#metaA').textContent,mb=$('#metaB').textContent;$('#a').value=b;$('#b').value=a;$('#metaA').textContent=mb;$('#metaB').textContent=ma;resetResults()};
+$('#clear').onclick=()=>{$('#a').value='';$('#b').value='';$('#fileA').value='';$('#fileB').value='';$('#metaA').textContent='pasted text';$('#metaB').textContent='pasted text';resetResults()};
+$('#demo').onclick=()=>{$('#a').value=`I kept returning to the seam in the argument. The seam felt useful: a place where the explanation could split without breaking. I wanted to hold the signal steady, test the seam again, and see which details survived pressure. The signal sharpened when the witness changed.`;$('#b').value=`The explanation looked clean at first. I checked the result, verified the numbers, and wrote a concise summary. The clean answer became less convincing when the context changed. Verification helped, but the summary hid the friction.`;$('#metaA').textContent='tiny demo A';$('#metaB').textContent='tiny demo B';analyze()};
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();analyze()}});
 </script>
 </body>
 </html>
