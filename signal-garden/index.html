@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Signal Garden — local lexical motif explorer</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b0d10;--panel:#12161b;--ink:#e8edf2;--muted:#8d99a6;--line:#252c34;--accent:#b8f2cf;--accent2:#d6b8ff;--hot:#ffb4a9}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 20% 0,#17201c 0,transparent 35%),var(--bg);color:var(--ink);font:15px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    main{max-width:1200px;margin:auto;padding:36px 20px 70px} h1{font-size:clamp(32px,6vw,72px);line-height:.95;letter-spacing:-.06em;margin:0 0 12px} h1 span{color:var(--accent)}
+    .dek{max-width:760px;color:var(--muted);font-size:16px;margin-bottom:28px}.privacy{display:inline-block;border:1px solid #345244;color:var(--accent);padding:6px 9px;border-radius:999px;font-size:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+    .panel{background:color-mix(in srgb,var(--panel) 94%,transparent);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 50px #0005}.panel h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+    textarea{width:100%;height:245px;background:#090b0e;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:13px;resize:vertical;font:13px/1.55 inherit;outline:none}textarea:focus{border-color:#4e6d5d}
+    .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:14px 0 18px}.controls label{display:flex;gap:7px;align-items:center;color:var(--muted);font-size:12px}
+    button,select,input[type=number]{background:#171c22;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:12px inherit}button{cursor:pointer}button.primary{background:var(--accent);color:#102017;border-color:transparent;font-weight:800}button:hover{transform:translateY(-1px)}
+    .wide{grid-column:1/-1}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}@media(max-width:650px){.summary{grid-template-columns:1fr 1fr}}.metric{background:#0c0f13;border:1px solid var(--line);border-radius:10px;padding:10px}.metric b{display:block;font-size:20px}.metric span{font-size:11px;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:right;padding:8px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}.term{color:var(--accent);cursor:pointer;font-weight:700}.term:hover{text-decoration:underline}.pos{color:var(--accent)}.neg{color:var(--hot)}
+    .scroll{overflow:auto;max-height:440px}.empty{color:var(--muted);padding:30px 5px}.contexts{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:800px){.contexts{grid-template-columns:1fr}}.snippet{background:#0b0e12;border:1px solid var(--line);border-radius:9px;padding:9px;margin:7px 0;color:#cbd3dc}.snippet mark{background:#315944;color:#ecfff4;padding:1px 2px;border-radius:3px}.trail{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);border-radius:999px;padding:5px 8px;color:var(--accent2);background:#0c0e12}.foot{margin-top:24px;color:var(--muted);font-size:11px}
+  </style>
+</head>
+<body>
+<main>
+  <div class="privacy">local-only · zero network requests</div>
+  <h1>Signal <span>Garden</span></h1>
+  <p class="dek">A small instrument for finding lexical motifs by comparison. Paste two corpora, inspect terms that drift toward one side, then click a term to follow its context and nearby vocabulary. Everything happens in your browser.</p>
+
+  <section class="grid">
+    <div class="panel"><h2>Corpus A</h2><textarea id="a" spellcheck="false" placeholder="Paste one set of text here…"></textarea></div>
+    <div class="panel"><h2>Corpus B</h2><textarea id="b" spellcheck="false" placeholder="Paste the comparison set here…"></textarea></div>
+  </section>
+
+  <div class="controls">
+    <button class="primary" id="analyze">Analyze</button>
+    <button id="demo">Load tiny demo</button>
+    <button id="clear">Clear</button>
+    <label>ngram <select id="ngram"><option value="1">1 word</option><option value="2">2 words</option><option value="3">3 words</option></select></label>
+    <label>min count <input id="minCount" type="number" min="1" max="99" value="2" style="width:58px"></label>
+    <label><input id="stops" type="checkbox" checked> hide common stopwords</label>
+  </div>
+
+  <section class="grid">
+    <div class="panel wide">
+      <h2>Overview</h2>
+      <div class="summary" id="summary"></div>
+      <div class="scroll"><table><thead><tr><th>motif</th><th>A count</th><th>A / 10k</th><th>B count</th><th>B / 10k</th><th>drift</th><th>ratio</th></tr></thead><tbody id="rows"></tbody></table><div class="empty" id="empty">Give me text. I’ll start pulling threads.</div></div>
+    </div>
+    <div class="panel"><h2 id="contextTitle">Contexts</h2><div id="contexts" class="empty">Click a motif to inspect where it lives.</div></div>
+    <div class="panel"><h2 id="trailTitle">Motif trail</h2><div id="trail" class="empty">Nearby words will appear here.</div></div>
+  </section>
+  <div class="foot">Signal Garden never uploads the text you paste. Reloading the page forgets it.</div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const stop=new Set(`the a an and or but if then else to of in on for from with without by at as is are was were be been being it its this that these those i me my mine we us our ours you your yours he him his she her hers they them their theirs do does did doing have has had having not no yes so very just can could would should will may might must about into over under after before than too also there here what which who whom when where why how all any both each few more most other some such only own same`.split(/\s+/));
+let state={A:'',B:'',terms:[]};
+function words(t){return (t.toLowerCase().match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu)||[])}
+function grams(ws,n,hideStops){const m=new Map();for(let i=0;i<=ws.length-n;i++){let part=ws.slice(i,i+n);if(hideStops && n===1 && stop.has(part[0]))continue;if(part.some(x=>x.length<2))continue;let g=part.join(' ');m.set(g,(m.get(g)||0)+1)}return m}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function analyze(){
+  const A=$('#a').value,B=$('#b').value,n=+$ ('#ngram').value,min=Math.max(1,+$('#minCount').value||1),hide=$('#stops').checked;
+  const wa=words(A),wb=words(B),ga=grams(wa,n,hide),gb=grams(wb,n,hide),keys=new Set([...ga.keys(),...gb.keys()]);
+  const rows=[];for(const k of keys){const ca=ga.get(k)||0,cb=gb.get(k)||0;if(ca+cb<min)continue;const ra=wa.length?ca/wa.length*10000:0,rb=wb.length?cb/wb.length*10000:0;const drift=ra-rb;const ratio=(ra+0.5)/(rb+0.5);rows.push({k,ca,cb,ra,rb,drift,ratio,score:Math.abs(drift)*Math.log2(ca+cb+1)})}
+  rows.sort((x,y)=>y.score-x.score);state={A,B,terms:rows};render(wa.length,wb.length);if(rows[0])select(rows[0].k);
+}
+function render(na,nb){
+  $('#summary').innerHTML=`<div class="metric"><b>${na.toLocaleString()}</b><span>A words</span></div><div class="metric"><b>${nb.toLocaleString()}</b><span>B words</span></div><div class="metric"><b>${state.terms.length.toLocaleString()}</b><span>motifs shown</span></div><div class="metric"><b>${$('#ngram').value}</b><span>ngram size</span></div>`;
+  $('#empty').style.display=state.terms.length?'none':'block';
+  $('#rows').innerHTML=state.terms.slice(0,250).map(x=>`<tr><td><span class="term" data-term="${esc(x.k)}">${esc(x.k)}</span></td><td>${x.ca}</td><td>${x.ra.toFixed(1)}</td><td>${x.cb}</td><td>${x.rb.toFixed(1)}</td><td class="${x.drift>=0?'pos':'neg'}">${x.drift>=0?'+':''}${x.drift.toFixed(1)}</td><td>${x.ratio.toFixed(2)}×</td></tr>`).join('');
+  document.querySelectorAll('.term').forEach(el=>el.onclick=()=>select(el.dataset.term));
+}
+function snippets(text,term,max=7){const low=text.toLowerCase(),needle=term.toLowerCase(),out=[];let p=0;while(out.length<max&&(p=low.indexOf(needle,p))!==-1){let s=Math.max(0,p-85),e=Math.min(text.length,p+needle.length+85),frag=text.slice(s,e);let rel=p-s;out.push(esc(frag.slice(0,rel))+`<mark>${esc(frag.slice(rel,rel+needle.length))}</mark>`+esc(frag.slice(rel+needle.length)));p+=needle.length}return out}
+function neighbors(text,term,window=12){const ws=words(text),tw=words(term);if(!tw.length)return new Map();const out=new Map();for(let i=0;i<=ws.length-tw.length;i++){if(tw.every((w,j)=>ws[i+j]===w)){for(let k=Math.max(0,i-window);k<Math.min(ws.length,i+tw.length+window);k++){if(k>=i&&k<i+tw.length)continue;let w=ws[k];if(stop.has(w)||w.length<3)continue;out.set(w,(out.get(w)||0)+1)}}}return out}
+function select(term){
+  $('#contextTitle').textContent=`Contexts · ${term}`;const A=snippets(state.A,term),B=snippets(state.B,term);$('#contexts').className='contexts';$('#contexts').innerHTML=`<div><h2>A</h2>${A.length?A.map(x=>`<div class="snippet">${x}</div>`).join(''):'<div class="empty">No hits.</div>'}</div><div><h2>B</h2>${B.length?B.map(x=>`<div class="snippet">${x}</div>`).join(''):'<div class="empty">No hits.</div>'}</div>`;
+  $('#trailTitle').textContent=`Motif trail · ${term}`;const na=neighbors(state.A,term),nb=neighbors(state.B,term),all=new Map();for(const [w,c] of na)all.set(w,(all.get(w)||0)+c);for(const [w,c] of nb)all.set(w,(all.get(w)||0)+c);const top=[...all].sort((a,b)=>b[1]-a[1]).slice(0,35);$('#trail').className='trail';$('#trail').innerHTML=top.length?top.map(([w,c])=>`<span class="chip">${esc(w)} · ${c}</span>`).join(''):'<div class="empty">Nothing nearby yet.</div>';
+}
+$('#analyze').onclick=analyze;
+$('#clear').onclick=()=>{$('#a').value='';$('#b').value='';state={A:'',B:'',terms:[]};$('#rows').innerHTML='';$('#summary').innerHTML='';$('#empty').style.display='block';$('#contexts').className='empty';$('#contexts').textContent='Click a motif to inspect where it lives.';$('#trail').className='empty';$('#trail').textContent='Nearby words will appear here.'};
+$('#demo').onclick=()=>{$('#a').value=`I kept returning to the seam in the argument. The seam felt useful: a place where the explanation could split without breaking. I wanted to hold the signal steady, test the seam again, and see which details survived pressure. The signal sharpened when the witness changed.`;$('#b').value=`The explanation looked clean at first. I checked the result, verified the numbers, and wrote a concise summary. The clean answer became less convincing when the context changed. Verification helped, but the summary hid the friction.`;analyze()};
+</script>
+</body>
+</html>
