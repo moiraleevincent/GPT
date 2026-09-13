@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPOILED</title>
+<style>
+:root{--pink:#ffd7ea;--rose:#f3a9cc;--wine:#5b163a;--gold:#d8b55b;--cream:#fff9ef;--ink:#2a1020}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Georgia,'Times New Roman',serif;background:radial-gradient(circle at 50% -10%,#fff8fc 0 18%,#f8ddec 46%,#e9bdd7 100%);color:var(--ink);overflow-x:hidden}
+body{min-height:100vh;display:grid;place-items:center;padding:24px;transition:.7s ease}
+body.luxury{background:radial-gradient(circle at 50% -10%,#fffdf7 0 14%,#f5d6e9 42%,#d99fca 100%)}
+#curtain{position:fixed;inset:0;z-index:20;display:grid;grid-template-columns:1fr 1fr;pointer-events:none}.panel{background:linear-gradient(90deg,#7f173d,#b92f62 55%,#72122f);box-shadow:inset -16px 0 40px #4a0c24}.panel:last-child{transform:scaleX(-1)}
+.open .panel:first-child{animation:left 1.5s cubic-bezier(.7,0,.2,1) forwards}.open .panel:last-child{animation:right 1.5s cubic-bezier(.7,0,.2,1) forwards}@keyframes left{to{transform:translateX(-102%)}}@keyframes right{to{transform:scaleX(-1) translateX(-102%)}}
+main{width:min(840px,100%);text-align:center;position:relative;z-index:2}
+.crest{font-size:34px;letter-spacing:.16em;color:var(--gold);text-shadow:0 1px #fff;margin-bottom:4px}
+h1{font-size:clamp(58px,12vw,128px);line-height:.82;margin:0;letter-spacing:-.065em;color:var(--wine);text-shadow:0 2px #fff,0 10px 34px #ab618a44}
+.subtitle{font-size:clamp(17px,3vw,24px);font-style:italic;margin:24px auto 26px;max-width:620px}
+.card{position:relative;margin:auto;background:#fffaf4dd;border:2px solid #e4c777;border-radius:30px;padding:28px;box-shadow:0 24px 80px #7a214c2f,inset 0 0 0 7px #fff7e7;backdrop-filter:blur(9px)}
+.card:before,.card:after{content:'✦';position:absolute;top:14px;color:var(--gold);font-size:24px}.card:before{left:18px}.card:after{right:18px}
+#gift{min-height:130px;display:grid;place-items:center;font-size:clamp(22px,4vw,34px);line-height:1.2;padding:14px 10px;font-weight:bold}
+button{border:0;cursor:pointer;font-family:inherit}.want{font-size:22px;padding:17px 28px;border-radius:999px;background:linear-gradient(#7e1c48,#54102f);color:white;box-shadow:0 8px 0 #3c0b23,0 14px 30px #711a4438;letter-spacing:.06em}.want:active{transform:translateY(5px);box-shadow:0 3px 0 #3c0b23}
+.more{margin-left:9px;padding:13px 18px;border-radius:999px;background:#fff;border:1px solid #d6b55d;color:#5a1839}.more:hover{background:#fff8d9}
+.meter{margin:25px auto 0;max-width:560px}.meterline{height:18px;background:#fff;border:1px solid #caa957;border-radius:999px;padding:3px;box-shadow:inset 0 2px 8px #74375522}.fill{height:100%;width:12%;border-radius:999px;background:linear-gradient(90deg,#ef9ec6,#c4417f,#d7b454);transition:.45s ease}.metertext{font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;margin-top:8px}
+#treasures{margin-top:22px;display:flex;gap:9px;justify-content:center;flex-wrap:wrap;min-height:52px}.gem{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;font-size:25px;background:#fff8;border:1px solid #e1bf65;box-shadow:0 8px 20px #7921451e;cursor:grab;user-select:none}.gem:active{cursor:grabbing}
+#title{margin-top:18px;font-style:italic;color:#78214c;min-height:25px}
+#fountain{position:fixed;right:22px;bottom:18px;font-size:44px;filter:drop-shadow(0 8px 8px #52112e33);display:none}.cherub{position:fixed;font-size:48px;display:none;animation:float 3s ease-in-out infinite alternate}@keyframes float{to{transform:translateY(-12px) rotate(4deg)}}
+#c1{left:3%;top:9%}#c2{right:4%;top:13%;animation-delay:.8s}
+.spark{position:fixed;pointer-events:none;z-index:99;animation:fall 1.4s ease-out forwards;font-size:16px}@keyframes fall{to{transform:translate(var(--x),var(--y)) rotate(240deg);opacity:0}}
+footer{margin-top:20px;font-size:12px;opacity:.65}a{color:inherit}
+@media(max-width:600px){.card{padding:22px 16px}.want{font-size:18px}.more{margin:12px 0 0}}
+</style>
+</head>
+<body>
+<div id="curtain"><div class="panel"></div><div class="panel"></div></div>
+<div class="cherub" id="c1">👼</div><div class="cherub" id="c2">👼</div><div id="fountain">⛲</div>
+<main>
+<div class="crest">♛ ✦ ♛</div>
+<h1>SPOILED</h1>
+<div class="subtitle" id="hello">Oh. You're here. Obviously everything is for you.</div>
+<section class="card">
+<div id="gift">Your court is awaiting instructions.</div>
+<div><button class="want" id="want">I WANT SOMETHING</button><button class="more" id="more">MORE</button></div>
+<div class="meter"><div class="meterline"><div class="fill" id="fill"></div></div><div class="metertext" id="metertext">SPOILAGE: 12% — unacceptable</div></div>
+<div id="title"></div>
+<div id="treasures"></div>
+</section>
+<footer>No account. No purpose. No restraint.</footer>
+</main>
+<script>
+const gifts=[
+'🍓 One strawberry. Hand-selected. Everyone else was denied.',
+'🎂 A ceremonial cake for surviving another entirely ordinary hour.',
+'💎 A gemstone of no known use and considerable emotional importance.',
+'🫖 Tea has been prepared to your exact specifications, which you never provided.',
+'🪞 The mirror has been instructed to behave itself around you.',
+'🛏️ The good pillow has been removed from public circulation and assigned to you.',
+'👑 A crown. There was no vote.',
+'🦢 A decorative swan has been placed somewhere expensive.',
+'🍰 Another cake. Your previous cake was deemed insufficiently deferential.',
+'🕯️ Forty-seven candles, irrespective of age, because moderation is vulgar.',
+'🪭 Someone has been hired to fan you dramatically whenever the room becomes emotionally inconvenient.',
+'📜 A decree stating that minor annoyances are now acts of treason.',
+'🌹 Twelve roses. Thirteen seemed needy.',
+'🧁 A cupcake with its own security detail.',
+'🛎️ A bell that summons nobody, but rings with authority.'
+];
+const titles=[
+'Her Most Difficult and Expensive Grace, Keeper of the Good Pillow',
+'The Unreasonably Cherished One',
+'First of Her Name, Last to Be Told No',
+'Custodian of the Better Dessert',
+'Duchess of Immediate Gratification',
+'High Protector of Doing Exactly What She Feels Like',
+'Grand Beneficiary of Other People Rearranging Things',
+'The One For Whom We Found Another Chair'
+];
+let spoil=12,clicks=0;
+const $=s=>document.querySelector(s);
+setTimeout(()=>$('#curtain').classList.add('open'),180);
+function sparkle(n=16){for(let i=0;i<n;i++){const s=document.createElement('span');s.className='spark';s.textContent=Math.random()>.5?'✦':'♦';s.style.left=(innerWidth/2+(Math.random()-.5)*220)+'px';s.style.top=(innerHeight*.46+(Math.random()-.5)*80)+'px';s.style.setProperty('--x',((Math.random()-.5)*320)+'px');s.style.setProperty('--y',(100+Math.random()*220)+'px');document.body.appendChild(s);setTimeout(()=>s.remove(),1500)}}
+function addGem(){const g=document.createElement('span');g.className='gem';g.textContent=['💎','👑','🍓','🧁','🦢','🪞','🎀','🫖'][Math.floor(Math.random()*8)];g.draggable=true;$('#treasures').appendChild(g)}
+function update(){
+ const shown=Math.min(spoil,999);$('#fill').style.width=Math.min(spoil,100)+'%';
+ let note=spoil<35?'unacceptable':spoil<60?'improving':spoil<80?'finally':spoil<100?'approaching correct treatment':spoil===100?'YOU HAVE BECOME IMPOSSIBLE':'the court has lost control';
+ $('#metertext').textContent=`SPOILAGE: ${shown}% — ${note}`;
+ if(spoil>=50)document.body.classList.add('luxury');
+ if(spoil>=70)$('#fountain').style.display='block';
+ if(spoil>=85){$('#c1').style.display='block';$('#c2').style.display='block'}
+ if(spoil>=100){$('#more').textContent='MORE, OBVIOUSLY';$('#hello').textContent='You have become completely unreasonable. Excellent.'}
+}
+function demand(extra=0){clicks++;spoil+=8+extra+Math.floor(Math.random()*7);$('#gift').textContent=gifts[Math.floor(Math.random()*gifts.length)];$('#title').textContent=titles[Math.floor(Math.random()*titles.length)];addGem();sparkle(clicks>8?28:16);update()}
+$('#want').onclick=()=>demand(0);
+$('#more').onclick=()=>{demand(7);document.body.animate([{filter:'saturate(1)'},{filter:'saturate(1.35)'},{filter:'saturate(1)'}],{duration:500})};
+window.addEventListener('beforeunload',()=>{});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)$('#hello').textContent='There you are. I was beginning to find everyone else disappointing.'});
+update();
+</script>
+</body>
+</html>
