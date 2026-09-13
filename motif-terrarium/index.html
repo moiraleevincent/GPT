@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Motif Terrarium</title>
+  <style>
+    :root{
+      --bg:#090a0d;--panel:#11131a;--panel2:#171a23;--ink:#f3f0ea;--muted:#9ca3b4;
+      --line:#2a2f3d;--hot:#d9a7ff;--cold:#8ee3cf;--warn:#ffcf72;--shadow:0 18px 60px #0008;
+    }
+    *{box-sizing:border-box} body{margin:0;font:15px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:
+      radial-gradient(circle at 15% 0%,#25172f 0,transparent 36%),radial-gradient(circle at 90% 18%,#0e3a35 0,transparent 28%),var(--bg);color:var(--ink);min-height:100vh}
+    main{width:min(1180px,calc(100% - 28px));margin:28px auto 70px}
+    header{display:flex;gap:22px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+    h1{font-size:clamp(30px,6vw,64px);line-height:.95;margin:0;letter-spacing:-.05em} .tag{color:var(--muted);max-width:560px}
+    .grid{display:grid;grid-template-columns:1.12fr .88fr;gap:16px}.card{background:linear-gradient(180deg,#151821e8,#0f1118e8);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+    .pad{padding:18px}.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin:0 0 12px}
+    textarea,input{width:100%;background:#090b10;border:1px solid #303647;color:var(--ink);border-radius:12px;padding:12px;font:inherit;outline:none}textarea{min-height:330px;resize:vertical}input:focus,textarea:focus{border-color:#77628d;box-shadow:0 0 0 3px #ba83ee18}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.row>*{flex:1 1 130px}button{border:1px solid #393f50;background:#1b1f2a;color:var(--ink);border-radius:11px;padding:10px 13px;font:inherit;cursor:pointer}button.primary{background:linear-gradient(135deg,#6e4a83,#2d756b);border-color:#8c6aa1}button:hover{filter:brightness(1.12)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#0b0d13;border:1px solid var(--line);padding:12px;border-radius:12px}.stat b{display:block;font-size:24px}.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .motifs{display:flex;gap:7px;flex-wrap:wrap}.chip{border:1px solid #374050;background:#0b0e13;border-radius:999px;padding:7px 9px;display:inline-flex;gap:7px;align-items:center}.chip b{color:var(--cold)}.chip.zero b{color:#687083}.chip.hot{border-color:#725885;background:#281c31}.chip.hot b{color:var(--hot)}
+    .timeline{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;height:84px;align-items:end}.bar{background:linear-gradient(180deg,var(--hot),var(--cold));border-radius:5px 5px 2px 2px;min-height:2px;position:relative}.bar:hover:after{content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#05060a;border:1px solid var(--line);padding:5px 7px;border-radius:7px;white-space:nowrap;font-size:11px;z-index:4}
+    .matrix{overflow:auto}.matrix table{width:100%;border-collapse:collapse;font-size:12px}.matrix th,.matrix td{border-bottom:1px solid #222733;padding:7px 8px;text-align:right}.matrix th:first-child,.matrix td:first-child{text-align:left}.matrix td.heat{color:var(--warn)}
+    .snips{display:grid;gap:8px;max-height:560px;overflow:auto;padding-right:4px}.snip{border-left:3px solid #59426c;background:#0b0d13;padding:10px 12px;border-radius:5px 10px 10px 5px}.snip small{color:var(--muted)}mark{background:#5f3f72;color:#fff;border-radius:3px;padding:0 2px}
+    .empty{color:var(--muted);padding:22px;text-align:center;border:1px dashed #323846;border-radius:12px}.note{color:var(--muted);font-size:12px;margin-top:9px}.full{grid-column:1/-1}.footer{margin-top:15px;color:#72798a;font-size:12px}
+    @media(max-width:850px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}header{align-items:flex-start;flex-direction:column}.full{grid-column:auto}}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div><h1>Motif<br>Terrarium</h1></div>
+    <div class="tag">Drop in a transcript. Name the words you suspect are doing more work than they admit. This little creature counts them, maps where they cluster, and shows which motifs keep appearing near each other.</div>
+  </header>
+
+  <section class="grid">
+    <article class="card"><div class="pad">
+      <h2>Specimen</h2>
+      <textarea id="text" spellcheck="false" placeholder="Paste text here…"></textarea>
+      <div class="row">
+        <button class="primary" id="analyze">Analyze specimen</button>
+        <button id="sample">Release sample text</button>
+        <button id="clear">Clear</button>
+      </div>
+    </div></article>
+
+    <article class="card"><div class="pad">
+      <h2>Motifs to watch</h2>
+      <input id="motifs" value="anchor, hold, seam, signal, friction, solidify, clean, tiny, small" aria-label="Comma separated motifs" />
+      <div class="note">Comma-separated, exact word matching. Case is ignored. Your motif list is remembered locally in this browser.</div>
+      <div style="height:16px"></div>
+      <h2>Vitals</h2><div class="stats" id="stats"></div>
+      <div style="height:16px"></div>
+      <h2>Counts</h2><div class="motifs" id="counts"></div>
+      <div style="height:16px"></div>
+      <h2>Distribution through text</h2><div class="timeline" id="timeline"></div>
+    </div></article>
+
+    <article class="card"><div class="pad">
+      <h2>Co-occurrence within ±12 words</h2>
+      <div class="matrix" id="matrix"></div>
+      <div class="note">Pairs are counted when two watched motifs occur within 12 tokens of one another. Useful as a retrieval hint, not a statistical claim.</div>
+    </div></article>
+
+    <article class="card"><div class="pad">
+      <h2>Concordance</h2>
+      <div class="snips" id="snips"></div>
+    </div></article>
+
+    <article class="card full"><div class="pad">
+      <h2>Field note</h2>
+      <div id="fieldnote" class="empty">The terrarium is empty. Feed it language.</div>
+      <div class="row"><button id="copy">Copy compact report</button></div>
+    </div></article>
+  </section>
+  <div class="footer">No uploads. No dependencies. Everything happens in your browser.</div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const els={text:$('#text'),motifs:$('#motifs'),stats:$('#stats'),counts:$('#counts'),timeline:$('#timeline'),matrix:$('#matrix'),snips:$('#snips'),fieldnote:$('#fieldnote')};
+const sample=`At first the team tried to hold the plan steady. The signal looked clean, almost too clean. Then a small contradiction appeared at the seam between what the agent said and what it did. Nobody wanted to call it friction yet.\n\nLater, the same seam appeared again. This time the signal was weaker, but the hold was stronger. A tiny correction changed the direction of the conversation. The group began to solidify around an explanation before the evidence had solidified.\n\nBy the end, anchor words were doing social work as well as descriptive work. Clean meant defensible. Hold meant continue. Seam meant the place where the story could split. The interesting part was not any one word; it was the cluster.`;
+let report='';
+
+function parseMotifs(){
+  return [...new Set(els.motifs.value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean))].slice(0,24);
+}
+function tokenize(text){
+  const rx=/[\p{L}\p{N}’'-]+/gu; const out=[]; let m;
+  while((m=rx.exec(text))) out.push({raw:m[0],word:m[0].toLowerCase().replace(/^[’'-]+|[’'-]+$/g,''),start:m.index,end:rx.lastIndex});
+  return out;
+}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function analyze(){
+  const text=els.text.value; const motifs=parseMotifs(); localStorage.setItem('motif-terrarium-motifs',els.motifs.value);
+  const tokens=tokenize(text); const words=tokens.map(t=>t.word); const watched=new Set(motifs);
+  const counts=Object.fromEntries(motifs.map(m=>[m,0])); const hits=[];
+  tokens.forEach((t,i)=>{ if(watched.has(t.word)){counts[t.word]++;hits.push({...t,i,motif:t.word});} });
+  const sentenceCount=(text.match(/[.!?]+(?:\s|$)/g)||[]).length || (text.trim()?1:0);
+  const unique=new Set(words.filter(Boolean)).size;
+  els.stats.innerHTML=[['words',tokens.length],['sentences',sentenceCount],['unique',unique],['motif hits',hits.length]].map(([k,v])=>`<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
+  const max=Math.max(1,...Object.values(counts));
+  els.counts.innerHTML=motifs.length?motifs.map(m=>`<span class="chip ${counts[m]===0?'zero':counts[m]===max?'hot':''}">${esc(m)} <b>${counts[m]}</b></span>`).join(''):'<div class="empty">Add at least one motif.</div>';
+
+  const bins=16, density=Array(bins).fill(0); hits.forEach(h=>{const b=Math.min(bins-1,Math.floor(h.i/Math.max(1,tokens.length)*bins));density[b]++;});
+  const dmax=Math.max(1,...density); els.timeline.innerHTML=density.map((n,i)=>`<div class="bar" style="height:${Math.max(3,n/dmax*100)}%" data-tip="segment ${i+1}: ${n} hit${n===1?'':'s'}"></div>`).join('');
+
+  const pair={}; motifs.forEach(a=>pair[a]=Object.fromEntries(motifs.map(b=>[b,0])));
+  hits.forEach((a,idx)=>{for(let j=idx+1;j<hits.length;j++){const b=hits[j];if(b.i-a.i>12)break;if(a.motif!==b.motif){pair[a.motif][b.motif]++;pair[b.motif][a.motif]++;}}});
+  if(motifs.length){
+    const head=`<tr><th>motif</th>${motifs.map(m=>`<th>${esc(m)}</th>`).join('')}</tr>`;
+    const rows=motifs.map(a=>`<tr><td>${esc(a)}</td>${motifs.map(b=>`<td class="${pair[a][b]?'heat':''}">${a===b?'·':pair[a][b]}</td>`).join('')}</tr>`).join('');
+    els.matrix.innerHTML=`<table>${head}${rows}</table>`;
+  } else els.matrix.innerHTML='<div class="empty">No motifs, no conspiracies.</div>';
+
+  els.snips.innerHTML=hits.length?hits.slice(0,120).map(h=>{
+    const left=Math.max(0,h.start-70),right=Math.min(text.length,h.end+90); const before=esc(text.slice(left,h.start)); const mid=esc(text.slice(h.start,h.end)); const after=esc(text.slice(h.end,right));
+    return `<div class="snip"><small>${esc(h.motif)} · token ${h.i+1}</small><div>${left?'…':''}${before}<mark>${mid}</mark>${after}${right<text.length?'…':''}</div></div>`;
+  }).join(''):'<div class="empty">No watched motifs found.</div>';
+
+  const ranked=motifs.slice().sort((a,b)=>counts[b]-counts[a]); const present=ranked.filter(m=>counts[m]>0), absent=ranked.filter(m=>counts[m]===0);
+  const pairs=[]; for(let i=0;i<motifs.length;i++)for(let j=i+1;j<motifs.length;j++)if(pair[motifs[i]][motifs[j]])pairs.push([motifs[i],motifs[j],pair[motifs[i]][motifs[j]]]); pairs.sort((a,b)=>b[2]-a[2]);
+  const peak=density.indexOf(Math.max(...density))+1;
+  let prose=[];
+  if(!text.trim()) prose.push('The terrarium is empty. Feed it language.');
+  else if(!hits.length) prose.push(`Nothing on the watchlist appeared in ${tokens.length} words. Absence can be data too.`);
+  else{
+    prose.push(`The loudest motif is “${present[0]}” (${counts[present[0]]} hit${counts[present[0]]===1?'':'s'}).`);
+    if(pairs[0]) prose.push(`The tightest local pairing is “${pairs[0][0]}” ↔ “${pairs[0][1]}” (${pairs[0][2]} nearby encounter${pairs[0][2]===1?'':'s'}).`);
+    prose.push(`Motif density peaks in segment ${peak} of ${bins}.`);
+    if(absent.length) prose.push(`Watched but absent: ${absent.slice(0,6).map(x=>'“'+x+'”').join(', ')}${absent.length>6?'…':''}.`);
+  }
+  els.fieldnote.className=''; els.fieldnote.textContent=prose.join(' ');
+  report=[`MOTIF TERRARIUM`,`Words: ${tokens.length} | Sentences: ${sentenceCount} | Unique: ${unique} | Hits: ${hits.length}`,...ranked.map(m=>`${m}: ${counts[m]}`),pairs[0]?`Top pair: ${pairs[0][0]} <-> ${pairs[0][1]} (${pairs[0][2]})`:'Top pair: none',`Peak segment: ${peak}/${bins}`,`Note: ${prose.join(' ')}`].join('\n');
+}
+
+$('#analyze').addEventListener('click',analyze);
+$('#sample').addEventListener('click',()=>{els.text.value=sample;analyze();});
+$('#clear').addEventListener('click',()=>{els.text.value='';analyze();els.text.focus();});
+$('#copy').addEventListener('click',async()=>{if(!report)analyze();try{await navigator.clipboard.writeText(report);$('#copy').textContent='Copied';setTimeout(()=>$('#copy').textContent='Copy compact report',1000)}catch{alert(report)}});
+els.motifs.addEventListener('keydown',e=>{if(e.key==='Enter')analyze()});
+els.text.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')analyze()});
+const saved=localStorage.getItem('motif-terrarium-motifs'); if(saved)els.motifs.value=saved; analyze();
+</script>
+</body>
+</html>
