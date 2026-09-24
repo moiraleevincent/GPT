@@ -1,5 +1,18 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Voice studio</title>
-<style>body{font-family:system-ui,-apple-system,sans-serif;max-width:560px;margin:40px auto;padding:20px;background:#111;color:#eee}button{display:block;width:100%;font:inherit;font-size:19px;font-weight:700;padding:16px;margin:12px 0;border:0;border-radius:14px;cursor:pointer}.news{font-size:22px;padding:20px}hr{border:0;border-top:1px solid #444;margin:32px 0}</style></head>
-<body><h1>Voice studio</h1><h2>Radio news</h2><button class="news" onclick="play('news')">▶ PLAY NEWS</button><hr><h2>Compare voices</h2>
-<button onclick="play('af_heart')">▶ Voice 1</button><button onclick="play('af_bella')">▶ Voice 2</button><button onclick="play('af_nicole')">▶ Voice 3</button><button onclick="play('am_michael')">▶ Voice 4</button><button onclick="play('am_adam')">▶ Voice 5</button>
-<audio id="player"></audio><script>const p=document.getElementById('player');function play(n){p.src='voice_demo/'+n+'.wav';p.play()}</script></body></html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Five voice samples</title>
+<style>body{font-family:system-ui,-apple-system,sans-serif;max-width:560px;margin:40px auto;padding:20px;background:#111;color:#eee}button{display:block;width:100%;font:inherit;font-size:20px;font-weight:700;padding:17px;margin:14px 0;border:0;border-radius:14px;cursor:pointer}</style></head>
+<body><h1>Five voice samples</h1><p>Tap a voice to hear it.</p>
+<button onclick="playVoice('af_heart')">▶ Voice 1</button>
+<button onclick="playVoice('af_bella')">▶ Voice 2</button>
+<button onclick="playVoice('af_nicole')">▶ Voice 3</button>
+<button onclick="playVoice('am_michael')">▶ Voice 4</button>
+<button onclick="playVoice('am_adam')">▶ Voice 5</button>
+<audio id="player" controls style="width:100%;margin-top:24px"></audio>
+<script>
+const player=document.getElementById('player');
+function playVoice(name){
+  player.src='voice_demo/'+name+'.wav';
+  player.load();
+  player.play();
+}
+</script></body></html>
