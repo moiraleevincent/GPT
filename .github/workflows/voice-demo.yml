@@ -1,0 +1,23 @@
+name: Generate voice sample
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "voice_demo/**"
+      - ".github/workflows/voice-demo.yml"
+
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install kokoro soundfile numpy
+      - run: python voice_demo/generate.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voice-sample
+          path: voice_demo/output.wav
