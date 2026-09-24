@@ -1,7 +1,36 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Voice sample</title>
-<style>body{font-family:system-ui,-apple-system,sans-serif;max-width:560px;margin:60px auto;padding:24px;background:#111;color:#eee}audio{width:100%;margin:24px 0}a{color:#ddd}</style></head>
-<body><h1>Voice sample</h1><p>Press play to hear the voice I made for you.</p>
-<audio controls preload="metadata"><source src="voice_demo/output.wav" type="audio/wav">Your browser could not show the player. <a href="voice_demo/output.wav">Open the audio directly.</a></audio>
-<p><a href="voice_demo/output.wav">Open the voice directly</a></p></body></html>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;background:#111;color:#eee;text-align:center}
+main{padding:24px}
+button{font:inherit;font-size:22px;font-weight:700;padding:18px 36px;border:0;border-radius:16px;cursor:pointer}
+p{margin-bottom:24px}
+</style>
+</head>
+<body>
+<main>
+<h1>Voice sample</h1>
+<p>Press the button to hear the voice.</p>
+<button id="playButton" type="button">▶ PLAY</button>
+<audio id="voice" src="voice_demo/output.wav" preload="auto"></audio>
+</main>
+<script>
+const audio=document.getElementById('voice');
+const button=document.getElementById('playButton');
+button.addEventListener('click',async()=>{
+  if(audio.paused){
+    await audio.play();
+    button.textContent='❚❚ PAUSE';
+  }else{
+    audio.pause();
+    button.textContent='▶ PLAY';
+  }
+});
+audio.addEventListener('ended',()=>button.textContent='▶ PLAY');
+</script>
+</body>
+</html>
