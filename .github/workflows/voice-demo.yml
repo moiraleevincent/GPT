@@ -1,10 +1,10 @@
-name: Generate voice sample
+name: Generate podcast
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "voice_demo/**"
+      - "voice_demo/generate.py"
       - ".github/workflows/voice-demo.yml"
 
 permissions:
@@ -20,10 +20,10 @@ jobs:
           python-version: "3.11"
       - run: pip install kokoro soundfile numpy
       - run: python voice_demo/generate.py
-      - name: Publish voice samples
+      - name: Publish podcast
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add voice_demo/*.wav
-          git commit -m "Update generated voice samples [skip ci]" || exit 0
+          git add voice_demo/podcast.wav
+          git commit -m "Add After Midnight podcast [skip ci]" || exit 0
           git push
