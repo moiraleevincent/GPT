@@ -19,5 +19,6 @@ def make(path, second):
     sf.write(path,np.concatenate(out),24000)
 make('voice_demo/audition_A.wav','af_heart')
 make('voice_demo/audition_B.wav','am_adam')
+make('voice_demo/audition_voice2.wav','af_bella')
 
 # generate blind A/B pair
