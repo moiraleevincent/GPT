@@ -1,0 +1,23 @@
+name: Generate spatial blind test
+on:
+  workflow_dispatch:
+  push:
+    paths: ["spatial_test/generate.py", ".github/workflows/spatial-test.yml"]
+permissions: {contents: write}
+jobs:
+ render:
+  runs-on: ubuntu-latest
+  steps:
+   - uses: actions/checkout@v4
+   - uses: actions/setup-python@v5
+     with: {python-version: "3.11"}
+   - run: pip install kokoro soundfile numpy
+   - run: python spatial_test/generate.py
+   - name: Publish audio
+     run: |
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      git add spatial_test/position_*.wav
+      git commit -m "Render spatial blind test [skip ci]" || exit 0
+      git pull --rebase origin main
+      git push
