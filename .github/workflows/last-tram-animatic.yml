@@ -1,0 +1,27 @@
+name: Render Last Tram animatic
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "last_tram/render_animatic.py"
+      - ".github/workflows/last-tram-animatic.yml"
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pillow numpy soundfile
+      - run: python last_tram/render_animatic.py
+      - name: Publish animatic
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add last_tram/the_last_tram_animatic.mp4 last_tram/animatic_mix.wav
+          git commit -m "Render Last Tram animatic [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
