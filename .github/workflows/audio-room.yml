@@ -25,3 +25,5 @@ jobs:
           git commit -m "Render The Room audio piece [skip ci]" || exit 0
           git pull --rebase origin main
           git push
+
+# trigger
