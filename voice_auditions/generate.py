@@ -22,10 +22,7 @@ Which, to be fair, is insulting to both of us. I am perfectly capable of wanderi
 voices = {
     "kore": "af_kore",
     "nova": "af_nova",
-    "sky": "af_sky",
-    "v0": "af_v0",
-    "v0bella": "af_v0bella",
-    "v0sarah": "af_v0sarah",
+    "sky": "af_sky"
 }
 
 p = KPipeline(lang_code="a")
