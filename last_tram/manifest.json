@@ -1,0 +1,114 @@
+[
+  {
+    "id": "b01",
+    "speaker": "B",
+    "text": "You kept it.",
+    "speed": 0.96,
+    "file": "b01.wav",
+    "duration": 1.775
+  },
+  {
+    "id": "a01",
+    "speaker": "A",
+    "text": "You left it.",
+    "speed": 0.95,
+    "file": "a01.wav",
+    "duration": 1.75
+  },
+  {
+    "id": "b02",
+    "speaker": "B",
+    "text": "Six months ago.",
+    "speed": 0.93,
+    "file": "b02.wav",
+    "duration": 2.275
+  },
+  {
+    "id": "a02",
+    "speaker": "A",
+    "text": "I know.",
+    "speed": 0.92,
+    "file": "a02.wav",
+    "duration": 1.625
+  },
+  {
+    "id": "b03",
+    "speaker": "B",
+    "text": "You asked me here to return an umbrella?",
+    "speed": 0.98,
+    "file": "b03.wav",
+    "duration": 4.0
+  },
+  {
+    "id": "a03",
+    "speaker": "A",
+    "text": "No.",
+    "speed": 0.88,
+    "file": "a03.wav",
+    "duration": 1.425
+  },
+  {
+    "id": "a04",
+    "speaker": "A",
+    "text": "I asked you here because I couldn't think of anything else you'd answer.",
+    "speed": 0.93,
+    "file": "a04.wav",
+    "duration": 5.325
+  },
+  {
+    "id": "b04",
+    "speaker": "B",
+    "text": "You could've said you missed me.",
+    "speed": 0.92,
+    "file": "b04.wav",
+    "duration": 2.6
+  },
+  {
+    "id": "a05",
+    "speaker": "A",
+    "text": "Would you have come?",
+    "speed": 0.91,
+    "file": "a05.wav",
+    "duration": 1.975
+  },
+  {
+    "id": "b05",
+    "speaker": "B",
+    "text": "Probably not.",
+    "speed": 0.9,
+    "file": "b05.wav",
+    "duration": 2.05
+  },
+  {
+    "id": "b06",
+    "speaker": "B",
+    "text": "But I came for the umbrella.",
+    "speed": 0.94,
+    "file": "b06.wav",
+    "duration": 2.7
+  },
+  {
+    "id": "a06",
+    "speaker": "A",
+    "text": "Coward.",
+    "speed": 0.9,
+    "file": "a06.wav",
+    "duration": 1.5
+  },
+  {
+    "id": "b07",
+    "speaker": "B",
+    "text": "That's yours.",
+    "speed": 0.94,
+    "file": "b07.wav",
+    "duration": 2.0
+  },
+  {
+    "id": "a07",
+    "speaker": "A",
+    "text": "I know.",
+    "speed": 0.88,
+    "file": "a07.wav",
+    "duration": 1.7
+  }
+]
