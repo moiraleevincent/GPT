@@ -21,3 +21,5 @@ jobs:
       git commit -m "Render spatial blind test [skip ci]" || exit 0
       git pull --rebase origin main
       git push
+
+# start
