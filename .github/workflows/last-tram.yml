@@ -1,0 +1,27 @@
+name: Generate Last Tram dialogue
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "last_tram/generate.py"
+      - ".github/workflows/last-tram.yml"
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install kokoro soundfile numpy
+      - run: python last_tram/generate.py
+      - name: Publish dialogue clips
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add last_tram/*.wav last_tram/manifest.json
+          git commit -m "Render Last Tram dialogue [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
