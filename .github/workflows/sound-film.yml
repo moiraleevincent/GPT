@@ -17,6 +17,12 @@ jobs:
           python-version: "3.11"
       - run: pip install kokoro soundfile numpy
       - run: python sound_film/generate.py
+      - name: Bundle dialogue clips
+        run: zip -j sound-film-dialogue.zip sound_film/*.wav sound_film/manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sound-film-dialogue
+          path: sound-film-dialogue.zip
       - name: Publish dialogue clips
         run: |
           git config user.name "github-actions[bot]"
