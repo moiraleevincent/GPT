@@ -1,0 +1,26 @@
+name: Generate Sol voice auditions
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "voice_auditions/generate.py"
+      - ".github/workflows/voice-auditions.yml"
+permissions:
+  contents: write
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install kokoro soundfile numpy
+      - run: python voice_auditions/generate.py
+      - name: Publish auditions
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add voice_auditions/*.wav
+          git commit -m "Render Sol voice auditions [skip ci]" || exit 0
+          git push
