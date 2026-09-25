@@ -1,0 +1,17 @@
+name: Pack sound film dialogue
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/pack-sound-film.yml"
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bundle existing dialogue clips
+        run: zip -j sound-film-dialogue.zip sound_film/*.wav sound_film/manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sound-film-dialogue
+          path: sound-film-dialogue.zip
