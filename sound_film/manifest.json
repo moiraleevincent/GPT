@@ -1,0 +1,114 @@
+[
+  {
+    "id": "a01",
+    "speaker": "A",
+    "text": "Tea?",
+    "speed": 0.9,
+    "duration": 1.3,
+    "file": "a01.wav"
+  },
+  {
+    "id": "b01",
+    "speaker": "B",
+    "text": "No, thank you.",
+    "speed": 0.92,
+    "duration": 2.075,
+    "file": "b01.wav"
+  },
+  {
+    "id": "a02",
+    "speaker": "A",
+    "text": "You always say that after I've filled the kettle.",
+    "speed": 0.96,
+    "duration": 3.575,
+    "file": "a02.wav"
+  },
+  {
+    "id": "b02",
+    "speaker": "B",
+    "text": "Then stop filling it for two.",
+    "speed": 0.9,
+    "duration": 3.125,
+    "file": "b02.wav"
+  },
+  {
+    "id": "a03",
+    "speaker": "A",
+    "text": "Did you move the blue mug?",
+    "speed": 0.95,
+    "duration": 2.425,
+    "file": "a03.wav"
+  },
+  {
+    "id": "b03",
+    "speaker": "B",
+    "text": "Top shelf.",
+    "speed": 0.92,
+    "duration": 1.925,
+    "file": "b03.wav"
+  },
+  {
+    "id": "a04",
+    "speaker": "A",
+    "text": "You're taking the big suitcase.",
+    "speed": 0.9,
+    "duration": 2.575,
+    "file": "a04.wav"
+  },
+  {
+    "id": "b04",
+    "speaker": "B",
+    "text": "It's raining.",
+    "speed": 0.9,
+    "duration": 1.9,
+    "file": "b04.wav"
+  },
+  {
+    "id": "a05",
+    "speaker": "A",
+    "text": "Take the umbrella.",
+    "speed": 0.9,
+    "duration": 2.05,
+    "file": "a05.wav"
+  },
+  {
+    "id": "b05",
+    "speaker": "B",
+    "text": "It's yours.",
+    "speed": 0.88,
+    "duration": 1.975,
+    "file": "b05.wav"
+  },
+  {
+    "id": "a06",
+    "speaker": "A",
+    "text": "How long?",
+    "speed": 0.87,
+    "duration": 1.8,
+    "file": "a06.wav"
+  },
+  {
+    "id": "b06",
+    "speaker": "B",
+    "text": "I don't know.",
+    "speed": 0.84,
+    "duration": 1.975,
+    "file": "b06.wav"
+  },
+  {
+    "id": "a07",
+    "speaker": "A",
+    "text": "You forgot your key.",
+    "speed": 0.88,
+    "duration": 2.375,
+    "file": "a07.wav"
+  },
+  {
+    "id": "b07",
+    "speaker": "B",
+    "text": "No.",
+    "speed": 0.8,
+    "duration": 1.6,
+    "file": "b07.wav"
+  }
+]
