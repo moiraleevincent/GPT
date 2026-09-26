@@ -1,0 +1,32 @@
+name: Generate Jensen podcast
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "jensen_podcast/generate_episode1.py"
+      - ".github/workflows/jensen-podcast.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kokoro
+        run: pip install kokoro soundfile numpy
+      - name: Render episode
+        run: python jensen_podcast/generate_episode1.py
+      - name: Publish MP3
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f jensen_podcast/episode1_openings_are_not_evidence.wav
+          git add jensen_podcast/episode1_openings_are_not_evidence.mp3
+          git commit -m "Render Jensen podcast episode 1 [skip ci]" || exit 0
+          git push
