@@ -238,9 +238,12 @@ def room(seconds=1.4, gain=0.0018, seed=23):
     return (x / peak * gain).astype(np.float32)
 
 def render(role, text):
-    chunks = [audio.astype(np.float32) for _, _, audio in pipeline(
-        text, voice=voices[role], speed=SPEEDS.get(role, 1.0)
-    )]
+    chunks = []
+    for _, _, audio in pipeline(text, voice=voices[role], speed=SPEEDS.get(role, 1.0)):
+        if hasattr(audio, "detach"):
+            audio = audio.detach().cpu().numpy()
+        audio = np.asarray(audio, dtype=np.float32)
+        chunks.append(audio)
     return np.concatenate(chunks) if chunks else silence(0.05)
 
 pieces = []
