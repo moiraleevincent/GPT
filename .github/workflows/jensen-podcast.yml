@@ -18,8 +18,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install Kokoro
-        run: pip install kokoro soundfile numpy
+      - name: Install audio tools and Kokoro
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install kokoro soundfile numpy
       - name: Render episode
         run: python jensen_podcast/generate_episode1.py
       - name: Publish MP3
