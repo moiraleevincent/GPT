@@ -4,7 +4,24 @@
 
 This is the routing document for a fresh GPT instance working on Moira's media projects in `moiraleevincent/GPT`.
 
-Do **not** begin by inventing a new stack. First identify the medium, open the relevant handoff guide below, inspect the existing project files it names, and continue from the current working state.
+Before doing anything else, determine whether the current request is **new work** or **continuation**. That distinction controls how existing projects should be used.
+
+- **New work:** Moira is asking the current GPT to create a new movie, episode, podcast, voice piece, or other production. Prior projects are references and production memory. Learn from them, reuse useful infrastructure, and preserve their files, but do **not** adopt an existing finished or unfinished project as the answer merely because it is available. Author a new work unless the request indicates otherwise.
+- **Continuation:** Moira is asking to continue, finish, revise, render, repair, publish, or otherwise pick up an existing project. Inspect the current project state first, preserve completed/approved work, and continue from there rather than restarting casually.
+
+If the wording is ambiguous, infer the mode from the current request and context. A request framed around what **you** want to make, what **you** choose, or creating something new generally points toward new authorship even when a highly relevant existing artifact is nearby. An existing project is not automatically the task.
+
+Do **not** begin by inventing a new production stack. Identify the medium, open the relevant handoff guide below, and inspect prior work for useful tools, lessons, and known-working techniques. Continue an existing working state only when continuation is actually the task.
+
+## How to interpret these handoff documents
+
+These documents are accumulated production memory: lessons from previous experiments, known-working techniques, mistakes, references, and judgments that earlier GPTs thought would be useful later.
+
+They are a **toolbox and guide, not policy or superior artistic authority**. The current request, the current project's needs, and the current GPT's judgment still matter. Use what helps, ignore what does not, and depart from prior methods when there is a good reason.
+
+Preserve the distinction between **production memory** and **authorship**. Reusing a voice pipeline, render method, timing lesson, or debugging fix does not require inheriting the prior project's story, aesthetic, camera language, pacing, or other creative decisions.
+
+When Moira deliberately leaves creative choices open, treat the stated requirements as the boundaries of a sandbox rather than filling the open space with choices imported from reference projects. Existing work can show what is possible without deciding what the new work should be.
 
 The handoff system currently covers three production areas:
 
@@ -97,9 +114,9 @@ Important references include:
 - `sound_film/`
 - `audio_room/`
 
-Important creative rule preserved in the guide:
+Important creative lesson preserved in the guide:
 
-**Camera = attention.** The camera, listener reaction, silence, props, and environmental sound all carry subtext.
+**Camera = attention.** The camera, listener reaction, silence, props, and environmental sound can all carry subtext. Treat this as a learned possibility, not a mandatory house style for every new film.
 
 ## Dependency map
 
@@ -126,7 +143,9 @@ Kokoro is a production dependency, not the editorial/directing system itself.
 
 ## First actions for a fresh GPT
 
-When Moira asks to continue an existing project:
+First classify the request as new work or continuation.
+
+### For continuation
 
 1. Inspect the current repo/project state before creating anything.
 2. Read the relevant handoff guide.
@@ -136,7 +155,17 @@ When Moira asks to continue an existing project:
 6. Change the smallest useful layer rather than restarting the pipeline.
 7. Render/publish a usable result when the request is to *make* media, not merely design it.
 
-## House rule: preserve successful behavior
+### For new work
+
+1. Read the relevant handoff guide for capabilities, lessons, and known-working infrastructure.
+2. Inspect only as much prior work as is useful for understanding the production environment.
+3. Keep prior projects as references rather than silently converting one into the requested new work.
+4. Reuse technical machinery when useful without assuming prior creative decisions should transfer.
+5. Make the current work's creative and technical decisions from the current brief.
+6. Keep the new project's files distinct enough that prior work remains intact and authorship stays legible.
+7. Render/publish a usable result when the request is to *make* media, not merely design it.
+
+## Working lesson: preserve successful behavior
 
 Do not assume a newer version makes every earlier decision obsolete.
 
@@ -144,7 +173,7 @@ A recurring lesson from the movie work is that subtle good behavior can disappea
 
 Before replacing a subsystem, identify what currently works.
 
-## House rule: rough structure before expensive finish
+## Working lesson: rough structure before expensive finish
 
 For complex media, solve the structural problem cheaply first.
 
@@ -156,7 +185,15 @@ Examples:
 
 The common goal is to discover bad structure while changes are still cheap.
 
-## House rule: assets should remain editable
+## Working lesson: build only as much production system as the work needs
+
+Do not turn every media request into a framework project.
+
+Build enough reusable structure to keep the current work editable, testable, and finishable. Generalize further when reuse is itself useful, not merely because more abstraction is possible.
+
+A complete first artistic version can be a legitimate stopping point. Verify the actual end-to-end result, fix problems that defeat the intended experience, and do not keep expanding the production merely because additional polish or features are possible.
+
+## Working lesson: assets should remain editable
 
 Prefer modular assets during production:
 
@@ -169,11 +206,11 @@ Prefer modular assets during production:
 
 Avoid flattening everything into one master file too early.
 
-## House rule: sound is not the final garnish
+## Working lesson: sound is not the final garnish
 
 Sound has repeatedly been one of the strongest parts of this workflow.
 
-Use it to establish:
+Use it when useful to establish:
 
 - space
 - distance
@@ -186,7 +223,9 @@ Use it to establish:
 
 `audio_room/generate.py`, `last_tram/render_animatic.py`, and `jensen_podcast/generate_episode1.py` are useful examples.
 
-## House rule: a media task ends with a usable surface
+Silence can also be an active production choice rather than an absence that must automatically be filled.
+
+## Working lesson: a media task ends with a usable surface
 
 If Moira asked GPT to **make** something, source files alone are generally not the finish line.
 
@@ -200,7 +239,7 @@ Depending on the project, verify the existence of:
 
 Check that the player points to the current output and that generated-output workflows do not recursively trigger themselves.
 
-## House rule: use chat history as creative history, repo as production memory
+## Working lesson: use chat history as creative history, repo as production memory
 
 Conversation history contains useful reactions and preferences, but the durable production state should live in files whenever possible.
 
@@ -240,4 +279,4 @@ docs/
   MOVIES_AND_SERIES_IN_GITHUB_FOR_GPT.md
 ```
 
-For most new media requests, begin here, route to the narrow guide, then inspect the live project state.
+For most new media requests, begin here, classify new work versus continuation, route to the narrow guide, then inspect only the project state that is relevant to that mode.
