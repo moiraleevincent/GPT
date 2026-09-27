@@ -1,0 +1,162 @@
+[
+  {
+    "id": "m01",
+    "speaker": "MARA",
+    "voice": "af_nicole",
+    "speed": 0.96,
+    "text": "Floor eight. West corridor. Six doors. All clear.",
+    "start": 3.0,
+    "file": "m01.wav",
+    "duration": 5.125
+  },
+  {
+    "id": "b01",
+    "speaker": "BUILDING",
+    "voice": "am_michael",
+    "speed": 0.9,
+    "text": "Seven.",
+    "start": 8.1,
+    "file": "b01.wav",
+    "duration": 1.525
+  },
+  {
+    "id": "m02",
+    "speaker": "MARA",
+    "voice": "af_nicole",
+    "speed": 0.94,
+    "text": "There are six.",
+    "start": 10.3,
+    "file": "m02.wav",
+    "duration": 1.875
+  },
+  {
+    "id": "b02",
+    "speaker": "BUILDING",
+    "voice": "am_michael",
+    "speed": 0.9,
+    "text": "There were.",
+    "start": 12.9,
+    "file": "b02.wav",
+    "duration": 1.55
+  },
+  {
+    "id": "f01",
+    "speaker": "RECORDER",
+    "voice": "af_nicole",
+    "speed": 0.92,
+    "text": "Don't open it.",
+    "start": 18.7,
+    "file": "f01.wav",
+    "duration": 2.1
+  },
+  {
+    "id": "m03",
+    "speaker": "MARA",
+    "voice": "af_nicole",
+    "speed": 0.96,
+    "text": "I didn't say that.",
+    "start": 21.9,
+    "file": "m03.wav",
+    "duration": 2.15
+  },
+  {
+    "id": "b03",
+    "speaker": "BUILDING",
+    "voice": "am_michael",
+    "speed": 0.88,
+    "text": "Not yet.",
+    "start": 24.3,
+    "file": "b03.wav",
+    "duration": 1.7
+  },
+  {
+    "id": "m04",
+    "speaker": "MARA",
+    "voice": "af_nicole",
+    "speed": 0.96,
+    "text": "What is this?",
+    "start": 27.2,
+    "file": "m04.wav",
+    "duration": 1.925
+  },
+  {
+    "id": "b04",
+    "speaker": "BUILDING",
+    "voice": "am_michael",
+    "speed": 0.88,
+    "text": "A rehearsal.",
+    "start": 29.6,
+    "file": "b04.wav",
+    "duration": 1.9
+  },
+  {
+    "id": "m05",
+    "speaker": "MARA",
+    "voice": "af_nicole",
+    "speed": 0.96,
+    "text": "For what?",
+    "start": 32.2,
+    "file": "m05.wav",
+    "duration": 1.7
+  },
+  {
+    "id": "f02",
+    "speaker": "RECORDER",
+    "voice": "af_nicole",
+    "speed": 0.9,
+    "text": "For leaving.",
+    "start": 34.2,
+    "file": "f02.wav",
+    "duration": 1.85
+  },
+  {
+    "id": "m06",
+    "speaker": "MARA",
+    "voice": "af_nicole",
+    "speed": 0.92,
+    "text": "No.",
+    "start": 39.4,
+    "file": "m06.wav",
+    "duration": 1.4
+  },
+  {
+    "id": "b05",
+    "speaker": "BUILDING",
+    "voice": "am_michael",
+    "speed": 0.88,
+    "text": "Good.",
+    "start": 41.5,
+    "file": "b05.wav",
+    "duration": 1.45
+  },
+  {
+    "id": "b06",
+    "speaker": "BUILDING",
+    "voice": "am_michael",
+    "speed": 0.9,
+    "text": "Again tomorrow?",
+    "start": 46.3,
+    "file": "b06.wav",
+    "duration": 2.1
+  },
+  {
+    "id": "m07",
+    "speaker": "MARA",
+    "voice": "af_nicole",
+    "speed": 0.9,
+    "text": "No.",
+    "start": 49.5,
+    "file": "m07.wav",
+    "duration": 1.4
+  },
+  {
+    "id": "b07",
+    "speaker": "BUILDING",
+    "voice": "am_michael",
+    "speed": 0.86,
+    "text": "Good.",
+    "start": 51.3,
+    "file": "b07.wav",
+    "duration": 1.5
+  }
+]
