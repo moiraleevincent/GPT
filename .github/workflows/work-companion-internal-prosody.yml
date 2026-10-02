@@ -1,0 +1,39 @@
+name: Generate Work Companion internal prosody test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "work_companion_radio/internal_prosody/generate.py"
+      - ".github/workflows/work-companion-internal-prosody.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install audio and Kokoro lab
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install kokoro soundfile numpy
+          git clone --depth 1 https://github.com/wlejon/kokoro-lab-py /tmp/kokoro-lab-py
+      - name: Render internal prosody tests
+        env:
+          PYTHONPATH: /tmp/kokoro-lab-py
+        run: python work_companion_radio/internal_prosody/generate.py
+      - name: Publish MP3s
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add work_companion_radio/internal_prosody/*.mp3
+          git commit -m "Render Kokoro internal prosody tests [skip ci]" || exit 0
+          git fetch origin main
+          git rebase origin/main
+          git push
