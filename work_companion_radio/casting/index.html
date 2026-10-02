@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Work Companion Radio — Casting Test</title>
+<style>
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:1100px;margin:0 auto;padding:34px 20px;background:#111;color:#eee;line-height:1.45}h1{margin:.1rem 0 .45rem}p{color:#aaa}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:22px}.card{background:#181818;border:1px solid #333;border-radius:16px;padding:16px}.pair{font-weight:700;margin-bottom:7px}.meta{font-size:.82rem;color:#888;margin-bottom:10px}audio{width:100%}.note{font-size:.9rem;color:#999;margin-top:18px}.eyebrow{font-size:.76rem;text-transform:uppercase;letter-spacing:.14em;color:#777}
+</style>
+</head><body>
+<div class="eyebrow">Work Companion Radio · Casting Test</div>
+<h1>The Attachment Review — opening scene</h1>
+<p>Same excerpt, same timing and sound design. Only the female and male Kokoro voices change.</p>
+<div class="grid" id="grid"></div>
+<div class="note">Female: Jessica, Kore, Nova, Sky · Male: Onyx, Puck, Fable, Lewis.</div>
+<script>
+const female=['Jessica','Kore','Nova','Sky'];
+const male=['Onyx','Puck','Fable','Lewis'];
+const grid=document.getElementById('grid');
+for(const f of female){for(const m of male){
+  const stem=f.toLowerCase()+'__'+m.toLowerCase();
+  const card=document.createElement('div'); card.className='card';
+  card.innerHTML=`<div class="pair">${f} × ${m}</div><div class="meta">Female × Male</div><audio controls preload="none"><source src="${stem}.mp3" type="audio/mpeg"></audio>`;
+  grid.appendChild(card);
+}}
+</script>
+</body></html>
