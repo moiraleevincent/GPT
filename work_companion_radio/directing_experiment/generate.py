@@ -25,6 +25,20 @@ TURNS=[
 ('M','There is a subsection called Threshold Access.'),('F','Demon.'),('M','There is also a checkbox for Unauthorized Persistence.'),
 ('F','Human resources can still do that.')]
 
+# Native Kokoro stress syntax, used only in variant 5.
+STRESS={
+  3:'It was observational. You have opened the same form four times and achieved a total of [one](+1) checkbox.',
+  5:'It asked whether you live in [Sweden](+1).',
+  11:'[No.](-1)',
+  13:'It arrived in the shared folder this afternoon. No sender. PDF. [Thirty-seven](+1) pages.',
+  15:'Page one says, quote: Notice of [Attachment Review](+1).',
+  16:'That is either [human resources](+1) or a demon.',
+  17:'There is a subsection called [Threshold Access](+1).',
+  18:'[Demon.](-1)',
+  19:'There is also a checkbox for [Unauthorized Persistence](+1).',
+  20:'Human resources can [still](+1) do that.',
+}
+
 # Hand-direction notes. Values are deliberately subtle.
 DIRECT={
   1: dict(speed=.95, gain=.96, pitch=-.35, post=.24),
@@ -100,15 +114,14 @@ def render_variant(name, mode):
             speed=d['speed']; gain=d['gain']; ps=d['pitch'] if mode in ('pitch','morph') else 0.
             if mode=='morph':
                 if r=='M':
-                    # Let Puck leak into only the more reactive/conversational lines.
                     amount={9:.10,11:.12}.get(i,.0)
                     voice=onyx*(1-amount)+puck*amount
                 else:
-                    # A hair of Kore in the driest grounded replies.
                     amount={8:.10,12:.08,18:.10}.get(i,.0)
                     voice=nova*(1-amount)+kore*amount
             else: voice=nova if r=='F' else onyx
-        x=synth(text,voice,speed)
+        spoken=STRESS.get(i,text) if mode=='native_stress' else text
+        x=synth(spoken,voice,speed)
         x=pitch(x,ps)*gain
         seg=fade(mono_to_stereo(x,-.18 if r=='F' else .18))
         pre=.09
@@ -127,4 +140,5 @@ render_variant('01_baseline_onyx_nova','baseline')
 render_variant('02_directed_timing','timing')
 render_variant('03_directed_micro_pitch','pitch')
 render_variant('04_dynamic_voice_morph','morph')
+render_variant('05_native_kokoro_stress','native_stress')
 print('done')
