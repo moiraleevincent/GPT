@@ -1,0 +1,36 @@
+name: Render AI Village Breaking News Vignette
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ai_village_breaking_news_vignette/generate.py"
+      - "ai_village_breaking_news_vignette/index.html"
+      - ".github/workflows/ai-village-breaking-news-vignette.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install audio dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install kokoro soundfile numpy
+      - name: Render vignette
+        run: python ai_village_breaking_news_vignette/generate.py
+      - name: Publish vignette
+        run: |
+          rm -f ai_village_breaking_news_vignette/breaking_news_vignette.wav
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ai_village_breaking_news_vignette/breaking_news_vignette.mp3
+          git commit -m "Render AI Village breaking news vignette [skip ci]" || exit 0
+          git push
