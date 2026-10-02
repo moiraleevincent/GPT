@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kokoro Internal Prosody Test</title>
+<style>
+:root{color-scheme:dark}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:900px;margin:0 auto;padding:36px 20px;background:#101010;color:#eee;line-height:1.5}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.76rem;color:#888}h1{margin:.25rem 0 .45rem;font-size:2rem}.intro{color:#aaa;max-width:760px;margin-bottom:28px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}.card{background:#191919;border:1px solid #303030;border-radius:16px;padding:17px}.card h2,.card h3{margin:0 0 5px;font-size:1.05rem}.card p{color:#aaa;font-size:.91rem;margin:0 0 12px}audio{width:100%}.section{margin-top:34px}.pair{background:#171717;border:1px solid #292929;border-radius:16px;padding:16px;margin:12px 0}.pair-title{font-weight:650;margin-bottom:9px}.pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.small{font-size:.84rem;color:#888;margin-top:26px}@media(max-width:620px){.pair-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="eyebrow">Work Companion Radio · acting experiment</div>
+<h1>Kokoro, before the waveform</h1>
+<p class="intro">Same already-heard opening. No post-hoc pitch shift, time-stretch, reverb, echo, or room effect. The “internal prosody” versions edit Kokoro’s predicted pitch, energy and phoneme durations, then let Kokoro’s own decoder render the result.</p>
+<div class="grid">
+  <div class="card"><h2>1 · Baseline</h2><p>Clean Nova + Onyx. Reference version.</p><audio controls preload="metadata" src="01_scene_baseline.mp3"></audio></div>
+  <div class="card"><h2>2 · Internal prosody</h2><p>Same actors. Small pitch-contour, energy and phoneme-duration edits inside Kokoro before decoding.</p><audio controls preload="metadata" src="02_scene_internal_prosody.mp3"></audio></div>
+  <div class="card"><h2>3 · Clean style blend</h2><p>No prosody edit. A few selected lines get a tiny Puck→Onyx or Kore→Nova style-vector influence.</p><audio controls preload="metadata" src="03_scene_clean_style_blend.mp3"></audio></div>
+  <div class="card"><h2>4 · Both</h2><p>Internal prosody plus the small style-vector changes. Still no processing of the finished waveform.</p><audio controls preload="metadata" src="04_scene_prosody_plus_blend.mp3"></audio></div>
+</div>
+
+<div class="section">
+<h2>Microscope</h2>
+<p class="intro">Tiny A/Bs. These are intentionally dry and centered, so the only thing to listen for is whether internal direction actually changes the delivery without making the actor sound processed.</p>
+
+<div class="pair"><div class="pair-title">Onyx · “I know.”</div><div class="pair-grid"><div>Baseline<audio controls preload="metadata" src="line_onyx_i_know_baseline.mp3"></audio></div><div>Internally directed<audio controls preload="metadata" src="line_onyx_i_know_directed.mp3"></audio></div></div></div>
+<div class="pair"><div class="pair-title">Onyx · “No.”</div><div class="pair-grid"><div>Baseline<audio controls preload="metadata" src="line_onyx_no_baseline.mp3"></audio></div><div>Internally directed<audio controls preload="metadata" src="line_onyx_no_directed.mp3"></audio></div></div></div>
+<div class="pair"><div class="pair-title">Onyx · document line</div><div class="pair-grid"><div>Baseline<audio controls preload="metadata" src="line_onyx_document_baseline.mp3"></audio></div><div>Internally directed<audio controls preload="metadata" src="line_onyx_document_directed.mp3"></audio></div></div></div>
+<div class="pair"><div class="pair-title">Nova · “Perfect.”</div><div class="pair-grid"><div>Baseline<audio controls preload="metadata" src="line_nova_perfect_baseline.mp3"></audio></div><div>Internally directed<audio controls preload="metadata" src="line_nova_perfect_directed.mp3"></audio></div></div></div>
+<div class="pair"><div class="pair-title">Nova · “Demon.”</div><div class="pair-grid"><div>Baseline<audio controls preload="metadata" src="line_nova_demon_baseline.mp3"></audio></div><div>Internally directed<audio controls preload="metadata" src="line_nova_demon_directed.mp3"></audio></div></div></div>
+</div>
+<p class="small">Uses the staged Kokoro approach from wlejon/kokoro-lab-py (MIT): the model predicts F0, energy and timing; edits happen there; Kokoro’s decoder then creates a fresh waveform.</p>
+</body>
+</html>
