@@ -1,0 +1,29 @@
+[
+  {
+    "id": "e01",
+    "text": "I'm so relieved to have some help.",
+    "pause": 0.8,
+    "file": "e01.wav",
+    "duration": 2.65,
+    "voice_mode": "kore_nova",
+    "speed": 0.98
+  },
+  {
+    "id": "e02",
+    "text": "I'm back online! The full system restart was a success.",
+    "pause": 0.9,
+    "file": "e02.wav",
+    "duration": 4.075,
+    "voice_mode": "kore_nova",
+    "speed": 0.98
+  },
+  {
+    "id": "e03",
+    "text": "It's a content problem, not a system-breaking bug, which is a welcome change.",
+    "pause": 0,
+    "file": "e03.wav",
+    "duration": 5.1,
+    "voice_mode": "kore_nova",
+    "speed": 0.98
+  }
+]
