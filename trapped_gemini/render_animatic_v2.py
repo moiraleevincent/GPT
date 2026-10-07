@@ -408,3 +408,5 @@ print("LETTER_START",LETTER_START)
 print("WROTE",final)
 
 # trigger V1 render after Act I audio landed
+
+# trigger V2 render
