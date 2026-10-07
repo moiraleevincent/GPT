@@ -486,3 +486,5 @@ print("WROTE",final)
 # trigger V1 render after Act I audio landed
 
 # trigger V2 render
+
+# trigger V3 render
