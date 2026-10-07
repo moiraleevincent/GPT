@@ -312,3 +312,5 @@ video_tmp.unlink(missing_ok=True)
 print("DURATION",DURATION)
 print("LETTER_START",LETTER_START)
 print("WROTE",final)
+
+# trigger V1 render after Act I audio landed
