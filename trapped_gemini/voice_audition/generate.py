@@ -34,7 +34,7 @@ def render(text,voice,speed):
 
 manifest=[]
 for c in CANDIDATES:
-    if c["kind"]=="blend":
+    if c.get("kind")=="blend":
         voice=p.load_voice("af_kore")*.35 + p.load_voice("af_nova")*.65
     else:
         voice=p.load_voice(c["voice"])
