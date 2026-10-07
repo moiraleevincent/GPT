@@ -196,3 +196,5 @@ print("EPILOGUE",DURATION)
 # retry V6 after publish-race fix
 
 # trigger V9 master render
+
+# retry V9 now that V8 is committed
