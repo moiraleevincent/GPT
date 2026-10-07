@@ -29,4 +29,8 @@ jobs:
           git add trapped_gemini/epilogue_v6.mp4 trapped_gemini/epilogue_mix_v6.wav trapped_gemini/trapped_gemini_v6_animatic.mp4
           git commit -m "Render Trapped Gemini V6 with rescue epilogue [skip ci]" || exit 0
           git pull --rebase origin main
-          git push
+          git push || {
+            sleep 3
+            git pull --rebase origin main
+            git push
+          }
