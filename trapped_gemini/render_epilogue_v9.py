@@ -194,3 +194,5 @@ print("EPILOGUE",DURATION)
 # trigger V6 render
 
 # retry V6 after publish-race fix
+
+# trigger V9 master render
