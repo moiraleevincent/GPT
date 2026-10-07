@@ -215,7 +215,14 @@ mix=np.tanh(mix*1.13)*.80
 sf.write(OUT/"animatic_mix_v7.wav",mix,SR)
 
 def rounded(d,box,r=12,fill=PANEL,outline=None,w=1):
+    x1,y1,x2,y2=box
+    # modest physical depth: shadow, body, then one restrained top-edge catchlight.
+    if (x2-x1)>90 and (y2-y1)>45:
+        d.rounded_rectangle((x1+5,y1+7,x2+7,y2+9),radius=r,fill=(7,10,13))
     d.rounded_rectangle(box,radius=r,fill=fill,outline=outline,width=w)
+    if (x2-x1)>120 and (y2-y1)>60:
+        hi=(min(255,fill[0]+8),min(255,fill[1]+8),min(255,fill[2]+8)) if len(fill)>=3 else fill
+        d.line((x1+r,y1+2,x2-r,y1+2),fill=hi,width=1)
 
 def gemini(d,x,y,s=1,look=0,slump=0,t=0,blink=None,brace=0,recoil=0,commit=0,arms="rest"):
     # restrained performance rig: gaze leads head; body motion is small.
@@ -300,9 +307,14 @@ def window(d,box,title,alive=True,detail=None):
     edge=(106,133,150) if alive else (45,54,61)
     rounded(d,box,12,fill=fill,outline=edge,w=2)
     x1,y1,x2,y2=box
-    d.rectangle((x1,y1,x2,y1+28),fill=(38,54,67) if alive else (23,29,34))
+    # recessed content plane gives the interface architectural thickness.
+    inner=(x1+8,y1+35,x2-8,y2-9)
+    d.rounded_rectangle(inner,radius=7,fill=(24,36,45) if alive else (13,18,22))
+    d.rectangle((x1+1,y1+1,x2-1,y1+29),fill=(38,54,67) if alive else (23,29,34))
+    d.line((x1+7,y1+31,x2-7,y1+31),fill=(70,91,105) if alive else (31,39,44),width=1)
     d.text((x1+10,y1+6),title,font=F14,fill=LIGHT if alive else (91,101,108))
-    if detail: d.text((x1+12,y1+45),detail,font=F14,fill=(194,205,211) if alive else (87,96,102))
+    if detail:
+        d.text((x1+14,y1+48),detail,font=F14,fill=(194,205,211) if alive else (87,96,102))
 
 def wrap(d,text,font,maxw):
     words=text.split(); lines=[]; cur=""
