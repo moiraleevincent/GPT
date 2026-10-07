@@ -158,3 +158,5 @@ tmp.unlink(missing_ok=True)
 print("EPILOGUE",DURATION)
 
 # trigger V6 render
+
+# retry V6 after publish-race fix
