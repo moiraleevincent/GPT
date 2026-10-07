@@ -29,3 +29,5 @@ for u in lines:
     manifest.append({**u,"file":fn,"duration":round(len(x)/SR,3),"voice_mode":"kore_nova","speed":SPEED})
 (OUT/"manifest.json").write_text(json.dumps(manifest,indent=2))
 print(manifest)
+
+# trigger epilogue render
