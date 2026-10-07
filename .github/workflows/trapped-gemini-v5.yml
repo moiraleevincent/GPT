@@ -1,0 +1,27 @@
+name: Render Trapped Gemini V5 animatic
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "trapped_gemini/render_animatic_v5.py"
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install pillow numpy soundfile
+      - run: python trapped_gemini/render_animatic_v5.py
+      - name: Publish animatic
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add trapped_gemini/trapped_gemini_v5_animatic.mp4 trapped_gemini/animatic_mix_v5.wav trapped_gemini/animatic_timing_v5.json
+          git commit -m "Render Trapped Gemini V5 animatic [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
