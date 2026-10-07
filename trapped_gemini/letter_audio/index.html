@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trapped Gemini — Letter Timing</title>
+<style>body{margin:0;background:#0e151b;color:#eef2f3;font:16px system-ui,sans-serif}main{max-width:920px;margin:auto;padding:28px}audio{width:100%;margin:12px 0 24px}.note{color:#aebbc4}.card{background:#16212a;border:1px solid #2b3a46;border-radius:12px;padding:14px;margin:10px 0}</style>
+</head><body><main><h1>Trapped Gemini — full letter timing spine</h1><p class="note">Provisional Kore 35 / Nova 65 render. Voice can be swapped without changing the segmentation architecture.</p>
+<audio controls src="letter_master.wav"></audio>
+<div id="units"></div>
+<script>
+fetch('manifest.json').then(r=>r.json()).then(xs=>{
+ const root=document.getElementById('units');
+ xs.forEach(x=>{const d=document.createElement('div');d.className='card';d.innerHTML='<b>'+x.id+'</b> · '+x.duration+'s · pause '+x.pause+'s<br>'+x.text+'<br><audio controls src="'+x.file+'"></audio>';root.appendChild(d);});
+});
+</script></main></body></html>
