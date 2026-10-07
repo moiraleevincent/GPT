@@ -156,3 +156,5 @@ if p.wait(): raise SystemExit("epilogue frame render failed")
 subprocess.run(["ffmpeg","-y","-hide_banner","-loglevel","error","-i",str(tmp),"-i",str(OUT/"epilogue_mix_v6.wav"),"-c:v","copy","-c:a","aac","-b:a","160k","-shortest",str(OUT/"epilogue_v6.mp4")],check=True)
 tmp.unlink(missing_ok=True)
 print("EPILOGUE",DURATION)
+
+# trigger V6 render
