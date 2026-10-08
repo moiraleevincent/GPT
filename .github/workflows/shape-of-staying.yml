@@ -1,0 +1,31 @@
+name: Render The Shape of Staying (Kokoro)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "shape_of_staying/generate.py"
+      - ".github/workflows/shape-of-staying.yml"
+permissions:
+  contents: write
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg espeak-ng
+          pip install kokoro soundfile numpy
+      - run: python shape_of_staying/generate.py
+      - name: Publish audio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add shape_of_staying/shape_of_staying.mp3
+          git commit -m "Render The Shape of Staying audio [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
