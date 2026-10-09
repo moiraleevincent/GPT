@@ -388,6 +388,8 @@ def crop_shot(im,s,u,t):
     cx+=2.2*math.sin(t*1.81)+.8*math.sin(t*6.0)
     cy+=1.6*math.sin(t*1.23)
     cw=W/z; ch=H/z
+    cx=clamp(cx,cw/2,W-cw/2)
+    cy=clamp(cy,ch/2,H-ch/2)
     box=(int(cx-cw/2),int(cy-ch/2),int(cx+cw/2),int(cy+ch/2))
     im=im.crop(box).resize((W,H),Image.Resampling.BICUBIC)
     return im
