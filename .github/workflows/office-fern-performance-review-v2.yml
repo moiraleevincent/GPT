@@ -36,4 +36,15 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add office_fern_performance_review_v2/fern_performance_review_v2.mp4
           git commit -m "Render Fern's Performance Review v2 [skip ci]" || exit 0
-          git push
+          # Other projects may push to the shared repository during the render.
+          # Rebase this output commit rather than discarding the completed film.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Could not publish after five attempts" >&2
+          exit 1
