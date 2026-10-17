@@ -1,0 +1,101 @@
+{
+  "title": "Kokoro Voice Laboratory \u00b7 Session 01",
+  "source_sentence": "I said it could evolve, not that it had to.",
+  "voices": {
+    "examiner": "35% Kore + 65% Nova",
+    "counsel": "George"
+  },
+  "samples": [
+    {
+      "id": "01_original",
+      "file": "audio/01_original.mp3",
+      "label": "01 \u00b7 Original take",
+      "group": "Voice direction",
+      "method": "Original words, punctuation, voice blend, and 1.04 speed",
+      "note": "The untouched comparison reference.",
+      "duration": 2.88,
+      "bytes": 46893
+    },
+    {
+      "id": "02_stress",
+      "file": "audio/02_stress.mp3",
+      "label": "02 \u00b7 Stress marks",
+      "group": "Voice direction",
+      "method": "Kokoro: [could](+2), [had](-1)",
+      "note": "Tests native phonological stress; it may be very subtle.",
+      "duration": 2.88,
+      "bytes": 46893
+    },
+    {
+      "id": "03_punctuation",
+      "file": "audio/03_punctuation.mp3",
+      "label": "03 \u00b7 The em dash",
+      "group": "Voice direction",
+      "method": "Replace the comma with an em dash, otherwise unchanged",
+      "note": "Tests whether a punctuation cue reshapes the sentence.",
+      "duration": 2.9,
+      "bytes": 47277
+    },
+    {
+      "id": "04_cut_and_pause",
+      "file": "audio/04_cut_and_pause.mp3",
+      "label": "04 \u00b7 Directed pause",
+      "group": "Voice direction",
+      "method": "Two separately synthesised clauses + exactly 430 ms of silence",
+      "note": "Pacing and sentence segmentation, with a deliberate beat.",
+      "duration": 4.36,
+      "bytes": 70701
+    },
+    {
+      "id": "05_speed",
+      "file": "audio/05_speed.mp3",
+      "label": "05 \u00b7 Slightly faster",
+      "group": "Voice direction",
+      "method": "Native Kokoro speed 1.08 versus 1.04",
+      "note": "A small proposed adjustment for future episodes.",
+      "duration": 2.88,
+      "bytes": 46893
+    },
+    {
+      "id": "06_pitch_lower",
+      "file": "audio/06_pitch_lower.mp3",
+      "label": "06 \u00b7 Lower pitch",
+      "group": "Audio processing",
+      "method": "The original take, post-processed at 0.955\u00d7 pitch",
+      "note": "Should sound modestly deeper while preserving approximately the same duration.",
+      "duration": 2.88,
+      "bytes": 46893
+    },
+    {
+      "id": "07_pitch_higher",
+      "file": "audio/07_pitch_higher.mp3",
+      "label": "07 \u00b7 Higher pitch",
+      "group": "Audio processing",
+      "method": "The original take, post-processed at 1.055\u00d7 pitch",
+      "note": "Should sound modestly brighter; this is not pitch-contour editing.",
+      "duration": 2.88,
+      "bytes": 46893
+    },
+    {
+      "id": "08_distance",
+      "file": "audio/08_distance.mp3",
+      "label": "08 \u00b7 Across the room",
+      "group": "Audio processing",
+      "method": "Low-pass filter, short echoes, reduced gain",
+      "note": "Changes acoustic location, not the speaker's acting or emotion.",
+      "duration": 3.0,
+      "bytes": 48813
+    },
+    {
+      "id": "09_two_hosts",
+      "file": "audio/09_two_hosts.mp3",
+      "label": "09 \u00b7 Two-host scene",
+      "group": "Performance",
+      "method": "Kore/Nova host + George counsel; timing, stress, synthetic gavel",
+      "note": "A miniature scene combining the controls, rather than an A/B comparison.",
+      "duration": 27.12,
+      "bytes": 434733
+    }
+  ],
+  "warning": "A/B judgments are subjective; tests vary only the specified production dimension where feasible. The directed pause also changes segmentation and punctuation."
+}
