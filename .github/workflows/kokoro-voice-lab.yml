@@ -1,0 +1,58 @@
+name: Render Kokoro Voice Laboratory
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "kokoro_voice_lab/generate.py"
+      - ".github/workflows/kokoro-voice-lab.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kokoro-voice-lab
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kokoro and audio tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install kokoro soundfile numpy
+      - name: Generate the comparison set
+        run: python kokoro_voice_lab/generate.py
+      - name: Inspect generated audio
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, subprocess
+          p=Path("kokoro_voice_lab")
+          samples=json.loads((p/"results.json").read_text())["samples"]
+          assert len(samples)==9
+          for item in samples:
+              fp=p/item["file"]
+              assert fp.exists() and fp.stat().st_size>15000,fp
+              measured=subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","default=noprint_wrappers=1:nokey=1",str(fp)],text=True)
+              assert float(measured)>1.0,(fp,measured)
+              print(fp,float(measured))
+          PY
+      - name: Publish MP3s and manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kokoro_voice_lab/audio/*.mp3 kokoro_voice_lab/results.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Render Kokoro Voice Lab comparisons [skip ci]"
+          git pull --rebase origin main
+          git push
