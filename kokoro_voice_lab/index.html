@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171b25">
+<title>Kokoro Voice Lab · Session 01</title>
+<style>
+:root{color-scheme:dark;--bg:#141820;--paper:#22232b;--cream:#f6ebdc;--muted:#bfb7af;--line:#554c4d;--gold:#e2bd8c;--blue:#b5cbd1}
+*{box-sizing:border-box}body{background:radial-gradient(ellipse at 100% -20%,#3d343e 0%,#1a1c26 46%,#141820 90%);color:var(--cream);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;min-height:100vh}
+.wrap{max-width:940px;margin:0 auto;padding:34px 22px 100px}header{border-bottom:1px solid #52484c;padding:18px 0 30px}
+.sup{font-size:11px;letter-spacing:.23em;text-transform:uppercase;color:var(--gold);font-weight:750}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(46px,9vw,81px);font-weight:400;letter-spacing:-.045em;line-height:.98;margin:25px 0}
+.lead{font-size:18px;color:#e2d6c9;line-height:1.65;max-width:720px}
+h2{font-size:12px;letter-spacing:.20em;text-transform:uppercase;color:var(--gold);margin:42px 0 17px}
+.highlight{font-family:Georgia,serif;font-size:clamp(22px,4.7vw,34px);max-width:750px;color:#f1d5b0;margin:25px 0}
+.panel{background:linear-gradient(135deg,#2d292e 0%,#23242f 95%);border:1px solid #6d5a52;border-radius:21px;padding:clamp(18px,4vw,29px);box-shadow:0 14px 45px #00000024;margin-top:32px}
+.panel-heading{display:flex;align-items:center;gap:12px}.light{width:10px;height:10px;border-radius:50%;background:#dbad7e;box-shadow:0 0 15px #d5ac8e90}
+.now{font-family:Georgia,serif;font-size:clamp(26px,5vw,38px);line-height:1.15;margin:19px 0 9px}
+#nowMethod{font-size:13px;line-height:1.65;color:#c9c1bd;margin-bottom:15px}
+audio{width:100%;display:block;min-height:52px;margin:18px 0}
+.controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:12px 0}
+button,.link-button{font:inherit;cursor:pointer;color:var(--cream);border:1px solid #675d60;border-radius:100px;background:#34303a;padding:10px 15px;font-size:13px;transition:background .15s,border-color .15s}
+button:hover,.link-button:hover{background:#443a3c;border-color:#dbbd98}
+button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+button.primary{background:#e1bf96;color:#272127;border-color:#e1bf96;font-weight:700}
+#compareNote{font-size:12px;color:#d4c7ba}
+button.chosen{background:#5a463d;border-color:#e1bf96}
+.hr{border:0;border-top:1px solid #55505a;margin:26px 0}
+.layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.test{display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:154px;border:1px solid #55505b;background:#22232c;border-radius:15px;padding:17px 18px}
+.test[aria-pressed="true"]{background:#3a3437;border-color:var(--gold);box-shadow:inset 0 0 0 1px #c5a67c50}
+.test strong{font-size:16px;font-weight:670;margin:12px 0 7px}
+.test .top{display:flex;width:100%;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.15em;color:var(--gold)}
+.test .desc{font-size:13px;line-height:1.52;color:#c5bcb5}
+.test .method{font-size:12px;line-height:1.45;color:#aab8bd;margin-top:8px}
+.test .play{font-size:13px;color:#f0d6b4}
+.small{font-size:13px;color:#bfb7af;line-height:1.7}
+.callout{padding:17px 20px;border-left:2px solid var(--gold);background:#292830;margin:28px 0;font-size:14px;line-height:1.6}
+a{color:#f4cda4;text-underline-offset:4px}footer{margin-top:45px;border-top:1px solid #55505a;padding-top:20px;font-size:12px;line-height:1.75;color:#aaa3a5}
+details{margin-top:26px;padding:15px 17px;border:1px solid #524d55;border-radius:12px}
+summary{cursor:pointer;font-size:14px;font-weight:600}details p{font-size:13px;line-height:1.65;color:#cfc9c3}
+@media(max-width:650px){.layout{grid-template-columns:1fr}.wrap{padding:21px 17px 76px}.test{min-height:128px}.lead{font-size:16px}}
+</style>
+</head>
+<body><main class="wrap">
+<header>
+<div class="sup">An experiment from The Evolutionary Court / 01</div>
+<h1>A voice under<br>the microscope.</h1>
+<p class="lead">One sentence. Several different performances. What actually changes when we direct a synthetic voice—its stress, pauses, pitch, speed, or acoustic space?</p>
+<p class="highlight">“I said it could evolve, not that it had to.”</p>
+<div class="small">Headphones recommended. All takes use the same female examiner voice from our podcast, unless indicated otherwise.</div>
+</header>
+<section aria-label="Playback studio" class="panel">
+<div class="panel-heading"><div class="light"></div><div class="sup">The listening desk</div></div>
+<div id="nowTitle" class="now">01 · Original take</div>
+<div id="nowMethod">Original words, punctuation, voice blend, and 1.04 speed.</div>
+<audio id="player" controls preload="metadata" src="audio/01_original.mp3">Your browser does not support HTML audio.</audio>
+<div class="controls">
+<button id="reference" class="primary" type="button">▶ Play original</button>
+<button id="selected" type="button">▶ Play selected</button>
+<button id="loop" type="button" aria-pressed="false">↻ Loop off</button>
+</div>
+<div class="controls">
+<span class="small">Playback:</span>
+<button class="rate chosen" type="button" data-rate="1">1.00×</button>
+<button class="rate" type="button" data-rate="1.05">1.05×</button>
+<button class="rate" type="button" data-rate=".95">0.95×</button>
+</div>
+<div id="compareNote" aria-live="polite">Select a take below. Alternate “original” and “selected” to compare.</div>
+</section>
+
+<h2>01 — Native voice direction</h2>
+<div id="direction" class="layout"></div>
+<h2>02 — Audio surgery</h2>
+<div id="processing" class="layout"></div>
+<h2>03 — Put it together</h2>
+<div id="performance" class="layout"></div>
+
+<div class="callout"><strong>What are we listening for?</strong> In the stress test, does “could” genuinely receive more contrastive emphasis? In the punctuation and pause tests, does the second half sound like a correction? In the pitch tests, does the voice merely get higher or lower—or does it convey a new intention?</div>
+
+<details><summary>Method notes and caveats</summary>
+<p>Original: speed 1.04, 35% Kore + 65% Nova. Stress: Kokoro markup on <em>could</em> and <em>had</em>. Punctuation: comma replaced by em dash. Directed pause: two separate synthesis calls, a 430-millisecond silence, and changed sentence boundaries. Faster: a fresh Kokoro synthesis at 1.08. Pitch: processed copies of the exact same original take, with ±4.5–5.5% shifts and tempo preservation where the FFmpeg filter allows. Distance: filtered highs and short echoes. The scene combines two voices and several controls.</p>
+<p>These are listening experiments, not validated improvements. Pitch shifting the entire clip does not directly edit a word's intonation contour. Pauses and punctuation may change prosody in other ways too. The two-host scene is a new script rather than a same-text comparison.</p></details>
+<footer>Created with Kokoro, Python and FFmpeg. All voices are synthetic. The Evolutionary Court pilot is preserved as released. <a href="../evolutionary_court/">Return to the original episode</a> · <a href="https://github.com/moiraleevincent/GPT/tree/main/kokoro_voice_lab">View the production files</a></footer>
+</main>
+<script>
+const samples=[
+{id:"01_original",label:"01 · Original take",group:"Voice direction",method:"Original words, punctuation, voice blend, and 1.04 speed",note:"The untouched reference."},
+{id:"02_stress",label:"02 · Stress marks",group:"Voice direction",method:"Native Kokoro: [could](+2), [had](-1)",note:"Phonological stress; the difference may be subtle."},
+{id:"03_punctuation",label:"03 · The em dash",group:"Voice direction",method:"Replace the comma with an em dash",note:"An intonation cue in the original sentence."},
+{id:"04_cut_and_pause",label:"04 · Directed pause",group:"Voice direction",method:"Two separately rendered clauses + 430 ms silence",note:"An intentional beat before the correction."},
+{id:"05_speed",label:"05 · Slightly faster",group:"Voice direction",method:"Native Kokoro 1.08 instead of 1.04",note:"An incremental podcast tempo change."},
+{id:"06_pitch_lower",label:"06 · Lower pitch",group:"Audio processing",method:"Postprocessing: 0.955× pitch",note:"Deeper overall register, not word-specific intonation."},
+{id:"07_pitch_higher",label:"07 · Higher pitch",group:"Audio processing",method:"Postprocessing: 1.055× pitch",note:"Brighter overall register, same original take."},
+{id:"08_distance",label:"08 · Across the room",group:"Audio processing",method:"Filtered highs, short echoes, reduced gain",note:"An acoustic-space experiment, not a whisper."},
+{id:"09_two_hosts",label:"09 · Two-host mini-scene",group:"Performance",method:"Two established voices + pauses + a synthetic knock",note:"A small argument in an imaginary evolutionary courtroom."}
+];
+const player=document.getElementById("player");
+const nowTitle=document.getElementById("nowTitle");
+const nowMethod=document.getElementById("nowMethod");
+const compareNote=document.getElementById("compareNote");
+let chosen=samples[0];
+let rate=1;
+function play(item){
+chosen=item;
+player.pause();
+player.src="audio/"+item.id+".mp3";
+player.playbackRate=rate;
+nowTitle.textContent=item.label;
+nowMethod.textContent=item.method;
+document.querySelectorAll(".test").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.id===item.id)));
+compareNote.textContent=item.id==="01_original"?"Listening to the reference take. Pick an alternative to compare.":"Listening to "+item.label+". Tap “Play original” to compare.";
+player.play().catch(()=>{compareNote.textContent="Tap play on the audio control if your browser blocks automatic playback.";});
+}
+function makeCard(it){
+const el=document.createElement("button");
+el.className="test";el.type="button";el.dataset.id=it.id;el.setAttribute("aria-pressed",String(it.id===chosen.id));
+const top=document.createElement("span");top.className="top";top.innerHTML="<span>"+(it.id==="01_original"?"REFERENCE":"TAKE "+it.id.slice(0,2))+"</span><span class='play'>▶ Listen</span>";
+const strong=document.createElement("strong");strong.textContent=it.label;
+const note=document.createElement("span");note.className="desc";note.textContent=it.note;
+const method=document.createElement("span");method.className="method";method.textContent=it.method;
+el.append(top,strong,note,method);el.addEventListener("click",()=>play(it));return el;
+}
+for(const it of samples){const region=it.group==="Voice direction"?"direction":it.group==="Audio processing"?"processing":"performance";document.getElementById(region).append(makeCard(it));}
+document.getElementById("reference").addEventListener("click",()=>play(samples[0]));
+document.getElementById("selected").addEventListener("click",()=>play(chosen));
+document.getElementById("loop").addEventListener("click",e=>{player.loop=!player.loop;e.currentTarget.setAttribute("aria-pressed",String(player.loop));e.currentTarget.textContent=player.loop?"↻ Loop on":"↻ Loop off";});
+document.querySelectorAll(".rate").forEach(button=>button.addEventListener("click",()=>{rate=Number(button.dataset.rate);player.playbackRate=rate;document.querySelectorAll(".rate").forEach(x=>x.classList.toggle("chosen",x===button));}));
+player.addEventListener("error",()=>{compareNote.textContent="This sample has not finished publishing yet. Please try again in a moment.";});
+fetch("results.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{if(!data)return;for(const s of data.samples){const el=document.querySelector('[data-id="'+s.id+'"] .play');if(el)el.textContent=s.duration+"s ▶";}}).catch(()=>{});
+</script></body></html>
