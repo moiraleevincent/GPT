@@ -101,14 +101,14 @@ const nowMethod=document.getElementById("nowMethod");
 const compareNote=document.getElementById("compareNote");
 let chosen=samples[0];
 let rate=1;
-function play(item){
-chosen=item;
+function play(item, remember=true){
+if(remember)chosen=item;
 player.pause();
 player.src="audio/"+item.id+".mp3";
 player.playbackRate=rate;
 nowTitle.textContent=item.label;
 nowMethod.textContent=item.method;
-document.querySelectorAll(".test").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.id===item.id)));
+document.querySelectorAll(".test").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.id===chosen.id)));
 compareNote.textContent=item.id==="01_original"?"Listening to the reference take. Pick an alternative to compare.":"Listening to "+item.label+". Tap “Play original” to compare.";
 player.play().catch(()=>{compareNote.textContent="Tap play on the audio control if your browser blocks automatic playback.";});
 }
@@ -122,7 +122,7 @@ const method=document.createElement("span");method.className="method";method.tex
 el.append(top,strong,note,method);el.addEventListener("click",()=>play(it));return el;
 }
 for(const it of samples){const region=it.group==="Voice direction"?"direction":it.group==="Audio processing"?"processing":"performance";document.getElementById(region).append(makeCard(it));}
-document.getElementById("reference").addEventListener("click",()=>play(samples[0]));
+document.getElementById("reference").addEventListener("click",()=>play(samples[0],false));
 document.getElementById("selected").addEventListener("click",()=>play(chosen));
 document.getElementById("loop").addEventListener("click",e=>{player.loop=!player.loop;e.currentTarget.setAttribute("aria-pressed",String(player.loop));e.currentTarget.textContent=player.loop?"↻ Loop on":"↻ Loop off";});
 document.querySelectorAll(".rate").forEach(button=>button.addEventListener("click",()=>{rate=Number(button.dataset.rate);player.playbackRate=rate;document.querySelectorAll(".rate").forEach(x=>x.classList.toggle("chosen",x===button));}));
