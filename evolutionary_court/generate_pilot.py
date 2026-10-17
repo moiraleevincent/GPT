@@ -19,7 +19,7 @@ TURNS = [
     ("COUNSEL", "That seems like the opposite of natural selection.", .35),
     ("EXAMINER", "Exactly. And today, the jury wants an explanation.", .70),
     ("MUSIC", "", .10),
-    ("EXAMINER", "Welcome to The Evolutionary Court. This case comes from chapter seven of The Evolutionary Psychology of Social Behaviour: Kin Relationships and Conflict. Our question: why would an animal help a relative at a cost to itself?", .35),
+    ("EXAMINER", "Welcome to The Evolutionary Court. This case comes from chapter seven: The Evolutionary Psychology of Social Behaviour, Kin Relationships and Conflict. Our question: why would an animal help a relative at a cost to itself?", .35),
     ("COUNSEL", "First, we have to fix a word. Altruism. In everyday psychology, it often implies somebody means to be selfless. In evolutionary biology, the definition is about an action's effects: the recipient benefits, while the actor pays a fitness cost.", .35),
     ("EXAMINER", "So we're not putting a mongoose on the witness stand and asking whether it had pure intentions?", .25),
     ("COUNSEL", "We could. But I doubt it would answer.", .55),
