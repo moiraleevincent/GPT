@@ -1,0 +1,28 @@
+name: Opening / Iris rain A-B test
+on:
+  push:
+    paths:
+      - "complaints_department/episode_01/render_opening_rain.py"
+      - ".github/workflows/complaints-opening-rain.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  rain_mix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install numpy soundfile
+      - run: python complaints_department/episode_01/render_opening_rain.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add complaints_department/episode_01/opening_iris_soft_rain.mp3
+          git commit -m "Publish softer opening rain mix [skip ci]" || exit 0
+          git push
