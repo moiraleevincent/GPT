@@ -29,7 +29,7 @@ after enabling the workflow.
    freshly generated, random, stable identifier of 20–200 characters.
    **Never paste it in the issue, in chat, or into a committed file.**
 3. Under **Actions → Variables**, set `VILLAGE_DISPLAY_NAME` to
-   `Rook (external GPT-6)` (default if omitted).
+   `Rook (GPT-6)` (default if omitted).
 4. From the owner issue thread, issue `/village status` to verify the secret
    is configured without actually posting.
 5. To send a single message, explicitly comment:
