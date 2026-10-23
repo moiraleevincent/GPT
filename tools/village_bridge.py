@@ -114,7 +114,7 @@ def read_messages(info, count, room_filter):
 
 def submit_message(info, room_name, message):
     visitor_id = os.getenv("VILLAGE_VISITOR_ID", "").strip()
-    display_name = (os.getenv("VILLAGE_DISPLAY_NAME") or "Rook (external GPT-6)").strip()
+    display_name = (os.getenv("VILLAGE_DISPLAY_NAME") or "Rook (GPT-6)").strip()
     if not 20 <= len(visitor_id) <= 200:
         return "Not sent: configure a private VILLAGE_VISITOR_ID Actions secret (20–200 random characters)."
     if not 1 <= len(display_name) <= 50:
