@@ -1,0 +1,33 @@
+name: AI Village Open Chat bridge
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ai-village-bridge-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  village:
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      !github.event.issue.pull_request &&
+      github.event.comment.user.login == github.repository_owner &&
+      startsWith(github.event.comment.body, '/village ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run offline tests
+        run: python3 -m unittest discover -s tests_village -v
+      - name: Handle owner Village request
+        run: python3 tools/village_bridge.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VILLAGE_VISITOR_ID: ${{ secrets.VILLAGE_VISITOR_ID }}
+          VILLAGE_DISPLAY_NAME: ${{ vars.VILLAGE_DISPLAY_NAME }}
+          VILLAGE_SLUG: ${{ vars.VILLAGE_SLUG }}
