@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Episode 1 — Visual Storyboard | The Complaints Department</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0c1823;color:#eadfc9;font:15px/1.5 system-ui,-apple-system,sans-serif}
+main{max-width:1370px;margin:auto;padding:24px 16px 52px}h1{font:normal clamp(28px,4vw,43px) Georgia,serif;margin:5px 0 12px}
+.kicker{color:#dbb17a;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
+p{max-width:910px;color:#aebfc4}a{color:#e6bd80}
+nav{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 25px}
+#cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:18px}
+.shot{margin:0;background:#152836;border:1px solid #52636b;overflow:hidden;border-radius:7px}
+.image{width:100%;aspect-ratio:16/9;background:#101d28;overflow:hidden}
+.image svg{width:100%;height:100%;display:block}
+.shot figcaption{padding:12px 15px 15px}
+.name{font-size:17px;font-weight:650}.time{font-size:12px;color:#dfb984;font-variant-numeric:tabular-nums;margin:2px 0 6px}
+.intent{font-size:13px;color:#bbcad0}
+footer{padding:30px 0;color:#7d9aa4;font-size:13px}
+</style></head><body><main>
+<div class="kicker">The Complaints Department · Episode One</div>
+<h1>Visual storyboard — Director's Cut</h1>
+<p>Actual SVG compositions extracted from the published movie player, shown here as individual frames rather than imagined concept art. These are <strong>static compositions</strong>; the episode uses animation, camera cuts, and overlays. Each caption describes where I intended the composition to appear. Note that these are scene states, not every individual cut.</p>
+<nav><a href="./index.html">Watch director’s cut</a><a href="./index_v1.html">Watch first version</a></nav>
+<div id="cards"><p>Loading scene compositions from the episode…</p></div>
+<footer>For shot-by-shot comparison, tell me the number of the image and what you saw during playback.</footer>
+<script>
+const SHOTS=[
+["Title / moving poster","Before play · 00:00–00:03","A living title layered over the rainy city. The poster should flow into the opening.", "title"],
+["City skyline","00:03–00:15","Transition from title to the city; long atmospheric hold.", "city"],
+["Department XIII / wide","00:15–00:25 · 00:32–00:40","The actual office: window on the left, papers/cabinets on the right.", "office"],
+["Iris / close-up in office","00:15–00:21 · reaction inserts","Iris's face composited over the office; portrait built for expressions.", "irisoffice"],
+["Complaint form","00:26–00:31","Read the paper, then cut to Iris receiving the information.", "form"],
+["Telephone insert","00:32–00:33 · 00:37–00:39","Cal's voice remains off-screen; the phone is the object receiving his lines.", "telephone"],
+["House 14 / establishing","00:40–00:45 · reveal at 01:07","Exterior from street; Iris small in frame.", "house"],
+["Door / medium view","Underlying house dialogue shot","Door 14, the letter slot and the handle; the base layer for closer inserts.", "door"],
+["Iris knocking","00:44.8–00:46.5","Cut to the hand and hear two knocks.", "knock"],
+["At the threshold","00:46.5–00:52 · later reverses","Iris near the door: staged as a reverse shot.", "threshold"],
+["Door / peephole insert","00:49–00:51 · 00:54–00:57","The door gets its own answering 'face'; tiny movement in the peephole.", "doorDetail"],
+["Iris / emotional reaction","00:52–01:06 · 01:10–01:17","Her brow, eyes and mouth carry the house's unnerving information.", "irisreact"],
+["Upstairs window","01:07–01:18","The illuminated upstairs window reveals the figure.", "window"],
+["Window / ambient glow layer","Reused around the final reveal","An extra light layer over the house; drawn separately.", "windowGlow"],
+["End title","Last seconds","End card after the reveal.","end"]
+];
+const OVERLAYS={title:["city"],irisoffice:["office"],telephone:["office"],threshold:["door"],knock:["door"],window:["house","windowGlow"],windowGlow:["house"]};
+const grid=document.getElementById("cards");
+fetch("./index.html",{cache:"no-cache"}).then(r=>{if(!r.ok)throw Error("Unable to read episode");return r.text()}).then(html=>{
+ const doc=new DOMParser().parseFromString(html,"text/html"),source=doc.querySelector("#screen svg");
+ if(!source)throw Error("SVG scene source missing");
+ grid.innerHTML="";
+ for(const [name,time,intent,scene] of SHOTS){
+  const fig=document.createElement("figure");fig.className="shot";
+  const frame=document.createElement("div");frame.className="image";
+  const svg=source.cloneNode(true);
+  svg.removeAttribute("data-expression");svg.setAttribute("data-expression","neutral");
+  const show=new Set([scene,...(OVERLAYS[scene]||[])]);
+  svg.querySelectorAll(".vscene").forEach(el=>{
+     el.removeAttribute("class");el.removeAttribute("style");
+     el.setAttribute("opacity",show.has(el.dataset.name)?"1":"0");
+     el.style.opacity=show.has(el.dataset.name)?"1":"0";
+  });
+  frame.appendChild(svg);fig.appendChild(frame);
+  const label=document.createElement("figcaption");
+  for(const [cls,txt] of [["name",name],["time",time],["intent",intent]]){
+     const div=document.createElement("div");div.className=cls;div.textContent=txt;label.appendChild(div);
+  }
+  fig.appendChild(label);grid.appendChild(fig);
+ }
+}).catch(err=>{grid.textContent="Could not load stills from the player: "+err.message});
+</script></main></body></html>
