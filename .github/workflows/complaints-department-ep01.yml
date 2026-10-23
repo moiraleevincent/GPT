@@ -35,4 +35,5 @@ jobs:
             complaints_department/episode_01/manifest.json \
             complaints_department/episode_01/episode_01.mp3
           git commit -m "Render Complaints Department episode 1 with Kokoro [skip ci]" || exit 0
+          git pull --rebase origin main
           git push
