@@ -1,0 +1,38 @@
+name: The Complaints Department — Kokoro Episode 01
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "complaints_department/episode_01/generate.py"
+      - ".github/workflows/complaints-department-ep01.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render-voices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kokoro and FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y espeak-ng ffmpeg
+          python -m pip install --upgrade pip
+          python -m pip install kokoro soundfile numpy
+      - name: Record and mix episode
+        run: python complaints_department/episode_01/generate.py
+      - name: Publish rendered voices and mastered episode
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add complaints_department/episode_01/voices/*.wav \
+            complaints_department/episode_01/manifest.json \
+            complaints_department/episode_01/episode_01.mp3
+          git commit -m "Render Complaints Department episode 1 with Kokoro [skip ci]" || exit 0
+          git push
