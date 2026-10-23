@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1723">
+<title>Opening & Iris test — The Complaints Department</title>
+<style>
+:root{color-scheme:dark;--ink:#09131f;--gold:#e8b778;--cream:#f0e2cb;--mist:#81aab0}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at 50% 0%,#203949 0%,#08121c 75%);color:var(--cream);font:15px/1.5 system-ui,Arial,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 44px} header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 2px 14px}
+.small{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+h1{font:normal clamp(19px,3.5vw,31px)/1.12 Georgia,serif;letter-spacing:.035em;margin:4px 0}.episode{font-size:12px;color:#b7c3c4;text-align:right}
+#screen{background:#0c1723;position:relative;overflow:hidden;aspect-ratio:16/9;border:1px solid #7a7665;box-shadow:0 24px 70px #000a}
+svg{display:block;width:100%;height:100%}svg .vscene{opacity:0;transition:opacity .4s ease}svg .vscene.on{opacity:1}
+#captions{position:absolute;bottom:3%;left:6%;right:6%;min-height:12%;display:flex;flex-direction:column;justify-content:center;padding:7px 12px;background:#07121dc2;border:1px solid #b39a6560;border-radius:3px;pointer-events:none;transition:opacity .2s}
+#speaker{font-size:clamp(8px,1.2vw,12px);color:var(--gold);letter-spacing:.12em;font-weight:700;text-transform:uppercase}
+#caption{font-size:clamp(12px,1.8vw,19px);line-height:1.25;font-family:Georgia,serif;margin-top:4px;text-wrap:balance}
+#rain{position:absolute;inset:0;overflow:hidden;pointer-events:none}.drop{position:absolute;width:1px;height:19px;background:#b8c2b455;transform:rotate(17deg);animation:fall linear infinite}
+@keyframes fall{from{translate:0 -110%}to{translate:-35px 850px}}
+#screen[data-scene="office"] #rain,#screen[data-scene="officeSoft"] #rain,#screen[data-scene="irisoffice"] #rain,#screen[data-scene="telephone"] #rain,#screen[data-scene="form"] #rain{display:none}
+#houseeye{animation:look 8s ease-in-out infinite;transform-origin:480px 238px}@keyframes look{0%,38%,70%,100%{transform:translateX(0)}50%{transform:translateX(-7px)}}
+#slot{animation:breathe 4s ease-in-out infinite;transform-origin:480px 299px}@keyframes breathe{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1.3)}}
+#irishead{animation:turn 7s ease-in-out infinite;transform-origin:250px 337px}@keyframes turn{0%,100%{transform:rotate(0)}35%{transform:rotate(-3deg)}60%{transform:rotate(2deg)}}
+#paper{animation:paper 10s ease-in-out infinite}@keyframes paper{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(-1deg)}}
+.controls{padding:13px 0;display:flex;gap:12px;align-items:center}
+button{border:1px solid #ad9474;background:#273b45;color:#fff1d9;padding:10px 16px;border-radius:3px;font:600 13px system-ui;cursor:pointer}
+button:hover{background:#415a66}button:disabled{opacity:.45;cursor:default}input[type="range"]{flex:1;min-width:0;accent-color:#e8b778;cursor:pointer}#time{font-variant-numeric:tabular-nums;font-size:13px;color:#c2c8c6}
+p.note{color:#9fadaf;font-size:13px;max-width:760px;margin:2px 0 0}a{color:#dfba81}footer{margin-top:30px;border-top:1px solid #56666d4b;padding-top:16px;color:#9fadaf;font-size:12px}
+#loading{color:#c3b38d;font-size:13px;margin-top:5px;min-height:23px}
+@media(max-width:520px){main{padding:10px 7px 28px}header{margin:4px 7px 14px}.controls{gap:7px}button{padding:10px}#captions{left:2%;right:2%;bottom:2%;padding:6px 9px;min-height:23%}}
+@media(prefers-reduced-motion:reduce){.drop,#irishead,#houseeye,#slot,#paper{animation:none!important}}
+
+/* Episode 01 / director's cut. The still-looking poster is a living shot. */
+#cityScene{transform-origin:480px 240px;animation:citydrift 18s ease-in-out infinite alternate}
+@keyframes citydrift{from{transform:translate(-5px,1px) scale(1.018)}to{transform:translate(6px,-4px) scale(1.042)}}
+#posterlight{animation:lightSweep 9s ease-in-out infinite;transform-origin:480px 240px;mix-blend-mode:screen}
+@keyframes lightSweep{0%,14%{transform:translateX(-380px);opacity:0}24%{opacity:.2}48%{transform:translateX(340px);opacity:.12}60%,100%{opacity:0;transform:translateX(380px)}}
+#titleGlow{animation:glowBreathe 4.8s ease-in-out infinite}
+@keyframes glowBreathe{0%,100%{opacity:.42}50%{opacity:.91}}
+#irisFigure{animation:personBreathe 5.7s ease-in-out infinite;transform-origin:480px 420px}
+@keyframes personBreathe{0%,100%{translate:0 0}50%{translate:0 -2px}}
+#irisPortrait .eyes{animation:blink 7.1s ease-in-out infinite;transform-origin:0 -9px;transform-box:fill-box}
+@keyframes blink{0%,34%,37%,100%{transform:scaleY(1)}35.2%,35.8%{transform:scaleY(.09)}}
+#irisPortrait .pupils{animation:eyeDart 11s ease-in-out infinite}
+@keyframes eyeDart{0%,39%,74%,100%{transform:translateX(0)}44%,56%{transform:translateX(-6px)}62%,69%{transform:translateX(3px)}}
+#irisPortrait .leftbrow,#irisPortrait .rightbrow,#irisPortrait .mouth{transition:transform .32s ease;transform-box:fill-box;transform-origin:center}
+svg[data-expression="skeptical"] #irisPortrait .leftbrow{transform:rotate(-12deg) translateY(3px)}
+svg[data-expression="skeptical"] #irisPortrait .rightbrow{transform:rotate(8deg) translateY(-4px)}
+svg[data-expression="skeptical"] #irisPortrait .mouth{transform:rotate(-5deg) translateY(-2px)}
+svg[data-expression="startled"] #irisPortrait .leftbrow,svg[data-expression="startled"] #irisPortrait .rightbrow{transform:translateY(-14px)}
+svg[data-expression="startled"] #irisPortrait .mouth{transform:scaleY(1.5) translateY(4px)}
+svg[data-expression="afraid"] #irisPortrait .leftbrow{transform:rotate(17deg) translateY(-8px)}
+svg[data-expression="afraid"] #irisPortrait .rightbrow{transform:rotate(-17deg) translateY(-8px)}
+svg[data-expression="afraid"] #irisPortrait .mouth{transform:scaleX(.58) translateY(-1px)}
+#knockingArm{transform-origin:210px 410px}.vscene.on #knockingArm{animation:twoKnocks 2.65s ease-in-out infinite}
+@keyframes twoKnocks{0%,11%,32%,47%,70%,100%{transform:translateX(0)}19%,55%{transform:translateX(22px)}}
+#windowGlow{animation:windowFlicker 6.1s ease-in-out infinite}
+@keyframes windowFlicker{0%,100%{opacity:.68}21%{opacity:.9}33%{opacity:.45}45%{opacity:1}64%{opacity:.7}}
+#phoneLight{animation:phonePulse 2.5s ease-out infinite}
+@keyframes phonePulse{0%,100%{opacity:.25}50%{opacity:1}}
+#doorpeep{animation:peep 7.5s ease-in-out infinite}
+@keyframes peep{0%,38%,60%,100%{transform:translateX(0)}47%{transform:translateX(-13px)}}
+#expressionHint{font:12px system-ui;opacity:.65}
+@media(prefers-reduced-motion:reduce){#cityScene,#posterlight,#titleGlow,#irisFigure,#irisPortrait .eyes,#irisPortrait .pupils,#knockingArm,#windowGlow,#phoneLight,#doorpeep{animation:none!important}}
+
+/* Close-up face rig is present in the scene DOM (not a referenced SVG symbol). */
+#irisFigure .irisFace .eyes{animation:irisBlink 4.4s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes irisBlink{0%,29%,30.8%,68%,70%,100%{transform:scaleY(1)}29.7%,69%{transform:scaleY(.07)}}
+#irisFigure .irisFace .pupils{animation:irisGaze 5.6s ease-in-out infinite}
+@keyframes irisGaze{0%,22%,80%,100%{transform:translateX(0)}37%,61%{transform:translateX(-5px)}}
+#irisFigure{animation:irisBreath 3.6s ease-in-out infinite;transform-origin:493px 460px}
+@keyframes irisBreath{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){#irisFigure .irisFace .eyes,#irisFigure .irisFace .pupils,#irisFigure{animation:none!important}}
+</style>
+</head>
+<body><main>
+<header><div><div class="small">A short animated mystery series · Director’s cut</div><h1>The Complaints Department — Iris test</h1></div><div class="episode">EPISODE 01<br>HOUSE 14</div></header>
+<div id="screen" data-scene="title" role="img" aria-label="Animated noir scenes: city offices, municipal complaint paperwork, and an old house with a lit upstairs window.">
+<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<linearGradient id="night" x2="0" y2="1"><stop stop-color="#1c3447"/><stop offset="1" stop-color="#08131d"/></linearGradient>
+<linearGradient id="walls" x2="0" y2="1"><stop stop-color="#77766c"/><stop offset="1" stop-color="#363d3e"/></linearGradient>
+<radialGradient id="light"><stop stop-color="#fff1b5" stop-opacity=".75"/><stop offset="1" stop-color="#f1b96c" stop-opacity="0"/></radialGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+<g id="iris"><path d="M-42 112 L-41 38 Q-22 18 3 25 Q26 27 42 50 L45 118" fill="#29566a"/><path d="M-33 40 L-12 54 L-16 116 L-43 117Z" fill="#173d4e"/><path d="M-30 35 L27 36 L34 48 L-32 55Z" fill="#b06c4c"/><ellipse cx="0" cy="-10" rx="27" ry="43" fill="#c4a17c"/><path d="M-27 -11 Q-40 -75 8 -64 Q32 -58 29 -10 L22 28 L12 4 L14 -38 Q-8 -35 -25 -21 L-24 33 L-38 45Z" fill="#202832"/><path d="M10 -3 L18 -4" stroke="#20252d" stroke-width="3"/></g>
+
+<!-- More detailed expression-capable portrait rig; reused by closeups and reverse shots. -->
+<g id="irisPortrait">
+  <path d="M-151 208 Q-150 96 -90 76 Q-48 56 -35 57 L41 61 Q120 69 146 208Z" fill="#163341"/>
+  <path d="M-96 95 L-63 80 -31 168 -72 211 -142 211Z" fill="#285368"/>
+  <path d="M96 90L65 73 32 167 78 211 147 211Z" fill="#285468"/>
+  <path d="M-47 83L-9 126 5 152 20 123 47 77" fill="#ad6c57" stroke="#d1a37d" stroke-width="3"/>
+  <path d="M-22 54L-22 106 Q0 119 22 106L27 58Z" fill="#b47d60"/>
+  <path d="M-86 -41 Q-99 -115 -27 -140 Q26 -161 67 -116 Q109 -64 84 81 L59 129 56 33Z" fill="#222731"/>
+  <path d="M-65 -49 Q-60 -116 6 -113 Q74 -111 69 -46L58 47 Q21 97 0 100 Q-29 93 -61 46Z" fill="#c49272" stroke="#8a604e" stroke-width="1.5"/>
+  <path d="M-65 -38 Q-91 -16 -83 39 Q-80 94 -34 118L-51 46 -53 -40Z" fill="#252b34"/>
+  <path d="M67 -50Q97 -29 84 36Q80 88 46 118L58 39Z" fill="#242b34"/>
+  <path d="M-66 -57Q-82 -132 -10 -145Q62 -155 85 -79Q59 -104 29 -98Q-19 -69 -65 -57Z" fill="#20262f"/>
+  <path d="M-71 -50Q-11 -97 50 -106" fill="none" stroke="#39343a" stroke-width="10" opacity=".55"/>
+  <path d="M-52 -24Q-36 -40 -16 -29" stroke="#79523f" stroke-width="3" fill="none"/>
+  <path d="M14 -31Q34 -44 55 -27" stroke="#79523f" stroke-width="3" fill="none"/>
+  <g class="leftbrow"><path d="M-55 -41Q-34 -52 -12 -44" fill="none" stroke="#292b30" stroke-width="7" stroke-linecap="round"/></g>
+  <g class="rightbrow"><path d="M13 -44Q36 -56 58 -39" fill="none" stroke="#292b30" stroke-width="7" stroke-linecap="round"/></g>
+  <g class="eyes">
+   <path d="M-54 -13Q-36 -31 -13 -15Q-33 5 -54 -13Z" fill="#ead8c5"/>
+   <path d="M13 -15Q37 -33 59 -14Q39 3 13 -15Z" fill="#ead8c5"/>
+   <g class="pupils"><ellipse cx="-33" cy="-12" rx="9" ry="12" fill="#765643"/><ellipse cx="36" cy="-13" rx="9" ry="12" fill="#765643"/><ellipse cx="-32" cy="-12" rx="4" ry="8" fill="#1b2833"/><ellipse cx="37" cy="-13" rx="4" ry="8" fill="#1b2833"/><circle cx="-36" cy="-17" r="2.8" fill="#fff3d7"/><circle cx="34" cy="-18" r="2.8" fill="#fff3d7"/></g>
+   <path d="M-57 -16Q-36 -36 -11 -17M11 -17Q35 -38 60 -16" fill="none" stroke="#26262d" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <path d="M1 -7Q-6 14 -9 32Q-4 39 11 34" fill="none" stroke="#925f4b" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M-31 56Q-3 65 31 54" fill="none" stroke="#aa7660" stroke-width="3" opacity=".75"/>
+  <g class="mouth"><path d="M-23 58Q0 72 22 57 Q2 78 -23 58Z" fill="#743f44"/><path d="M-18 60Q0 64 18 60" fill="none" stroke="#e0ac94" stroke-width="2"/></g>
+  <path d="M-79 13Q-92 32 -78 52" fill="none" stroke="#af8164" stroke-width="9"/>
+  <circle cx="-78" cy="52" r="5" fill="#c5ad78"/>
+  <path d="M-79 -39Q-104 26 -81 94" fill="none" stroke="#202935" stroke-width="16" stroke-linecap="round"/>
+  <path d="M87 -64Q106 6 85 74" fill="none" stroke="#202935" stroke-width="16" stroke-linecap="round"/>
+  <path d="M-44 106L-5 153 24 126 59 102" fill="none" stroke="#bd9478" stroke-width="6"/>
+</g>
+<filter id="officeFocus" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+<rect width="960" height="540" fill="#091722"/>
+<g data-name="city" id="cityScene" class="vscene on">
+<rect width="960" height="540" fill="url(#night)"/><circle cx="744" cy="108" r="55" fill="#c3ae88"/><circle cx="759" cy="92" r="55" fill="#1c3447"/>
+<path d="M0 239H61V197H147V253H205V168H306V226H370V196H467V273H519V182H629V252H710V214H797V183H874V246H960V540H0Z" fill="#183342"/>
+<path d="M0 308H102V259H180V331H268V221H336V330H421V275H497V336H581V246H661V339H740V263H828V326H910V269H960V540H0Z" fill="#102b38"/>
+<g fill="#c7995e" opacity=".66"><path d="M214 202h13v19h-13zM255 197h11v17h-11zM542 223h13v20h-13zM595 268h11v17h-11zM282 259h12v18h-12zM335 351h13v20h-13zM620 356h11v18h-11zM835 306h12v18h-12z"/></g>
+<path d="M0 455 Q380 432 960 460 V540H0Z" fill="#0a1c29"/>
+</g>
+<g data-name="office" class="vscene">
+<rect width="960" height="540" fill="#19313f"/><rect x="77" y="39" width="355" height="293" fill="#0b202b" stroke="#738987" stroke-width="7"/>
+<path d="M172 43V330M308 43V330" stroke="#586e70" stroke-width="6"/>
+<path d="M94 288V192H158V288M190 288V153H282V288M320 288V183H415V288" fill="#254452"/>
+<rect x="598" y="60" width="312" height="350" fill="#244552" stroke="#748482" stroke-width="5"/>
+<g fill="none" stroke="#80938e" stroke-width="3"><path d="M610 80H897V215H610zM610 225H897V394H610zM679 80V395M753 80V395M825 80V395"/></g>
+<rect x="449" y="47" width="146" height="100" fill="#bd9059"/><text x="521" y="82" font-size="16" text-anchor="middle" fill="#142a2e">CITY HALL</text><text x="521" y="111" font-size="16" font-weight="bold" text-anchor="middle" fill="#142a2e">DEPT. XIII</text>
+<path d="M0 410H960V540H0z" fill="#49403c"/><path d="M0 414L960 424" stroke="#a17b55" stroke-width="9"/>
+<use href="#iris" transform="translate(322 326) scale(1.25)"/>
+<path d="M148 400L194 290" stroke="#d0a05b" stroke-width="8"/><path d="M153 280H234L208 345H163Z" fill="#e2b979"/>
+<ellipse cx="670" cy="430" rx="185" ry="25" fill="#0e1c26"/>
+</g>
+<g data-name="officeSoft" class="vscene"><g filter="url(#officeFocus)">
+<rect width="960" height="540" fill="#19313f"/><rect x="77" y="39" width="355" height="293" fill="#0b202b" stroke="#738987" stroke-width="7"/>
+<path d="M172 43V330M308 43V330" stroke="#586e70" stroke-width="6"/>
+<path d="M94 288V192H158V288M190 288V153H282V288M320 288V183H415V288" fill="#254452"/>
+<rect x="598" y="60" width="312" height="350" fill="#244552" stroke="#748482" stroke-width="5"/>
+<g fill="none" stroke="#80938e" stroke-width="3"><path d="M610 80H897V215H610zM610 225H897V394H610zM679 80V395M753 80V395M825 80V395"/></g>
+<rect x="449" y="47" width="146" height="100" fill="#bd9059"/><text x="521" y="82" font-size="16" text-anchor="middle" fill="#142a2e">CITY HALL</text><text x="521" y="111" font-size="16" font-weight="bold" text-anchor="middle" fill="#142a2e">DEPT. XIII</text>
+<path d="M0 410H960V540H0z" fill="#49403c"/><path d="M0 414L960 424" stroke="#a17b55" stroke-width="9"/>
+
+<path d="M148 400L194 290" stroke="#d0a05b" stroke-width="8"/><path d="M153 280H234L208 345H163Z" fill="#e2b979"/>
+<ellipse cx="670" cy="430" rx="185" ry="25" fill="#0e1c26"/>
+</g><rect width="960" height="540" fill="#06111c" opacity=".46"/></g>
+<g data-name="form" class="vscene">
+<rect width="960" height="540" fill="#1b303a"/>
+<g id="paper"><rect x="171" y="15" width="620" height="532" fill="#ebdbb8" stroke="#8a806a" stroke-width="8"/>
+<text x="215" y="78" font-size="26" font-weight="700" fill="#253239">MUNICIPAL PROPERTY OFFICE</text>
+<text x="215" y="112" font-size="15" fill="#62635a">FORM 13B / ARCHITECTURAL COMPLAINT</text>
+<path d="M215 141H740" stroke="#6d756a"/><text x="215" y="189" fill="#62635a" font-size="16">PROPERTY</text>
+<text x="215" y="225" fill="#26383b" font-size="30" font-weight="700">14 BELL STREET</text>
+<text x="215" y="301" fill="#62635a" font-size="16">REASON FOR COMPLAINT</text>
+<text x="215" y="335" fill="#26383b" font-size="26" font-weight="700">NOISE DISTURBANCE</text>
+<text x="215" y="400" font-family="Georgia" font-size="29" fill="#63382d">Somebody is crying</text>
+<text x="215" y="438" font-family="Georgia" font-size="29" fill="#63382d">inside my walls.</text>
+<circle cx="707" cy="441" r="35" stroke="#a5594b" stroke-width="4" fill="none"/>
+<text x="707" y="446" font-size="13" font-weight="700" text-anchor="middle" fill="#a5594b">URGENT</text>
+</g></g>
+<g data-name="house" class="vscene">
+<rect width="960" height="540" fill="url(#night)"/><path d="M0 196L120 149L249 204V526H0ZM760 193L862 158L960 204V526H760Z" fill="#182f3a"/>
+<path d="M237 177L475 59L738 180L711 492H256Z" fill="url(#walls)" stroke="#868279" stroke-width="4"/>
+<path d="M220 175L477 39L756 184L743 206L477 90L240 195Z" fill="#213139"/>
+<g fill="#0c1e26" stroke="#948a71" stroke-width="7">
+<rect x="301" y="212" width="99" height="97"/><rect x="560" y="212" width="99" height="97"/>
+<rect x="432" y="188" width="100" height="117"/>
+</g><path d="M351 215V306M610 215V306M481 191V301" stroke="#958973" stroke-width="6"/>
+<rect x="425" y="350" width="116" height="141" fill="#22282d" stroke="#ac8d6d" stroke-width="6"/>
+<rect x="450" y="393" width="67" height="17" fill="#be915c"/><circle cx="513" cy="432" r="6" fill="#e7bf75"/>
+<path d="M397 478H578V496H378V518H601" fill="none" stroke="#79766d" stroke-width="18"/>
+<circle cx="371" cy="177" r="48" fill="url(#light)" opacity=".85"/><path d="M370 176V450" stroke="#354b49" stroke-width="8"/>
+<use href="#iris" transform="translate(234 441) scale(1.12)"/>
+<rect y="521" width="960" height="19" fill="#102028"/>
+</g>
+<g data-name="window" class="vscene">
+<rect x="437" y="192" width="91" height="107" fill="#e6b46f"/>
+<ellipse cx="481" cy="229" rx="16" ry="22" fill="#1a242a"/>
+<path d="M460 251Q480 240 503 252L512 298H453Z" fill="#1a242a"/>
+<g id="houseeye"><circle cx="475" cy="227" r="2.5" fill="#ffddab"/><circle cx="486" cy="227" r="2.5" fill="#ffddab"/></g>
+<rect x="429" y="186" width="106" height="121" fill="none" stroke="#978875" stroke-width="7"/>
+<path d="M481 191V302" stroke="#746655" stroke-width="7"/>
+</g>
+<g data-name="door" class="vscene">
+<rect width="960" height="540" fill="#10212b"/>
+<rect x="190" y="-20" width="600" height="580" fill="#373b3d" stroke="#a08d70" stroke-width="16"/>
+<rect x="242" y="27" width="496" height="480" fill="#323638" stroke="#5b5b57" stroke-width="5"/>
+<path d="M274 58H705V241H274zM274 325H705V462H274z" fill="none" stroke="#54504d" stroke-width="6"/>
+<text x="480" y="190" font-family="Georgia" font-size="80" fill="#a18e69" text-anchor="middle">14</text>
+<rect x="332" y="277" width="303" height="50" rx="3" fill="#ae8c64" stroke="#efbe78" stroke-width="4"/>
+<rect id="slot" x="349" y="294" width="268" height="16" fill="#0b0f13"/>
+<circle cx="702" cy="398" r="26" fill="#d4a868"/><circle cx="704" cy="398" r="8" fill="#504739"/>
+</g>
+
+<!-- The edit cuts to faces and inserts without changing the existing Kokoro recording. -->
+<g data-name="irisoffice" class="vscene">
+  <path d="M0 490Q280 454 960 480V540H0Z" fill="#0e1f2c" opacity=".55"/>
+  <ellipse cx="535" cy="320" rx="240" ry="280" fill="#d3a16f" opacity=".07" filter="url(#glow)"/>
+  <g id="irisFigure"><g transform="translate(493 254) scale(1.62)"><g class="irisFace">
+  <path d="M-151 208 Q-150 96 -90 76 Q-48 56 -35 57 L41 61 Q120 69 146 208Z" fill="#163341"/>
+  <path d="M-96 95 L-63 80 -31 168 -72 211 -142 211Z" fill="#285368"/>
+  <path d="M96 90L65 73 32 167 78 211 147 211Z" fill="#285468"/>
+  <path d="M-47 83L-9 126 5 152 20 123 47 77" fill="#ad6c57" stroke="#d1a37d" stroke-width="3"/>
+  <path d="M-22 54L-22 106 Q0 119 22 106L27 58Z" fill="#b47d60"/>
+  <path d="M-86 -41 Q-99 -115 -27 -140 Q26 -161 67 -116 Q109 -64 84 81 L59 129 56 33Z" fill="#222731"/>
+  <path d="M-65 -49 Q-60 -116 6 -113 Q74 -111 69 -46L58 47 Q21 97 0 100 Q-29 93 -61 46Z" fill="#c49272" stroke="#8a604e" stroke-width="1.5"/>
+  <path d="M-65 -38 Q-91 -16 -83 39 Q-80 94 -34 118L-51 46 -53 -40Z" fill="#252b34"/>
+  <path d="M67 -50Q97 -29 84 36Q80 88 46 118L58 39Z" fill="#242b34"/>
+  <path d="M-66 -57Q-82 -132 -10 -145Q62 -155 85 -79Q59 -104 29 -98Q-19 -69 -65 -57Z" fill="#20262f"/>
+  <path d="M-71 -50Q-11 -97 50 -106" fill="none" stroke="#39343a" stroke-width="10" opacity=".55"/>
+  <path d="M-52 -24Q-36 -40 -16 -29" stroke="#79523f" stroke-width="3" fill="none"/>
+  <path d="M14 -31Q34 -44 55 -27" stroke="#79523f" stroke-width="3" fill="none"/>
+  <g class="leftbrow"><path d="M-55 -41Q-34 -52 -12 -44" fill="none" stroke="#292b30" stroke-width="7" stroke-linecap="round"/></g>
+  <g class="rightbrow"><path d="M13 -44Q36 -56 58 -39" fill="none" stroke="#292b30" stroke-width="7" stroke-linecap="round"/></g>
+  <g class="eyes">
+   <path d="M-54 -13Q-36 -31 -13 -15Q-33 5 -54 -13Z" fill="#ead8c5"/>
+   <path d="M13 -15Q37 -33 59 -14Q39 3 13 -15Z" fill="#ead8c5"/>
+   <g class="pupils"><ellipse cx="-33" cy="-12" rx="9" ry="12" fill="#765643"/><ellipse cx="36" cy="-13" rx="9" ry="12" fill="#765643"/><ellipse cx="-32" cy="-12" rx="4" ry="8" fill="#1b2833"/><ellipse cx="37" cy="-13" rx="4" ry="8" fill="#1b2833"/><circle cx="-36" cy="-17" r="2.8" fill="#fff3d7"/><circle cx="34" cy="-18" r="2.8" fill="#fff3d7"/></g>
+   <path d="M-57 -16Q-36 -36 -11 -17M11 -17Q35 -38 60 -16" fill="none" stroke="#26262d" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <path d="M1 -7Q-6 14 -9 32Q-4 39 11 34" fill="none" stroke="#925f4b" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M-31 56Q-3 65 31 54" fill="none" stroke="#aa7660" stroke-width="3" opacity=".75"/>
+  <g class="mouth"><path d="M-23 58Q0 72 22 57 Q2 78 -23 58Z" fill="#743f44"/><path d="M-18 60Q0 64 18 60" fill="none" stroke="#e0ac94" stroke-width="2"/></g>
+  <path d="M-79 13Q-92 32 -78 52" fill="none" stroke="#af8164" stroke-width="9"/>
+  <circle cx="-78" cy="52" r="5" fill="#c5ad78"/>
+  <path d="M-79 -39Q-104 26 -81 94" fill="none" stroke="#202935" stroke-width="16" stroke-linecap="round"/>
+  <path d="M87 -64Q106 6 85 74" fill="none" stroke="#202935" stroke-width="16" stroke-linecap="round"/>
+  <path d="M-44 106L-5 153 24 126 59 102" fill="none" stroke="#bd9478" stroke-width="6"/>
+</g></g></g>
+  <path d="M78 540L170 393L218 400L236 540Z" fill="#4b4540" opacity=".7"/>
+</g>
+<g data-name="telephone" class="vscene">
+  <path d="M576 406L820 377L920 540H552Z" fill="#23292e"/>
+  <path d="M618 376 Q714 342 812 361L827 400 610 416Z" fill="#161d24" stroke="#746961" stroke-width="7"/>
+  <path d="M647 347Q641 313 668 301H742Q770 318 759 351Z" fill="#1a2329" stroke="#96816b" stroke-width="5"/>
+  <rect x="690" y="364" width="74" height="17" rx="5" fill="#5a5a4c"/>
+  <circle cx="799" cy="391" r="8" fill="#b49b77"/>
+  <circle id="phoneLight" cx="728" cy="315" r="7" fill="#f3c084"/>
+</g>
+<g data-name="knock" class="vscene">
+  <rect x="0" y="0" width="960" height="540" fill="#0d1d28" opacity=".22"/>
+  <g id="knockingArm">
+   <path d="M-30 557L195 425 310 326 365 324 390 360 345 383 228 509 162 570Z" fill="#254c5e" stroke="#102935" stroke-width="7"/>
+   <path d="M345 330Q352 308 373 301L388 284 417 279 425 294 411 313 439 318 444 336 430 355 394 373 364 359Z" fill="#bd8d6f" stroke="#8e634e" stroke-width="5"/>
+   <path d="M385 289L404 279M404 316L430 320" stroke="#8f6351" stroke-width="3"/>
+  </g>
+  <text x="120" y="84" letter-spacing="4" font-size="16" fill="#dbc4a0" opacity=".8">BELL STREET · 02:24</text>
+</g>
+<g data-name="threshold" class="vscene">
+  <path d="M0 0H445V540H0Z" fill="#071724" opacity=".53"/>
+  <ellipse cx="228" cy="220" rx="167" ry="210" fill="#d6a573" opacity=".12" filter="url(#glow)"/>
+  <use href="#irisPortrait" transform="translate(217 289) scale(1.34)"/>
+  <path d="M455 0V540" stroke="#e3ae6e" stroke-width="3" opacity=".22"/>
+</g>
+<g data-name="doorDetail" class="vscene">
+ <rect width="960" height="540" fill="#252d31"/>
+ <path d="M-15 0H980V540H-15" stroke="#98866b" stroke-width="20" fill="none"/>
+ <path d="M20 20H937V500H20Z" fill="none" stroke="#44494a" stroke-width="15"/>
+ <path d="M105 0V540M360 0V540M701 0V540" stroke="#18242a" stroke-width="4" opacity=".5"/>
+ <ellipse cx="530" cy="261" rx="230" ry="179" fill="#1b2630" opacity=".5"/>
+ <circle cx="522" cy="245" r="88" fill="#866e55" stroke="#d1b285" stroke-width="10"/>
+ <circle cx="522" cy="245" r="51" fill="#0a121b"/>
+ <g id="doorpeep"><ellipse cx="524" cy="235" rx="18" ry="25" fill="#ae9979" opacity=".7"/><circle cx="523" cy="231" r="8" fill="#0c1722"/></g>
+ <path d="M382 391Q524 367 667 391" stroke="#8b7b64" stroke-width="7" opacity=".7"/>
+</g>
+<g data-name="irisreact" class="vscene">
+  <rect width="960" height="540" fill="#0c1a26"/>
+  <rect x="0" y="0" width="960" height="540" fill="url(#night)" opacity=".5"/>
+  <path d="M700 0H960V540H730Z" fill="#b38754" opacity=".13"/>
+  <ellipse cx="501" cy="260" rx="304" ry="277" fill="#ca965a" opacity=".1" filter="url(#glow)"/>
+  <use href="#irisPortrait" transform="translate(487 274) scale(2.05)"/>
+  <path d="M700 0H960V540H700Z" fill="#0e1b29" opacity=".12"/>
+</g>
+<g data-name="windowGlow" class="vscene">
+ <circle id="windowGlow" cx="480" cy="245" r="200" fill="url(#light)" opacity=".72"/>
+</g>
+<g data-name="title" class="vscene on"><rect x="121" y="113" width="718" height="235" fill="#0c1b2be8" stroke="#887e6a" stroke-width="2"/>
+<path id="posterlight" d="M170 115L290 115 655 347 515 347Z" fill="#f7dca1" opacity=".13"/>
+<path id="titleGlow" d="M122 349H838" stroke="#e8b778" stroke-width="2" opacity=".5"/>
+<text x="480" y="190" text-anchor="middle" font-family="Georgia" font-size="52" fill="#eee0c6">THE COMPLAINTS</text>
+<text x="480" y="254" text-anchor="middle" font-family="Georgia" font-size="52" fill="#eee0c6">DEPARTMENT</text>
+<path d="M292 286H668" stroke="#e8b778" stroke-width="3"/>
+<text x="480" y="323" text-anchor="middle" letter-spacing="3" font-size="17" fill="#e8b778">EPISODE 01  ·  HOUSE 14</text>
+</g>
+<g data-name="end" class="vscene"><rect width="960" height="540" fill="#09141ff5"/><text x="480" y="216" text-anchor="middle" font-family="Georgia" font-size="53" fill="#f0e2cb">THE COMPLAINTS</text><text x="480" y="275" text-anchor="middle" font-family="Georgia" font-size="53" fill="#f0e2cb">DEPARTMENT</text><path d="M327 303H633" stroke="#e8b778" stroke-width="3"/><text x="480" y="348" text-anchor="middle" font-size="18" letter-spacing="2" fill="#e8b778">END OF EPISODE ONE</text></g>
+</svg>
+<div id="rain" aria-hidden="true"></div>
+<div id="captions" aria-live="off"><div id="speaker"></div><div id="caption">Press play to enter the city.</div></div>
+</div>
+<div class="controls">
+<button id="play" disabled aria-label="Play or pause">▶ Play</button>
+<button id="restart" disabled aria-label="Restart">↺</button>
+<input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek episode" disabled>
+<span id="time">0:00 / --:--</span>
+</div>
+<div id="loading">Checking for the Kokoro-rendered soundtrack…</div>
+<p class="note">Opening / Iris experiment: office wide before close-up, cleaned softly blurred background, no indoor rain, visible facial acting, reduced subtitle panel. Original film unchanged. Original Kokoro voices and soundtrack preserved. Headphones recommended.</p>
+<audio id="audio" preload="metadata" src="episode_01.mp3"></audio>
+<footer>OPENING TEST · Director’s experimental cut · Original episode preserved</footer>
+</main>
+<script>
+const audio=document.querySelector("#audio");
+const play=document.querySelector("#play"),restart=document.querySelector("#restart"),seek=document.querySelector("#seek");
+const speaker=document.querySelector("#speaker"),caption=document.querySelector("#caption");
+const clock=document.querySelector("#time"),status=document.querySelector("#loading"),screen=document.querySelector("#screen");
+const rain=document.querySelector("#rain");
+let knockContext=null;
+const knocksPlayed=new Set();
+function playWoodKnock(){
+ if(!knockContext||audio.paused)return;
+ const fs=knockContext.sampleRate,n=Math.floor(.15*fs);
+ const buffer=knockContext.createBuffer(1,n,fs),a=buffer.getChannelData(0);
+ for(let i=0;i<n;i++){
+   const t=i/fs,decay=Math.exp(-t*39);
+   a[i]=decay*(Math.sin(2*Math.PI*186*t)*.47 + Math.sin(2*Math.PI*314*t)*.22 + (Math.random()-.5)*.22);
+ }
+ const source=knockContext.createBufferSource(),lp=knockContext.createBiquadFilter(),gain=knockContext.createGain();
+ source.buffer=buffer;lp.type="lowpass";lp.frequency.value=800;gain.gain.value=.17;
+ source.connect(lp);lp.connect(gain);gain.connect(knockContext.destination);
+ source.start();
+}
+function checkKnockCue(t){
+ if(audio.paused)return;
+ [45.25,45.94].forEach((beat,i)=>{
+   if(t>=beat&&t<beat+.35&&!knocksPlayed.has(i)){knocksPlayed.add(i);playWoodKnock()}
+ });
+}
+
+for(let i=0;i<65;i++){let el=document.createElement("i");el.className="drop";el.style.left=(i*151%99)+"%";el.style.top=(-(i*127)%900)+"px";el.style.animationDuration=(.85+i%6*.13)+"s";el.style.animationDelay=(-i*.19)+"s";rain.appendChild(el)}
+let manifest=null,playing=false,sceneName="",prevId="";
+function fmt(t){t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}
+// Shot selection is deliberately independent of speech ownership.
+const CUTS={
+"01":[[0,"title"],[.65,"city"]],
+"02":[[0,"city"]],
+"03":[[0,"office"],[.34,"irisoffice"]],
+"04":[[0,"office"],[.72,"irisoffice"]],
+"05":[[0,"form"],[.78,"irisoffice"]],
+"06":[[0,"telephone"]],
+"07":[[0,"irisoffice"],[.78,"office"]],
+"08":[[0,"telephone"],[.68,"office"]],
+"09":[[0,"house"]],
+"10":[[0,"knock"],[.52,"threshold"]],
+"11":[[0,"doorDetail"],[.55,"threshold"]],
+"12":[[0,"irisreact"]],
+"13":[[0,"doorDetail"]],
+"14":[[0,"threshold"],[.5,"irisreact"]],
+"15":[[0,"irisreact"]],
+"16":[[0,"threshold"]],
+"17":[[0,"irisreact"]],
+"18":[[0,"house"],[.28,"window"]],
+"19":[[0,"irisreact"],[.65,"window"]],
+"20":[[0,"irisreact"],[.54,"window"]]};
+const REACTIONS={"01":"neutral","02":"skeptical","03":"neutral","04":"skeptical","05":"skeptical","06":"skeptical","07":"skeptical","08":"skeptical","09":"neutral","10":"neutral","11":"skeptical","12":"skeptical","13":"startled","14":"skeptical","15":"startled","16":"afraid","17":"startled","18":"startled","19":"afraid","20":"afraid"};
+function cut(item,t){
+ const cuts=CUTS[item.id]||[[0,item.scene]],p=Math.max(0,(t-item.start)/(item.end-item.start));
+ let shot=cuts[0][1];for(const [threshold,next] of cuts){if(p>=threshold)shot=next}
+ return shot;
+}
+function scene(name){
+ if(sceneName===name)return;
+ sceneName=name;screen.dataset.scene=name;
+ const overlays={"title":["city"],"irisoffice":["officeSoft"],"telephone":["office"],"threshold":["door"],"knock":["door"],"window":["house","windowGlow"],"windowGlow":["house"]};
+ const selected=new Set([name,...(overlays[name]||[])]);
+ document.querySelectorAll(".vscene").forEach(el=>el.classList.toggle("on",selected.has(el.dataset.name)));
+}
+function update(){
+ if(!manifest)return;
+ const t=audio.currentTime||0,d=21.45;
+ seek.value=Math.min(1000,Math.round(t/21.45*1000));clock.textContent=fmt(t)+" / "+fmt(21.45);
+ checkKnockCue(t);
+ const item=manifest.lines.find(x=>t>=x.start&&t<x.end+x.after);
+ if(item){
+   scene(cut(item,t));
+   const svg=screen.querySelector("svg"); svg.dataset.expression=REACTIONS[item.id]||"neutral";
+   if(prevId!==item.id){speaker.textContent=item.speaker_label;caption.textContent=item.text;prevId=item.id}
+ }else if(t>=manifest.lines[manifest.lines.length-1].end+manifest.lines[manifest.lines.length-1].after){
+   scene("end");speaker.textContent="";caption.textContent="To be continued.";
+ }else{
+   scene("title");speaker.textContent="";caption.textContent="Every building has something to say.";
+ }
+}
+fetch("manifest.json",{cache:"no-cache"}).then(r=>{if(!r.ok)throw Error("Soundtrack not published yet.");return r.json()}).then(data=>{
+manifest=data;play.disabled=false;restart.disabled=false;seek.disabled=false;status.textContent="Voices ready · Press play.";update();
+}).catch(()=>{status.innerHTML='Kokoro audio is still being generated by GitHub Actions. <a href="https://github.com/moiraleevincent/GPT/actions/workflows/complaints-department-ep01.yml">Check the render status.</a>'});
+play.onclick=async()=>{if(audio.paused){
+try{
+ if(!knockContext){const Ctx=window.AudioContext||window.webkitAudioContext;if(Ctx)knockContext=new Ctx()}
+ if(knockContext&&knockContext.state==="suspended")await knockContext.resume();
+ await audio.play();
+}catch(e){status.textContent="Could not load the soundtrack yet. "+e.message;return}
+}else{audio.pause()}};
+restart.onclick=()=>{knocksPlayed.clear();audio.currentTime=0;update();audio.play()};
+seek.oninput=()=>{if(manifest){audio.currentTime=seek.value/1000*21.45;update()}};
+audio.addEventListener("play",()=>{play.textContent="Ⅱ Pause";status.textContent="Now playing"});
+audio.addEventListener("pause",()=>{play.textContent="▶ Play"});
+audio.addEventListener("ended",()=>{play.textContent="↺ Replay";scene("end")});
+audio.addEventListener("timeupdate",()=>{if(audio.currentTime>=21.45){audio.pause();audio.currentTime=21.45;}update()});
+audio.addEventListener("seeking",()=>{knocksPlayed.clear();update()});
+scene("title");
+</script>
+</body></html>
