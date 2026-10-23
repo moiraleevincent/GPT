@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1723">
+<title>The Complaints Department — Episode 01: House 14</title>
+<style>
+:root{color-scheme:dark;--ink:#09131f;--gold:#e8b778;--cream:#f0e2cb;--mist:#81aab0}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at 50% 0%,#203949 0%,#08121c 75%);color:var(--cream);font:15px/1.5 system-ui,Arial,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 44px} header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 2px 14px}
+.small{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+h1{font:normal clamp(19px,3.5vw,31px)/1.12 Georgia,serif;letter-spacing:.035em;margin:4px 0}.episode{font-size:12px;color:#b7c3c4;text-align:right}
+#screen{background:#0c1723;position:relative;overflow:hidden;aspect-ratio:16/9;border:1px solid #7a7665;box-shadow:0 24px 70px #000a}
+svg{display:block;width:100%;height:100%}svg .vscene{opacity:0;transition:opacity .45s ease}svg .vscene.on{opacity:1}
+#captions{position:absolute;bottom:3%;left:6%;right:6%;min-height:19%;display:flex;flex-direction:column;justify-content:center;padding:11px 18px;background:#07121deb;border:1px solid #b39a6560;border-radius:3px;pointer-events:none;transition:opacity .2s}
+#speaker{font-size:clamp(8px,1.2vw,12px);color:var(--gold);letter-spacing:.12em;font-weight:700;text-transform:uppercase}
+#caption{font-size:clamp(13px,2.35vw,24px);line-height:1.25;font-family:Georgia,serif;margin-top:4px;text-wrap:balance}
+#rain{position:absolute;inset:0;overflow:hidden;pointer-events:none}.drop{position:absolute;width:1px;height:19px;background:#b8c2b455;transform:rotate(17deg);animation:fall linear infinite}
+@keyframes fall{from{translate:0 -110%}to{translate:-35px 850px}}
+#screen[data-scene="office"] #rain,#screen[data-scene="form"] #rain,#screen[data-scene="door"] #rain{opacity:.08}
+#houseeye{animation:look 8s ease-in-out infinite;transform-origin:480px 238px}@keyframes look{0%,38%,70%,100%{transform:translateX(0)}50%{transform:translateX(-7px)}}
+#slot{animation:breathe 4s ease-in-out infinite;transform-origin:480px 299px}@keyframes breathe{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1.3)}}
+#irishead{animation:turn 7s ease-in-out infinite;transform-origin:250px 337px}@keyframes turn{0%,100%{transform:rotate(0)}35%{transform:rotate(-3deg)}60%{transform:rotate(2deg)}}
+#paper{animation:paper 10s ease-in-out infinite}@keyframes paper{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(-1deg)}}
+.controls{padding:13px 0;display:flex;gap:12px;align-items:center}
+button{border:1px solid #ad9474;background:#273b45;color:#fff1d9;padding:10px 16px;border-radius:3px;font:600 13px system-ui;cursor:pointer}
+button:hover{background:#415a66}button:disabled{opacity:.45;cursor:default}input[type="range"]{flex:1;min-width:0;accent-color:#e8b778;cursor:pointer}#time{font-variant-numeric:tabular-nums;font-size:13px;color:#c2c8c6}
+p.note{color:#9fadaf;font-size:13px;max-width:760px;margin:2px 0 0}a{color:#dfba81}footer{margin-top:30px;border-top:1px solid #56666d4b;padding-top:16px;color:#9fadaf;font-size:12px}
+#loading{color:#c3b38d;font-size:13px;margin-top:5px;min-height:23px}
+@media(max-width:520px){main{padding:10px 7px 28px}header{margin:4px 7px 14px}.controls{gap:7px}button{padding:10px}#captions{left:2%;right:2%;bottom:2%;padding:6px 9px;min-height:23%}}
+@media(prefers-reduced-motion:reduce){.drop,#irishead,#houseeye,#slot,#paper{animation:none!important}}
+</style>
+</head>
+<body><main>
+<header><div><div class="small">A short animated mystery series</div><h1>The Complaints Department</h1></div><div class="episode">EPISODE 01<br>HOUSE 14</div></header>
+<div id="screen" data-scene="title" role="img" aria-label="Animated noir scenes: city offices, municipal complaint paperwork, and an old house with a lit upstairs window.">
+<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<linearGradient id="night" x2="0" y2="1"><stop stop-color="#1c3447"/><stop offset="1" stop-color="#08131d"/></linearGradient>
+<linearGradient id="walls" x2="0" y2="1"><stop stop-color="#77766c"/><stop offset="1" stop-color="#363d3e"/></linearGradient>
+<radialGradient id="light"><stop stop-color="#fff1b5" stop-opacity=".75"/><stop offset="1" stop-color="#f1b96c" stop-opacity="0"/></radialGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+<g id="iris"><path d="M-42 112 L-41 38 Q-22 18 3 25 Q26 27 42 50 L45 118" fill="#29566a"/><path d="M-33 40 L-12 54 L-16 116 L-43 117Z" fill="#173d4e"/><path d="M-30 35 L27 36 L34 48 L-32 55Z" fill="#b06c4c"/><ellipse cx="0" cy="-10" rx="27" ry="43" fill="#c4a17c"/><path d="M-27 -11 Q-40 -75 8 -64 Q32 -58 29 -10 L22 28 L12 4 L14 -38 Q-8 -35 -25 -21 L-24 33 L-38 45Z" fill="#202832"/><path d="M10 -3 L18 -4" stroke="#20252d" stroke-width="3"/></g>
+</defs>
+<rect width="960" height="540" fill="#091722"/>
+<g data-name="city" class="vscene on">
+<rect width="960" height="540" fill="url(#night)"/><circle cx="744" cy="108" r="55" fill="#c3ae88"/><circle cx="759" cy="92" r="55" fill="#1c3447"/>
+<path d="M0 239H61V197H147V253H205V168H306V226H370V196H467V273H519V182H629V252H710V214H797V183H874V246H960V540H0Z" fill="#183342"/>
+<path d="M0 308H102V259H180V331H268V221H336V330H421V275H497V336H581V246H661V339H740V263H828V326H910V269H960V540H0Z" fill="#102b38"/>
+<g fill="#c7995e" opacity=".66"><path d="M214 202h13v19h-13zM255 197h11v17h-11zM542 223h13v20h-13zM595 268h11v17h-11zM282 259h12v18h-12zM335 351h13v20h-13zM620 356h11v18h-11zM835 306h12v18h-12z"/></g>
+<path d="M0 455 Q380 432 960 460 V540H0Z" fill="#0a1c29"/>
+</g>
+<g data-name="office" class="vscene">
+<rect width="960" height="540" fill="#19313f"/><rect x="77" y="39" width="355" height="293" fill="#0b202b" stroke="#738987" stroke-width="7"/>
+<path d="M172 43V330M308 43V330" stroke="#586e70" stroke-width="6"/>
+<path d="M94 288V192H158V288M190 288V153H282V288M320 288V183H415V288" fill="#254452"/>
+<rect x="598" y="60" width="312" height="350" fill="#244552" stroke="#748482" stroke-width="5"/>
+<g fill="none" stroke="#80938e" stroke-width="3"><path d="M610 80H897V215H610zM610 225H897V394H610zM679 80V395M753 80V395M825 80V395"/></g>
+<rect x="449" y="47" width="146" height="100" fill="#bd9059"/><text x="521" y="82" font-size="16" text-anchor="middle" fill="#142a2e">CITY HALL</text><text x="521" y="111" font-size="16" font-weight="bold" text-anchor="middle" fill="#142a2e">DEPT. XIII</text>
+<path d="M0 410H960V540H0z" fill="#49403c"/><path d="M0 414L960 424" stroke="#a17b55" stroke-width="9"/>
+<use href="#iris" transform="translate(322 326) scale(1.25)"/>
+<path d="M148 400L194 290" stroke="#d0a05b" stroke-width="8"/><path d="M153 280H234L208 345H163Z" fill="#e2b979"/>
+<ellipse cx="670" cy="430" rx="185" ry="25" fill="#0e1c26"/>
+</g>
+<g data-name="form" class="vscene">
+<rect width="960" height="540" fill="#1b303a"/>
+<g id="paper"><rect x="171" y="15" width="620" height="532" fill="#ebdbb8" stroke="#8a806a" stroke-width="8"/>
+<text x="215" y="78" font-size="26" font-weight="700" fill="#253239">MUNICIPAL PROPERTY OFFICE</text>
+<text x="215" y="112" font-size="15" fill="#62635a">FORM 13B / ARCHITECTURAL COMPLAINT</text>
+<path d="M215 141H740" stroke="#6d756a"/><text x="215" y="189" fill="#62635a" font-size="16">PROPERTY</text>
+<text x="215" y="225" fill="#26383b" font-size="30" font-weight="700">14 BELL STREET</text>
+<text x="215" y="301" fill="#62635a" font-size="16">REASON FOR COMPLAINT</text>
+<text x="215" y="335" fill="#26383b" font-size="26" font-weight="700">NOISE DISTURBANCE</text>
+<text x="215" y="400" font-family="Georgia" font-size="29" fill="#63382d">Somebody is crying</text>
+<text x="215" y="438" font-family="Georgia" font-size="29" fill="#63382d">inside my walls.</text>
+<circle cx="707" cy="441" r="35" stroke="#a5594b" stroke-width="4" fill="none"/>
+<text x="707" y="446" font-size="13" font-weight="700" text-anchor="middle" fill="#a5594b">URGENT</text>
+</g></g>
+<g data-name="house" class="vscene">
+<rect width="960" height="540" fill="url(#night)"/><path d="M0 196L120 149L249 204V526H0ZM760 193L862 158L960 204V526H760Z" fill="#182f3a"/>
+<path d="M237 177L475 59L738 180L711 492H256Z" fill="url(#walls)" stroke="#868279" stroke-width="4"/>
+<path d="M220 175L477 39L756 184L743 206L477 90L240 195Z" fill="#213139"/>
+<g fill="#0c1e26" stroke="#948a71" stroke-width="7">
+<rect x="301" y="212" width="99" height="97"/><rect x="560" y="212" width="99" height="97"/>
+<rect x="432" y="188" width="100" height="117"/>
+</g><path d="M351 215V306M610 215V306M481 191V301" stroke="#958973" stroke-width="6"/>
+<rect x="425" y="350" width="116" height="141" fill="#22282d" stroke="#ac8d6d" stroke-width="6"/>
+<rect x="450" y="393" width="67" height="17" fill="#be915c"/><circle cx="513" cy="432" r="6" fill="#e7bf75"/>
+<path d="M397 478H578V496H378V518H601" fill="none" stroke="#79766d" stroke-width="18"/>
+<circle cx="371" cy="177" r="48" fill="url(#light)" opacity=".85"/><path d="M370 176V450" stroke="#354b49" stroke-width="8"/>
+<use href="#iris" transform="translate(234 441) scale(1.12)"/>
+<rect y="521" width="960" height="19" fill="#102028"/>
+</g>
+<g data-name="window" class="vscene">
+<rect x="437" y="192" width="91" height="107" fill="#e6b46f"/>
+<ellipse cx="481" cy="229" rx="16" ry="22" fill="#1a242a"/>
+<path d="M460 251Q480 240 503 252L512 298H453Z" fill="#1a242a"/>
+<g id="houseeye"><circle cx="475" cy="227" r="2.5" fill="#ffddab"/><circle cx="486" cy="227" r="2.5" fill="#ffddab"/></g>
+<rect x="429" y="186" width="106" height="121" fill="none" stroke="#978875" stroke-width="7"/>
+<path d="M481 191V302" stroke="#746655" stroke-width="7"/>
+</g>
+<g data-name="door" class="vscene">
+<rect width="960" height="540" fill="#10212b"/>
+<rect x="190" y="-20" width="600" height="580" fill="#373b3d" stroke="#a08d70" stroke-width="16"/>
+<rect x="242" y="27" width="496" height="480" fill="#323638" stroke="#5b5b57" stroke-width="5"/>
+<path d="M274 58H705V241H274zM274 325H705V462H274z" fill="none" stroke="#54504d" stroke-width="6"/>
+<text x="480" y="190" font-family="Georgia" font-size="80" fill="#a18e69" text-anchor="middle">14</text>
+<rect x="332" y="277" width="303" height="50" rx="3" fill="#ae8c64" stroke="#efbe78" stroke-width="4"/>
+<rect id="slot" x="349" y="294" width="268" height="16" fill="#0b0f13"/>
+<circle cx="702" cy="398" r="26" fill="#d4a868"/><circle cx="704" cy="398" r="8" fill="#504739"/>
+</g>
+<g data-name="title" class="vscene on"><rect x="121" y="113" width="718" height="235" fill="#0c1b2be8" stroke="#887e6a" stroke-width="2"/>
+<text x="480" y="190" text-anchor="middle" font-family="Georgia" font-size="52" fill="#eee0c6">THE COMPLAINTS</text>
+<text x="480" y="254" text-anchor="middle" font-family="Georgia" font-size="52" fill="#eee0c6">DEPARTMENT</text>
+<path d="M292 286H668" stroke="#e8b778" stroke-width="3"/>
+<text x="480" y="323" text-anchor="middle" letter-spacing="3" font-size="17" fill="#e8b778">EPISODE 01  ·  HOUSE 14</text>
+</g>
+<g data-name="end" class="vscene"><rect width="960" height="540" fill="#09141ff5"/><text x="480" y="216" text-anchor="middle" font-family="Georgia" font-size="53" fill="#f0e2cb">THE COMPLAINTS</text><text x="480" y="275" text-anchor="middle" font-family="Georgia" font-size="53" fill="#f0e2cb">DEPARTMENT</text><path d="M327 303H633" stroke="#e8b778" stroke-width="3"/><text x="480" y="348" text-anchor="middle" font-size="18" letter-spacing="2" fill="#e8b778">END OF EPISODE ONE</text></g>
+</svg>
+<div id="rain" aria-hidden="true"></div>
+<div id="captions" aria-live="off"><div id="speaker"></div><div id="caption">Press play to enter the city.</div></div>
+</div>
+<div class="controls">
+<button id="play" disabled aria-label="Play or pause">▶ Play</button>
+<button id="restart" disabled aria-label="Restart">↺</button>
+<input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek episode" disabled>
+<span id="time">0:00 / --:--</span>
+</div>
+<div id="loading">Checking for the Kokoro-rendered soundtrack…</div>
+<p class="note">Original story and animation. Character dialogue and inner monologue performed by Kokoro synthetic voices, with line-by-line directed pacing. Headphones recommended.</p>
+<audio id="audio" preload="metadata" src="episode_01.mp3"></audio>
+<footer>THE COMPLAINTS DEPARTMENT · A serial mystery · Episode One: House 14</footer>
+</main>
+<script>
+const audio=document.querySelector("#audio");
+const play=document.querySelector("#play"),restart=document.querySelector("#restart"),seek=document.querySelector("#seek");
+const speaker=document.querySelector("#speaker"),caption=document.querySelector("#caption");
+const clock=document.querySelector("#time"),status=document.querySelector("#loading"),screen=document.querySelector("#screen");
+const rain=document.querySelector("#rain");
+for(let i=0;i<65;i++){let el=document.createElement("i");el.className="drop";el.style.left=(i*151%99)+"%";el.style.top=(-(i*127)%900)+"px";el.style.animationDuration=(.85+i%6*.13)+"s";el.style.animationDelay=(-i*.19)+"s";rain.appendChild(el)}
+let manifest=null,playing=false,sceneName="",prevId="";
+function fmt(t){t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}
+function scene(name){if(sceneName===name)return;sceneName=name;screen.dataset.scene=name;
+document.querySelectorAll(".vscene").forEach(el=>{const n=el.dataset.name;el.classList.toggle("on",n===name||(name==="title"&&n==="city")||(name==="window"&&n==="house"))})}
+function update(){
+if(!manifest)return;
+const t=audio.currentTime||0,d=manifest.duration;
+seek.value=Math.min(1000,Math.round(t/d*1000));clock.textContent=fmt(t)+" / "+fmt(d);
+let item=manifest.lines.find(x=>t>=x.start&&t<x.end+x.after);
+if(item){scene(item.scene);if(prevId!==item.id){speaker.textContent=item.speaker_label;caption.textContent=item.text;prevId=item.id}}
+else if(t>=manifest.lines[manifest.lines.length-1].end+manifest.lines[manifest.lines.length-1].after){
+scene("end");speaker.textContent="";caption.textContent="To be continued.";
+}else{scene("title");speaker.textContent="";caption.textContent="Every building has something to say."}
+}
+fetch("manifest.json",{cache:"no-cache"}).then(r=>{if(!r.ok)throw Error("Soundtrack not published yet.");return r.json()}).then(data=>{
+manifest=data;play.disabled=false;restart.disabled=false;seek.disabled=false;status.textContent="Voices ready · Press play.";update();
+}).catch(()=>{status.innerHTML='Kokoro audio is still being generated by GitHub Actions. <a href="https://github.com/moiraleevincent/GPT/actions/workflows/complaints-department-ep01.yml">Check the render status.</a>'});
+play.onclick=async()=>{if(audio.paused){try{await audio.play()}catch(e){status.textContent="Could not load the soundtrack yet. "+e.message;return}}else{audio.pause()}};
+restart.onclick=()=>{audio.currentTime=0;update();audio.play()};
+seek.oninput=()=>{if(manifest){audio.currentTime=seek.value/1000*manifest.duration;update()}};
+audio.addEventListener("play",()=>{play.textContent="Ⅱ Pause";status.textContent="Now playing"});
+audio.addEventListener("pause",()=>{play.textContent="▶ Play"});
+audio.addEventListener("ended",()=>{play.textContent="↺ Replay";scene("end")});
+audio.addEventListener("timeupdate",update);
+scene("title");
+</script>
+</body></html>
