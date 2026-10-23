@@ -33,3 +33,17 @@ Kokoro voice casting lives in `episode_01/generate.py`. Narrated and spoken Iris
 - `.github/workflows/complaints-department-ep01.yml` renders and commits audio/manifest.
 - The renderer must publish a playable result, not only source code.
 - Keep character voice WAVs separate so timing can be adjusted independently of visuals.
+
+
+## Episode 1 — Director's cut (October 23, 2026)
+The initial browser release is archived as `episode_01/index_v1.html`; the current `episode_01/index.html` is the revised edition. **Do not replace the original Kokoro recordings** when editing shots alone.
+
+Editorial decisions established:
+- **The pre-play image is a living opening shot.** The rain moves, city breathes/parallaxes, and light moves across the title. Playback begins within the same illustrated world; the title dissolves to the city during the first narration.
+- **Iris needs a face.** The new reusable SVG portrait rig includes layered hair, expressive eyes, brows, a mouth, and subtle motion. First character close-up is on "My name is Iris Vale"; subsequent shots alternate over dialogue and reaction, including when a different character is speaking.
+- **House 14 is a scene, not a single door still.** Start at the approach; introduce a two-knock hand insert; use the threshold/two-shot, a letter-slot/peephole insert, and Iris reaction close-ups. Keep door geography consistent.
+- On "You are," stay on Iris's face. Cut up to the illuminated window afterward. Use the lit window as a reveal, not as continuous wallpaper.
+- Kokoro cast and its manifest timings remain the source of truth. `CUTS` in the HTML chooses visual shots within speech lines; synthetic wood knocks are aligned to the knock insert via Web Audio.
+- For future episodes: reaction/acting, cut rhythm, animated opening continuity and motivated camera movement outrank decorative detail.
+
+Visual continuity for Iris: medium warm-brown complexion, dark side-parted hair, teal overcoat and muted rust/amber scarf, gold earring. Her eyes and brows should communicate thinking before her mouth does. An earlier standalone portrait experiment was mentioned as a possible reference but its image file was not in the GitHub repository at this revision, so this vector rig is the current working version.
