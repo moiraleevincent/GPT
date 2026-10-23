@@ -105,7 +105,7 @@ svg[data-expression="afraid"] #irisPortrait .mouth{transform:scaleX(.58) transla
   <g class="eyes">
    <path d="M-54 -13Q-36 -31 -13 -15Q-33 5 -54 -13Z" fill="#ead8c5"/>
    <path d="M13 -15Q37 -33 59 -14Q39 3 13 -15Z" fill="#ead8c5"/>
-   <g class="pupils"><ellipse cx="-33" cy="-12" rx="9" ry="12" fill="#765643"/><ellipse cx="36" cy="-13" rx="9" ry="12" fill="#765643"/><ellipse cx="-32" cy="-12" rx="4" ry="8" fill="#1b2833"/><ellipse cx="37" cy="-13" rx="4" ry="8" fill="#1b2833"/><circle cx="-36" cy="-17" r="2.8" fill="#fff3d7"/><circle cx="34" cy="-18" r="2.8" fill="#fff3d7"/></g>
+   <g class="pupils" clip-path="url(#irisEyeballBoundary)"><ellipse cx="-33" cy="-12" rx="9" ry="12" fill="#765643"/><ellipse cx="36" cy="-13" rx="9" ry="12" fill="#765643"/><ellipse cx="-32" cy="-12" rx="4" ry="8" fill="#1b2833"/><ellipse cx="37" cy="-13" rx="4" ry="8" fill="#1b2833"/><circle cx="-36" cy="-17" r="2.8" fill="#fff3d7"/><circle cx="34" cy="-18" r="2.8" fill="#fff3d7"/></g>
    <path d="M-57 -16Q-36 -36 -11 -17M11 -17Q35 -38 60 -16" fill="none" stroke="#26262d" stroke-width="5" stroke-linecap="round"/>
   </g>
   <path d="M1 -7Q-6 14 -9 32Q-4 39 11 34" fill="none" stroke="#925f4b" stroke-width="3.5" stroke-linecap="round"/>
@@ -117,6 +117,10 @@ svg[data-expression="afraid"] #irisPortrait .mouth{transform:scaleX(.58) transla
   <path d="M87 -64Q106 6 85 74" fill="none" stroke="#202935" stroke-width="16" stroke-linecap="round"/>
   <path d="M-44 106L-5 153 24 126 59 102" fill="none" stroke="#bd9478" stroke-width="6"/>
 </g>
+<clipPath id="irisEyeballBoundary" clipPathUnits="userSpaceOnUse">
+<path d="M-54 -13Q-36 -31 -13 -15Q-33 5 -54 -13Z"/>
+<path d="M13 -15Q37 -33 59 -14Q39 3 13 -15Z"/>
+</clipPath>
 <filter id="officeFocus" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="6"/></filter></defs>
 <rect width="960" height="540" fill="#091722"/>
 <g data-name="city" id="cityScene" class="vscene on">
@@ -308,9 +312,9 @@ svg[data-expression="afraid"] #irisPortrait .mouth{transform:scaleX(.58) transla
 <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek episode" disabled>
 <span id="time">0:00 / --:--</span>
 </div>
-<div id="loading">Testing lighter rain and deliberate Iris eye direction…</div>
+<div id="loading">Restored original sound design · Iris eye boundary test</div>
 <p class="note">Opening / Iris experiment: office wide before close-up, cleaned softly blurred background, no indoor rain, visible facial acting, reduced subtitle panel. Original film unchanged. Iris reads the desk paperwork, then looks toward the office door rather than addressing the viewer. Original Kokoro voices and soundtrack preserved. Headphones recommended.</p>
-<audio id="audio" preload="metadata" src="opening_iris_soft_rain.mp3"></audio>
+<audio id="audio" preload="metadata" src="episode_01.mp3"></audio>
 <footer>OPENING TEST · Director’s experimental cut · Original episode preserved</footer>
 </main>
 <script>
