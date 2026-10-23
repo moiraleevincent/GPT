@@ -274,6 +274,7 @@ function playWoodKnock(){
  source.start();
 }
 function checkKnockCue(t){
+ if(audio.paused)return;
  [45.25,45.94].forEach((beat,i)=>{
    if(t>=beat&&t<beat+.35&&!knocksPlayed.has(i)){knocksPlayed.add(i);playWoodKnock()}
  });
