@@ -381,6 +381,8 @@
       ctx.fillStyle=rim;ctx.fillRect(0,0,W,H*.075);
     }
     function frame(now){
+      // 30 fps is deliberately enough for slow drifting, and kinder to sleeping phones.
+      if(last && now-last<33.3){requestAnimationFrame(frame);return}
       const dt=last?Math.min(.05,(now-last)/1000):0;last=now;
       if(document.visibilityState!=="hidden"){
         if(!paused)t+=dt;
