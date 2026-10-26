@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Stillwater">
-  <meta name="description" content="A quiet, living aquarium for the end of the day.">
+  <meta name="description" content="A quiet, living aquarium with gently moving depths and a little hidden visitor.">
   <link rel="manifest" href="./manifest.webmanifest">
   <title>Stillwater — a bedtime aquarium</title>
   <style>
@@ -100,6 +100,9 @@
     ];
     const rocks=Array.from({length:17},(_,i)=>({x:seeded(i+710),size:rnd(14,54),high:rnd(0,16),light:seeded(i+910)}));
     const motes=[];
+    let visitorAt=-1000;
+    const cameraPan=()=>Math.sin(t*.018)*Math.min(W*.013,17*unit);
+    const soften=v=>{v=clamp(v,0,1);return v*v*(3-2*v)};
     function ellipse(x,y,rx,ry,fill,stroke){
       ctx.beginPath();ctx.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,tau);
       if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}
@@ -166,6 +169,113 @@
         ctx.globalAlpha=.14+.28*(1-progress);
         ctx.lineWidth=.75*unit;ellipse(x,y,r,r*1.14,null,"#b3e5df");
         ctx.globalAlpha=.28+.24*(1-progress);ellipse(x-r*.34,y-r*.4,r*.25,r*.3,"#dbfbef");
+      }
+      ctx.restore();
+    }
+    // Distant submerged ledges, silhouettes and feathery fronds sit behind a veil of water.
+    // Low contrast is intentional: distant things should recede, not demand attention.
+    function distantReef(){
+      ctx.save();
+      const back=ctx.createLinearGradient(0,H*.54,0,H);
+      back.addColorStop(0,"rgba(44,104,113,.24)");
+      back.addColorStop(1,"rgba(17,54,69,.38)");
+      ctx.beginPath();ctx.moveTo(-W*.06,H);
+      ctx.lineTo(-W*.06,H*.81);
+      ctx.bezierCurveTo(W*.09,H*.79,W*.14,H*.68,W*.28,H*.735);
+      ctx.bezierCurveTo(W*.41,H*.81,W*.54,H*.73,W*.68,H*.77);
+      ctx.bezierCurveTo(W*.80,H*.80,W*.87,H*.66,W*1.06,H*.73);
+      ctx.lineTo(W*1.06,H);ctx.closePath();ctx.fillStyle=back;ctx.fill();
+      const front=ctx.createLinearGradient(0,H*.73,0,H);
+      front.addColorStop(0,"rgba(33,83,92,.23)");front.addColorStop(1,"rgba(16,55,67,.38)");
+      ctx.beginPath();ctx.moveTo(-W*.06,H);ctx.lineTo(-W*.06,H*.87);
+      ctx.bezierCurveTo(W*.13,H*.83,W*.25,H*.865,W*.37,H*.82);
+      ctx.bezierCurveTo(W*.51,H*.77,W*.64,H*.88,W*.77,H*.845);
+      ctx.bezierCurveTo(W*.87,H*.825,W*.94,H*.86,W*1.06,H*.84);
+      ctx.lineTo(W*1.06,H);ctx.closePath();ctx.fillStyle=front;ctx.fill();
+      for(let i=0;i<17;i++){
+        const xf=seeded(1430+i)*1.12-.06;
+        const x=xf*W,y=H*(.83+seeded(1500+i)*.09);
+        const h=H*(.07+seeded(1700+i)*.13);
+        const twist=Math.sin(t*.16+i*1.8)*4*unit;
+        ctx.beginPath();ctx.moveTo(x,y);
+        ctx.bezierCurveTo(x-12*unit,y-h*.48,x+8*unit+twist,y-h*.72,x+twist,y-h);
+        ctx.strokeStyle=i%3===0?"rgba(102,171,156,.18)":"rgba(87,148,158,.15)";
+        ctx.lineWidth=(2+seeded(1555+i)*3)*unit;ctx.lineCap="round";ctx.stroke();
+        for(let j=1;j<=4;j++){
+          const p=j/5,xx=x+twist*p,yy=y-h*p;
+          ctx.beginPath();ctx.moveTo(xx,yy);
+          ctx.quadraticCurveTo(xx+(j%2?12:-12)*unit,yy-8*unit,xx+(j%2?18:-18)*unit,yy-19*unit);
+          ctx.strokeStyle="rgba(108,172,163,.11)";ctx.lineWidth=2*unit;ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+    function depthHaze(){
+      // A translucent blue water column separates the far reef from the animals.
+      const g=ctx.createLinearGradient(0,H*.18,0,H);
+      g.addColorStop(0,"rgba(29,89,105,0)");
+      g.addColorStop(.60,"rgba(25,84,100,.07)");
+      g.addColorStop(1,"rgba(27,73,84,.13)");
+      ctx.fillStyle=g;ctx.fillRect(0,H*.18,W,H*.82);
+    }
+    // An out-of-focus suggestion of leaves very close to the viewing glass.
+    function glassLeaves(){
+      ctx.save();
+      const drift=Math.sin(t*.13)*9*unit;
+      const stems=[[-.035,1,1],[1.035,-1,2]];
+      for(const [anchor,dir,seed] of stems){
+        const x=W*anchor;
+        for(let i=0;i<3;i++){
+          const yy=H*(.70+i*.09);
+          const reach=(22+i*13)*unit;
+          const tipX=x+dir*(reach+drift*.45);
+          const tipY=yy-(78-i*12)*unit;
+          ctx.beginPath();ctx.moveTo(x,H*1.035);
+          ctx.bezierCurveTo(x+dir*14*unit,yy+55*unit,tipX-dir*11*unit,tipY+23*unit,tipX,tipY);
+          ctx.strokeStyle="rgba(81,150,136,.12)";
+          ctx.lineWidth=(22-i*4)*unit;ctx.lineCap="round";ctx.stroke();
+          ctx.beginPath();ctx.moveTo(x,H*1.035);
+          ctx.bezierCurveTo(x+dir*14*unit,yy+55*unit,tipX-dir*11*unit,tipY+23*unit,tipX,tipY);
+          ctx.strokeStyle="rgba(141,197,174,.075)";
+          ctx.lineWidth=(9-i*2)*unit;ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+    // A small creature knows this one stone. Touching it coaxes a shy emergence.
+    function secretStone(){
+      const x=W*.675,y=H*.932;
+      rock(x,y,62*unit,38*unit,true);
+      ctx.save();
+      const elapsed=t-visitorAt;
+      if(elapsed>=0&&elapsed<15){
+        const reveal=soften(elapsed/2.0)*(1-soften((elapsed-11.8)/2.7));
+        const bx=x-27*unit-(reveal*9)*unit;
+        const by=y-18*unit-(reveal*16)*unit+Math.sin(t*.9)*1.3*unit;
+        ctx.translate(bx,by);ctx.scale(unit,unit);
+        ctx.globalAlpha=.90*reveal;
+        // Legs, pincers and curious eye stalks of a tiny rock-dwelling crab.
+        ctx.strokeStyle="#a6b9ab";ctx.lineCap="round";ctx.lineWidth=1.8;
+        for(let i=0;i<3;i++){
+          ctx.beginPath();ctx.moveTo(-7,i*3-1);
+          ctx.lineTo(-15-i*2,i*3-5);ctx.lineTo(-21-i*2,i*3+2);ctx.stroke();
+          ctx.beginPath();ctx.moveTo(7,i*3-1);
+          ctx.lineTo(15+i*2,i*3-5);ctx.lineTo(20+i*2,i*3+1);ctx.stroke();
+        }
+        ctx.beginPath();ctx.moveTo(-5,-5);ctx.lineTo(-6,-15);ctx.moveTo(5,-5);ctx.lineTo(6,-15);ctx.stroke();
+        ellipse(-6,-15.8,2.9,3.1,"#bec8b9");
+        ellipse(6,-15.8,2.9,3.1,"#bec8b9");
+        ellipse(-6.4,-16.2,1.2,1.5,"#20383c");
+        ellipse(5.6,-16.2,1.2,1.5,"#20383c");
+        ctx.beginPath();ctx.moveTo(-13,3);ctx.quadraticCurveTo(-11,-9,0,-10);
+        ctx.quadraticCurveTo(11,-9,13,3);ctx.quadraticCurveTo(0,10,-13,3);ctx.closePath();
+        const shell=ctx.createLinearGradient(0,-10,0,9);
+        shell.addColorStop(0,"#c8bea7");shell.addColorStop(1,"#7d9993");
+        ctx.fillStyle=shell;ctx.fill();
+        ctx.strokeStyle="#e2d3b150";ctx.lineWidth=.9;ctx.stroke();
+        ctx.beginPath();ctx.moveTo(-10,1);ctx.lineTo(-16,-3);ctx.lineTo(-18,0);
+        ctx.moveTo(10,1);ctx.lineTo(16,-3);ctx.lineTo(18,0);
+        ctx.strokeStyle="#bbafa0";ctx.lineWidth=3;ctx.stroke();
       }
       ctx.restore();
     }
@@ -244,6 +354,8 @@
         const size=(.42+seeded(i+551)*.72)*unit;
         coral(x,H*(.91+seeded(i+1120)*.05),size,i%3,i);
       }
+      // One specially placed shelter, hiding a possible surprise.
+      secretStone();
       // A soft anemone, opening and closing with the current.
       for(let j=0;j<13;j++){
         const bx=W*.405,by=H*.9,theta=(j/12)*Math.PI-.22;
@@ -447,13 +559,30 @@
     }
     function render(){
       ctx.setTransform(dpr,0,0,dpr,0,0);
-      background();backdropKelp();particles();school();
+      background();
+      // A very slow, cropped camera glide; parallax keeps the most distant
+      // scenery moving less than the animals and near-glass plants.
+      const pan=cameraPan();
+      ctx.save();
+      ctx.translate(W*.5+pan,H*.5);
+      ctx.scale(1.042,1.042);
+      ctx.translate(-W*.5,-H*.5);
+      ctx.save();ctx.translate(-pan*.78,0);
+      distantReef();backdropKelp();ctx.restore();
+      depthHaze();particles();
+      ctx.save();ctx.translate(-pan*.40,0);school();ctx.restore();
       // Fish take their time; smaller distant fish go behind the jellyfish.
       for(const f of fish){if(f.layer===0)fishShape(f)}
       for(const j of jelly)jellyfish(j);
       for(const f of fish){if(f.layer!==0)fishShape(f)}
-      drawBubbles();seabed();seahorse();vegetation();snail();tapRipples();
-      // Thin glass reflection across the upper rim.
+      drawBubbles();
+      ctx.save();ctx.translate(pan*.17,0);
+      seabed();seahorse();vegetation();snail();
+      ctx.restore();
+      tapRipples();
+      ctx.save();ctx.translate(pan*.42,0);glassLeaves();ctx.restore();
+      ctx.restore();
+      // Thin glass reflection belongs to the viewer, not the moving world.
       let rim=ctx.createLinearGradient(0,0,0,H*.075);rim.addColorStop(0,"rgba(180,239,230,.075)");rim.addColorStop(1,"rgba(180,239,230,0)");
       ctx.fillStyle=rim;ctx.fillRect(0,0,W,H*.075);
     }
@@ -478,8 +607,14 @@
     document.addEventListener("keydown",activity);
     canvas.addEventListener("pointerdown",e=>{
       const r=canvas.getBoundingClientRect();
-      motes.push({x:e.clientX-r.left,y:e.clientY-r.top,age:0});
+      const vx=e.clientX-r.left,vy=e.clientY-r.top;
+      // Undo the camera's small pan and crop so touch-ripples align to fingertips.
+      const x=(vx-W*.5)/1.042+W*.5-cameraPan();
+      const y=(vy-H*.5)/1.042+H*.5;
+      motes.push({x,y,age:0});
       if(motes.length>10)motes.shift();
+      const stoneX=W*.675+cameraPan()*.17,stoneY=H*.932;
+      if(Math.hypot(x-stoneX,y-stoneY)<Math.max(38*unit,56))visitorAt=t;
     },{passive:true});
     function showTip(message){
       clearTimeout(tipTimer);
