@@ -1,0 +1,47 @@
+name: Render The Social Lives of Emotions
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "emotion_evolution_night/generate.py"
+      - "emotion_evolution_night/part_01.txt"
+      - "emotion_evolution_night/part_02.txt"
+      - ".github/workflows/emotion-evolution-night.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Kokoro and audio tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install --upgrade pip
+          pip install kokoro soundfile numpy
+      - name: Render the complete single-narrator episode
+        run: python emotion_evolution_night/generate.py
+      - name: Inspect audio
+        run: |
+          test -s emotion_evolution_night/the_social_lives_of_emotions.mp3
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 emotion_evolution_night/the_social_lives_of_emotions.mp3
+      - name: Publish playable MP3
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add emotion_evolution_night/the_social_lives_of_emotions.mp3
+          if git diff --cached --quiet; then
+            echo "Audio is unchanged; no new commit required."
+            exit 0
+          fi
+          git commit -m "Render evolutionary emotions night essay [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
