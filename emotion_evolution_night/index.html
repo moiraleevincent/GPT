@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#15111d">
+<title>The Social Lives of Emotions · A night essay</title>
+<style>
+  :root { color-scheme: dark; --text: #f3eced; --muted: #beb1c1; --pink: #e7a0be; --edge: #564052; }
+  * { box-sizing: border-box; }
+  html { background: #15111d; }
+  body { margin: 0; min-height: 100vh; font: 17px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--text);
+    background: radial-gradient(ellipse 85% 48% at 75% 4%, #4c2b47 0%, transparent 77%), #15111d; }
+  main { max-width: 690px; margin: auto; padding: clamp(36px, 8vw, 85px) 23px 80px; }
+  .eyebrow { color: var(--pink); text-transform: uppercase; letter-spacing: .20em; font-size: .72rem; font-weight: 700; }
+  h1 { font-family: Georgia, 'Times New Roman', serif; line-height: 1.11; font-size: clamp(2.6rem, 9vw, 4.75rem); font-weight: 400; letter-spacing: -.025em; margin: 18px 0 23px; }
+  .intro { color: #dbcbd5; max-width: 590px; font-size: 1.04rem; }
+  .player { padding: 25px 20px 22px; margin-top: 32px; border: 1px solid var(--edge); border-radius: 20px; background: #ffffff09; }
+  .play-label { display:block; color:var(--text); font-weight: 650; margin-bottom: 15px; }
+  audio { display: block; width: 100%; color-scheme: dark; }
+  .detail { color: var(--muted); font-size: .85rem; margin: 15px 0 0; }
+  .speed { display:flex; align-items:center; flex-wrap:wrap; gap: 9px; margin-top: 19px; }
+  .speed span { color: var(--muted); font-size: .85rem; margin-right: 5px; }
+  .speed button { background: transparent; border: 1px solid var(--edge); border-radius: 30px; color:var(--text); padding: 6px 13px; font: inherit; font-size: .84rem; cursor:pointer; }
+  .speed button.active { border-color:var(--pink); background:#e7a0be25; }
+  .note { color: var(--muted); font-size: .94rem; margin-top: 27px; max-width: 540px; }
+  .links { display: flex; flex-wrap: wrap; gap: 12px 22px; margin-top: 20px; }
+  a { color: #f1bad1; text-underline-offset: 4px; }
+  footer { border-top: 1px solid #ffffff20; margin-top: 68px; padding-top: 19px; color: #98899c; font-size: .77rem; }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">A science essay for the quiet hours</div>
+  <h1>The Social Lives<br>of Emotions</h1>
+  <p class="intro">Why anger bargains, shame anticipates an audience, gratitude binds people together, and fear changes what we see. An unhurried journey through evolutionary psychology, research, and the complicated lives of feelings.</p>
+  <section class="player" aria-label="Episode audio">
+    <strong class="play-label">Play the complete episode</strong>
+    <audio id="episode" controls preload="metadata" playsinline>
+      <source src="the_social_lives_of_emotions.mp3" type="audio/mpeg">
+      Your browser does not support audio playback.
+    </audio>
+    <div class="speed" role="group" aria-label="Playback speed">
+      <span>Playback speed</span>
+      <button type="button" data-speed="0.9">0.9×</button>
+      <button type="button" data-speed="1" class="active" aria-pressed="true">1×</button>
+      <button type="button" data-speed="1.15">1.15×</button>
+      <button type="button" data-speed="1.3">1.3×</button>
+    </div>
+    <p class="detail">One Kokoro narrator · No background music or sudden sound effects · Research references available below</p>
+  </section>
+  <p class="note">This episode explores testable evolutionary accounts of emotion, not claims that an emotion is always useful or that a proposed function is proven ancestral history.</p>
+  <div class="links">
+    <a href="part_01.txt">Transcript · Part 1</a>
+    <a href="part_02.txt">Transcript · Part 2</a>
+    <a href="sources.md">Research sources</a>
+    <a href="the_social_lives_of_emotions.mp3" download>Save MP3</a>
+  </div>
+  <footer>Written for Moira · October 2026 · Original narration rendered with Kokoro</footer>
+</main>
+<script>
+  const audio = document.getElementById("episode");
+  document.querySelectorAll("[data-speed]").forEach(button => {
+    button.addEventListener("click", () => {
+      const speed = Number(button.dataset.speed);
+      audio.playbackRate = speed;
+      document.querySelectorAll("[data-speed]").forEach(b => {
+        b.classList.toggle("active", b === button);
+        b.setAttribute("aria-pressed", String(b === button));
+      });
+    });
+  });
+</script>
+</body>
+</html>
