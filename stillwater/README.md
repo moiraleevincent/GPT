@@ -7,6 +7,10 @@ A quiet, entirely hand-drawn animated aquarium that runs in a web browser. No vi
 ## What lives here
 - Seventeen slow-swimming fish in pearlescent colors and a little school of distant fish
 - Three translucent, softly pulsing jellyfish
+- A shy seahorse with fluttering fins and a curled tail
+- Distant submerged rock formations, atmospheric haze and close-to-glass leaves
+- A barely perceptible horizontal camera drift, with different speeds by depth
+- A little secret visitor that appears when its shelter is touched
 - Rising bubbles, floating particles, drifting light, kelp, anemones, rocks, coral and a tiny snail
 - A dimmer for late-night watching
 - Pause/resume, fullscreen, and touch ripples
