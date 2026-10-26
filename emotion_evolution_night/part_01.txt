@@ -1,0 +1,219 @@
+THE SOCIAL LIVES OF EMOTIONS
+Part One. A Field Guide to Feelings That Negotiate.
+
+Imagine the edge of a small settlement at dusk. A few people are working near a fire. Someone has returned from gathering food. Someone else is trying to persuade a child to come inside. There is the low, ordinary noise of a group living together.
+
+The striking thing about this scene is not that the people need food, shelter, or protection. Of course they do. It is that, almost constantly, they need one another.
+
+A disagreement about food is also a disagreement about whose needs matter. A mistake made in public may change who is willing to help tomorrow. A small, unexpected act of kindness might change which person seems safe to approach. A face, a silence, a delayed answer, can carry information that affects a relationship for years.
+
+In such a world, a nervous system cannot simply ask whether something is pleasant or unpleasant. It has to ask which problem has appeared, which opportunities have opened, and what to do next.
+
+This is one way to approach the evolutionary psychology of emotions. Not as a collection of labels for feelings. And not as a story in which every emotion is always useful. But as the study of why certain states of mind and body might have been favored in recurring situations over evolutionary time.
+
+Fear changes what we notice. Anger changes what we are willing to demand. Shame changes what we want other people to know. Gratitude changes whom we want nearby. And grief, perhaps most painfully, reveals how thoroughly another person can become part of our expectations about the world.
+
+An emotion can alter several systems at once. Attention, memory, muscle readiness, interpretation, motivation, facial expression, and the likely meaning of another person's action. If there is a common theme in evolutionary theories of emotion, it is coordination. When a particular kind of problem appears, many smaller mechanisms may need to work together.
+
+There is an important distinction here. Explaining what happens inside an emotion is not the same as explaining why that kind of response might exist. A physiological account of fear could describe changes in arousal and attention. An evolutionary account asks why those changes, rather than some entirely different package of responses, would have been useful in particular circumstances.
+
+And even that is not the end of the investigation. A plausible story about usefulness is only a hypothesis. Modern experiments can test whether an emotion responds to the cues the theory predicts. Comparisons across cultures can test the reach of a pattern. Neither experiment is a time machine. We cannot watch a particular emotion being installed by natural selection in an ancestral brain.
+
+That limitation is worth keeping quietly in mind as we wander through these feelings.
+
+Let's begin with an emotion that rarely feels quiet.
+
+ANGER.
+
+Picture two small incidents.
+
+In the first, a person hurrying toward an emergency brushes hard against your shoulder. They are frightened, distracted, and trying to reach someone who needs help.
+
+In the second, a person pushes you aside because reaching a cup of coffee would otherwise require two extra steps.
+
+The pain in your shoulder could be identical. Yet the second incident might be more infuriating.
+
+Why?
+
+A straightforward explanation is that the second person had almost nothing to gain, and still treated your discomfort as an acceptable price.
+
+Evolutionary psychologist Aaron Sell, together with colleagues including John Tooby and Leda Cosmides, developed a theory in which anger acts, in part, as a bargaining system. The phrase they use is a welfare tradeoff ratio. In ordinary language, it means how much weight someone places on your welfare when pursuing their own goals.
+
+Suppose I would readily save myself a tiny inconvenience by imposing a large cost on you. My actions reveal something about the weight I assign to your interests. Now suppose you become angry, object, and threaten to withdraw cooperation. Your anger may raise the future cost of treating you that way. It is an attempt to change the terms on which we interact.
+
+The striking prediction is that anger should not be determined only by the size of the injury. It should also depend on the offender's benefit, their knowledge, and what the offense implies about how they value you.
+
+In twenty-three experiments conducted across six cultures, including Shuar communities in Ecuador, researchers tested predictions of this kind. Participants judged scenarios involving harms and benefits. Anger tended to increase when the harm was greater, when the offender gained less by imposing it, and when the offender knew whose welfare would be affected.
+
+The cultures did not become identical in every psychological respect. But the pattern the researchers were testing appeared across the samples.
+
+That is already a more precise theory than simply saying anger evolved to defend us.
+
+Consider how people argue when someone is furious.
+
+The offender may say: I didn't realize it was you. Or, it was a genuine emergency. Or, I didn't know it would hurt that much.
+
+Those explanations share a structure. Each is an attempt to revise what the angry person has inferred about the offender's priorities.
+
+I did not knowingly disregard you. The benefit I was pursuing really was important. The cost to you looked smaller than it turned out to be.
+
+These are not merely excuses pulled from nowhere. They target the variables that a welfare tradeoff account predicts should matter.
+
+And now consider a different detail about anger. It can make our own demands feel suddenly obvious. The compromise that seemed tolerable yesterday begins to feel insulting today. The cost of confrontation seems smaller. We become more prepared to withhold a favor, raise our voice, or end an interaction.
+
+That shift could be functional in a world where treatment by other people depends partly on whether they expect resistance.
+
+Of course, a system that makes a threat credible is not necessarily a system that makes the best possible decisions. Anger can be triggered by misunderstanding, exhaustion, old injuries, or a wildly inaccurate estimate of another person's intentions. Even if a mechanism evolved because it improved bargaining in some environments, its output is not automatically wise or fair.
+
+There is also a less comfortable prediction in this research. People who possess more bargaining leverage may, under some conditions, be more easily angered. If you have greater capacity to impose costs, or greater capacity to withhold valuable benefits, demanding better treatment can be a more profitable strategy.
+
+A study from 2009 investigated associations between anger, physical formidability, attractiveness, and attitudes about entitlement and conflict. Its results aligned with several predictions of the bargaining account. But the interpretation is more ambitious than the raw correlations. We should be careful not to confuse a theory that fits some patterns with a complete explanation of personality.
+
+Something else follows from the idea that anger is about future treatment. Imagine that someone has hurt you, and then apologizes.
+
+Sometimes the apology changes remarkably little. The words are polite, but your anger remains. Other times the anger begins to fade before anything material has been repaired.
+
+The recalibration account offers one possible reason. A believable apology can change your estimate of how the offender will treat you next time. If your anger was partly trying to produce a change in their future behavior, then evidence of that change matters.
+
+But the evidence has to seem believable. An apology that merely attempts to end the unpleasant conversation, while leaving the offender's priorities untouched, may fail completely.
+
+This is not a claim that every angry person wants reconciliation. Sometimes anger supports distancing, punishment, or withdrawal. Sometimes no apology will restore a relationship. It is simply a reminder that an angry response to a past event may be organized around expectations about the future.
+
+So there is our first curious possibility. Anger can be understood as a very demanding negotiation with another mind. A negotiation about how much your welfare counts.
+
+Now move from anger to an emotion that often makes a person want to disappear.
+
+SHAME.
+
+Imagine a capable member of a community who makes a costly mistake in private. They know what happened, but nobody else does.
+
+Now imagine the same mistake happens in full view of the people whose trust and cooperation they depend on.
+
+Why might those situations feel so different?
+
+For a species that has relied heavily on shared food, protection, childcare, information, and help during illness, other people's evaluations can have very real consequences. Being seen as unreliable, dangerous, selfish, or incapable could alter how much assistance other people offer you.
+
+One influential evolutionary account proposes that shame helps manage the danger of being devalued.
+
+That word, devaluation, sounds rather clinical. But it refers to something intimate. The possibility that someone who once considered you worth helping will now consider you less worth helping. That your place in their mind has changed.
+
+Shame may motivate people to avoid actions likely to damage their reputation, to conceal certain information, to appease others, to repair an impression, or simply to withdraw from attention.
+
+This is not a morally flattering description of every possible shame response. Some responses to shame may make a situation much worse. And the fact that an emotion could benefit the individual experiencing it does not mean it benefits the people around them.
+
+How do you test such a theory?
+
+One way is to ask a group of people how negatively they would evaluate a person with a particular characteristic or action. Then ask a different group how much shame they would expect to feel if that characteristic or action became known about themselves.
+
+The theory predicts a systematic match between the two sets of judgments. If an audience would strongly devalue you for some information, you should anticipate correspondingly intense shame.
+
+A 2016 study found substantial matches in the United States, India, and Israel. A later project broadened the question, studying almost nine hundred participants in fifteen small-scale communities with different languages and ways of life. Across those communities, anticipated shame closely tracked the local audiences' judgments about devaluation.
+
+It is a fascinating result because it suggests that the system is not just learning a random list of embarrassing acts. It seems to be tracking something about how other people's valuation works.
+
+But there is an equally important subtlety. The local community matters.
+
+A person does not need to be ashamed of exactly the same thing everywhere. If different audiences value different abilities, forms of loyalty, or kinds of behavior, a broadly similar psychological system could produce very different emotional responses.
+
+The mechanism might be widespread while its inputs vary.
+
+In March 2026, researchers published another set of tests in the Proceedings of the National Academy of Sciences. They compared how much shame people anticipated after larger or smaller failures, and after failures that were publicly visible or remained private. Their samples covered six countries as well as selected regions of the United States.
+
+Across those samples, more serious failures elicited greater anticipated shame. And public failures elicited greater shame than private ones.
+
+That is consistent with the idea that shame monitors the reputational consequences of what happens to us.
+
+There are limitations. The study used hypothetical scenarios and reported feelings. It did not observe distant evolutionary history, and it does not prove that every experience of shame is adaptive. People can also feel shame privately, or about events they did not cause. Those cases remain important challenges for any theory that hopes to describe the entire emotion.
+
+Still, there is a beautiful piece of psychological architecture to notice.
+
+We carry around models of other people's minds. We estimate what they would think of us if they knew certain things. We sometimes respond emotionally to judgments that nobody has actually made.
+
+The imagined audience can be enough.
+
+Shame, on this account, is partly an emotion about a model of an audience. Sometimes the model is accurate. Sometimes it is painfully wrong.
+
+Now a puzzle.
+
+If shame is concerned with keeping damaging information from lowering our standing, why can embarrassment, which makes our mistake so visible, sometimes bring other people closer?
+
+EMBARRASSMENT.
+
+Imagine someone saying the wrong name in a group, stumbling over their words, and giving that small, helpless smile that seems to say, yes, I know.
+
+The expression communicates something different from arrogance or indifference. It implies that the person recognizes the social mishap and cares about the people witnessing it.
+
+Researchers Matthew Feinberg, Robb Willer, and Dacher Keltner investigated embarrassment as a signal of prosocial tendencies. In five studies, observers treated embarrassed people as more prosocial and were more willing to trust, affiliate with, or share resources with them.
+
+That is a striking social function for an experience we usually wish would end immediately.
+
+Embarrassment can advertise that the relationship matters more to the person than maintaining an image of total self-possession.
+
+It is not a guarantee of goodness. People can perform awkwardness. People may misread embarrassment. An involuntary blush is not a scientific certificate of honesty.
+
+But imagine the alternative. A small social violation occurs, and the person responsible reacts with a blank face, no acknowledgment, and no attempt to show concern.
+
+The mistake may have been minor. The apparent indifference could become the larger problem.
+
+In that light, the embarrassed smile is a tiny social repair.
+
+It can say: I understand that something happened here. I am still participating in the rules of our relationship.
+
+And that brings us to an emotion that deals with a more serious kind of mistake.
+
+GUILT.
+
+Two friends have agreed to complete a difficult task together. One forgets an important commitment. The other person is left doing the work alone.
+
+The person who forgot might feel shame, guilt, both, or neither.
+
+But guilt has an especially interesting orientation. Rather than concentrating primarily on what others now think of my worth, it often concentrates on what I did to someone else.
+
+I caused a cost. I damaged a relationship. I may need to change what I do.
+
+Evolutionary accounts of guilt often focus on cooperation that continues over time. If partners sometimes make mistakes, a cooperative system needs ways to distinguish a genuine willingness to restore trust from an intention to keep exploiting the other person.
+
+Game-theoretic models help clarify why costly apologies or reparative efforts could matter. In repeated interactions, relationships may be worth preserving, and mechanisms that make repairing an accidental harm more likely can improve the prospects for future cooperation.
+
+But a game-theoretic result does not by itself establish that human guilt evolved in exactly the way the model describes. It establishes possible conditions under which such a tendency could be favored.
+
+And empirical results complicate the obvious story.
+
+In a study published in 2021, pairs of people took part in a cooperative task. One participant's wrongdoing and guilt were manipulated, and researchers then examined how the partners divided a reward.
+
+People made to feel guilty were motivated to repair the wrongdoing. That part fits a familiar picture.
+
+But seeing guilt in a wrongdoer did not simply make everyone more forgiving. In the study, victims could punish guilty close friends more than guilty acquaintances.
+
+Perhaps greater closeness also means greater expectations, or greater stakes when a promise is broken. That is a possible interpretation, not something the design alone proves.
+
+What I like about this result is that it refuses to turn guilt into a cartoon. An emotional signal can have more than one effect. The person feeling guilt may become more cooperative while the person observing it becomes more demanding.
+
+The meaning of an emotion depends on where you stand in the relationship.
+
+We have now encountered four states that seem to orbit around social value, but they are not interchangeable.
+
+Anger may try to increase the weight someone gives your welfare.
+Shame may try to manage the cost of being devalued.
+Embarrassment may signal that a social mishap matters to you.
+And guilt may motivate you to repair a cost you have imposed on someone else.
+
+Different situations. Different problems. Different patterns of attention and action.
+
+There is no need to imagine an ancient committee of emotions making decisions in a skull. These are theoretical descriptions of interacting psychological processes, not little agents with conscious plans.
+
+Yet the distinction is useful. It explains why two unpleasant emotions can sometimes pull in opposite directions. Shame might make someone want to hide. Guilt might make the same person want to confess, approach, or compensate.
+
+And a person can experience both at once.
+
+The evening in our imaginary settlement is getting quieter now. The fire is lower. The arguments have ended, or at least paused. A few people remain awake.
+
+Someone is still angry about an unfair exchange. Someone worries about a mistake that may become public. Someone is wondering how to repair an injury to a friend.
+
+Other feelings are beginning to emerge in the spaces between them.
+
+There is pride, when a contribution changes the way a community sees you. Gratitude, when another person reveals an unexpected willingness to help. Jealousy, when a bond seems threatened. Disgust, when an attractive opportunity may hide contamination. And the particular ache that comes when someone important is no longer there.
+
+Those feelings deserve more than a label.
+
+They are where our investigation goes next.
