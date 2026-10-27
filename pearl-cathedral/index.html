@@ -171,7 +171,7 @@ function seaStars(){
   }
 }
 function stoneStatue(){
-  let U=Math.max(.7,Math.min(w/980,h/760)),x=viewX(w*1.53,.43),floor=h*.90;
+  let U=Math.max(.7,Math.min(w/980,h/760)),x=viewX(w*1.53,.89),floor=h*.90;
   g.save();g.translate(x,floor);g.rotate(-.075);
   // A toppled marble figure, half reclaimed by the sea.
   let shadow=g.createRadialGradient(0,-67*U,0,0,-65*U,145*U);
@@ -331,7 +331,7 @@ function render(){
   g.fillStyle=rim;g.fillRect(0,0,w,h*.085);
 }
 function drawVisitor(){let x=viewX(visitor.x*w,.85),y=viewY(visitor.y*h,.85)+Math.sin(t*.7)*4,u=Math.max(.65,Math.min(w/900,h/700));g.save();g.translate(x,y);g.globalAlpha=Math.min(1,(visitorUntil-Date.now())/900);g.shadowColor="#a9e4d7";g.shadowBlur=16*u;g.strokeStyle="#b2d8c5";g.fillStyle="#8fbd9e";g.lineWidth=1.6*u;g.beginPath();g.moveTo(0,10*u);g.bezierCurveTo(-9*u,6*u,-8*u,-3*u,-2*u,-6*u);g.bezierCurveTo(-3*u,-14*u,6*u,-16*u,9*u,-11*u);g.bezierCurveTo(12*u,-7*u,7*u,-2*u,3*u,-4*u);g.bezierCurveTo(12*u,-2*u,11*u,7*u,4*u,10*u);g.bezierCurveTo(3*u,14*u,12*u,13*u,9*u,18*u);g.bezierCurveTo(7*u,21*u,1*u,17*u,4*u,14*u);g.lineTo(-1*u,12*u);g.closePath();g.fill();g.stroke();g.shadowBlur=0;g.fillStyle="#e3f0cf";g.beginPath();g.arc(3*u,-10*u,1.15*u,0,TAU);g.fill();g.strokeStyle="#b2d8c5";g.beginPath();g.moveTo(-2*u,-5*u);g.lineTo(-7*u,-9*u);g.moveTo(-1*u,1*u);g.lineTo(-8*u,4*u);g.stroke();g.restore()}
-function frame(now){let dt=last?Math.min((now-last)/1000,.08):0;last=now;if(!paused&&!document.hidden){t+=dt*pace*(mode==='sleep'?.57:1);camera+=(cameraTarget-camera)*Math.min(1,dt*1.2);render()}if(deadline){let left=deadline-Date.now();$('shade').style.opacity=String(Math.max(1-brightness,1-Math.max(0,Math.min(1,left/60000))));if(left<=0){deadline=0;paused=true;pauseUI();$('timer').value='0'}}requestAnimationFrame(frame)}
+function frame(now){if(last&&now-last<29){requestAnimationFrame(frame);return}let dt=last?Math.min((now-last)/1000,.08):0;last=now;if(!paused&&!document.hidden){t+=dt*pace*(mode==='sleep'?.57:1);camera+=(cameraTarget-camera)*Math.min(1,dt*1.2);render()}if(deadline){let left=deadline-Date.now();$('shade').style.opacity=String(Math.max(1-brightness,1-Math.max(0,Math.min(1,left/60000))));if(left<=0){deadline=0;paused=true;pauseUI();$('timer').value='0'}}requestAnimationFrame(frame)}
 function save(){try{localStorage.setItem('pearl-cathedral-v1',JSON.stringify({mode,pace,brightness}))}catch{}}
 function setBrightness(){brightness=Number($('brightness').value)/100;$('shade').style.opacity=String(1-brightness);save()}
 function selectMode(next){mode=next;$('study').setAttribute('aria-pressed',String(mode==='study'));$('sleep').setAttribute('aria-pressed',String(mode==='sleep'));brightness=mode==='sleep'?.48:1;$('brightness').value=String(brightness*100);setBrightness();save()}
