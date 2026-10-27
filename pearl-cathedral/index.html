@@ -16,7 +16,7 @@ header p{color:#d6abc4}
 #dock button:hover,#dock button[aria-pressed=true]{background:#f5c1da20;color:#fff0f8}
 #settings{background:#251527f7;border-color:#d5a3ca60}
 #settings p{color:#dab5ce}
-input[type=range]{accent-color:#eab2d0}
+input[type=range]{accent-color:#eab2d0}#fishSpeedLabel{min-width:36px;font-size:12px;letter-spacing:.02em;color:#ffd3eb;text-align:right;font-variant-numeric:tabular-nums}
 select{background:#3d2544;border-color:#d5a3ca55}
 #notice{background:#2d1839f0;border-color:#e6b3d45e;color:#f5e0ef}
 @media(max-width:520px){header p{max-width:245px;line-height:1.5;font-size:10px}}
@@ -24,11 +24,11 @@ select{background:#3d2544;border-color:#d5a3ca55}
 <canvas id="ocean" role="img" aria-label="A living rose and violet underwater cathedral. Explore the kelp forest, ancient columns, archway and fallen statue; watch jellyfish, sea horses, fish, corals, and a rising plume of bubbles. Tap to discover small creatures."></canvas><div id="shade"></div>
 <header><span>Three worlds, one tide</span><h1>The Pearl Cathedral</h1><p>drag to wander · touch the light · stay awhile</p></header>
 <nav id="dock" aria-label="Aquarium controls"><button id="study" aria-pressed="true">Study</button><button id="sleep" aria-pressed="false">Sleep</button><span class="divider"></span><button class="icon" id="pause" aria-label="Pause animation" title="Pause (Space)"><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg></button><button class="icon" id="options" aria-label="Settings" aria-expanded="false" title="Settings"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#08202a"/><circle cx="15" cy="17" r="3" fill="#08202a"/></svg></button><button class="icon" id="fullscreen" aria-label="Enter fullscreen" title="Fullscreen (F)"><svg viewBox="0 0 24 24"><path d="M8 4H4v4M16 4h4v4M20 16v4h-4M8 20H4v-4"/></svg></button></nav>
-<section id="settings" aria-label="Settings" hidden><button id="close" aria-label="Close settings">×</button><h2>Settle in</h2><label>Brightness <input id="brightness" type="range" min="15" max="100" value="100"></label><label>Gentle motion <input id="speed" type="range" min="15" max="100" value="65"></label><label>Fade to dark <select id="timer"><option value="0">Off</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">60 minutes</option></select></label><label>Keep screen awake <input id="awake" type="checkbox"></label><p>Drag the water left or right to explore. Tap near the bottom to meet a visitor; tap the pearl or bubbles to wake them. Space pauses; F opens fullscreen. Explore far to either side, touch the pearly shell, look beneath the kelp, and follow the rising bubbles. On iPhone, Safari → Share → Add to Home Screen gives an edge-to-edge view.</p></section><div id="notice" role="status" aria-live="polite"></div>
+<section id="settings" aria-label="Settings" hidden><button id="close" aria-label="Close settings">×</button><h2>Settle in</h2><label>Brightness <input id="brightness" type="range" min="15" max="100" value="100"></label><label>Gentle motion <input id="speed" type="range" min="15" max="100" value="65"></label><label>Fish swimming <input id="fishSpeed" type="range" min="50" max="400" step="10" value="200" aria-label="Fish swimming speed"><output id="fishSpeedLabel" for="fishSpeed">2.0×</output></label><label>Fade to dark <select id="timer"><option value="0">Off</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">60 minutes</option></select></label><label>Keep screen awake <input id="awake" type="checkbox"></label><p>Drag the water left or right to explore. Tap near the bottom to meet a visitor; tap the pearl or bubbles to wake them. Space pauses; F opens fullscreen. Explore far to either side, touch the pearly shell, look beneath the kelp, and follow the rising bubbles. Fish swimming adjusts just the ordinary fish; gentle motion controls the rest of the garden. On iPhone, Safari → Share → Add to Home Screen gives an edge-to-edge view.</p></section><div id="notice" role="status" aria-live="polite"></div>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id),c=$('ocean'),g=c.getContext('2d',{alpha:false}),TAU=Math.PI*2;
-let w=0,h=0,dpr=1,t=0,last=0,paused=matchMedia('(prefers-reduced-motion: reduce)').matches,mode='study',pace=.65,brightness=1,deadline=0,idleTimer,toastTimer,wakeLock=null;
+let w=0,h=0,dpr=1,t=0,last=0,paused=matchMedia('(prefers-reduced-motion: reduce)').matches,mode='study',pace=.65,brightness=1,fishSpeed=2,fishClock=0,deadline=0,idleTimer,toastTimer,wakeLock=null;
 const rand=n=>{const a=Math.sin(n*127.1+311.7)*43758.5453;return a-Math.floor(a)},mix=(a,b,s)=>a+(b-a)*s;
 const motes=Array.from({length:85},(_,i)=>({x:rand(i+12),y:rand(i+100),z:rand(i+201)}));
 const plants=Array.from({length:44},(_,i)=>({x:i<24?-.20+rand(i+2)*.42:.78+rand(i+2)*.43,len:.17+rand(i+92)*.45,width:5+rand(i+63)*15,phase:rand(i+55)*TAU,depth:rand(i+76)})).sort((a,b)=>a.depth-b.depth);
@@ -43,7 +43,7 @@ function resize(){w=innerWidth;h=innerHeight;dpr=Math.min(devicePixelRatio||1,1.
 function rays(){g.save();g.globalCompositeOperation='screen';for(let i=0;i<6;i++){let x=w*(.16+i*.145)+Math.sin(t*.035+i)*w*.018,spread=w*(.06+rand(i+5)*.08);let grad=g.createLinearGradient(x,0,x+h*.2,h*.88);grad.addColorStop(0,'#92e5d507');grad.addColorStop(.5,'#7abbb704');grad.addColorStop(1,'#65c6bc00');g.fillStyle=grad;g.beginPath();g.moveTo(x,0);g.lineTo(x+w*.024,0);g.lineTo(x+spread+h*.22,h);g.lineTo(x-spread*.25+h*.22,h);g.closePath();g.fill()}g.restore()}
 function plant(p,front){let unit=Math.min(w/900,h/700),len=h*p.len*(front?1:.80),x=viewX(p.x*w,p.depth),y=viewY(h*(front?1.035:.91),p.depth),bend=Math.sin(t*.28+p.phase)*len*.09+len*.13,wide=p.width*Math.max(.6,unit)*(front?1:.75);g.save();g.translate(x,y);let grad=g.createLinearGradient(0,0,bend,-len);grad.addColorStop(0,front?'#201323':'#0b2d38');grad.addColorStop(.55,front?'#553047':'#593349');grad.addColorStop(1,front?'#ad7087':'#84536d');g.fillStyle=grad;g.beginPath();g.moveTo(-wide*.25,0);g.bezierCurveTo(-wide*1.4,-len*.33,bend+wide*1.2,-len*.75,bend,-len);g.bezierCurveTo(bend+wide*.1,-len*.72,wide*1.6,-len*.32,wide*.25,0);g.fill();g.strokeStyle=front?'#55937d24':'#74b9b516';g.lineWidth=.8;g.beginPath();g.moveTo(0,0);g.bezierCurveTo(wide*.4,-len*.35,bend+wide*.4,-len*.7,bend,-len);g.stroke();g.restore()}
 function rock(s){let unit=Math.max(.55,Math.min(w/1000,h/700)),rx=s.r*unit,ry=rx*(.38+s.z*.35),x=viewX(s.x*w,s.z),y=viewY(s.y*h,s.z);let grad=g.createLinearGradient(0,-ry,0,ry);grad.addColorStop(0,s.z>.5?'#664c5f':'#4d3c50');grad.addColorStop(.3,'#322939');grad.addColorStop(1,'#171321');g.save();g.translate(x,y);g.rotate((s.z-.5)*.3);ellipse(0,0,rx,ry,grad);g.strokeStyle='#9ec3b00b';g.lineWidth=1;g.beginPath();g.ellipse(0,-ry*.04,rx*.9,ry*.84,0,3.6,5.7);g.stroke();g.restore()}
-function swimmer(f,i){let speed=.006+f.z*.008;let x=viewX(((((f.x+t*speed*f.dir)%1.24)+1.24)%1.24-.12)*w,f.z),y=viewY(h*(f.y+Math.sin(t*.12+f.phase)*.023),f.z);let size=(10+f.z*16)*Math.max(.8,Math.min(w/900,h/700)),tail=Math.sin(t*2.7+f.phase)*.23;g.save();g.translate(x,y);g.scale(f.dir,1);g.globalAlpha=.48+f.z*.48;let hue=f.group===0?32:f.group===1?176:205;let grad=g.createLinearGradient(-size,-size*.5,size,size*.5);grad.addColorStop(0,`hsla(${hue},35%,65%,.7)`);grad.addColorStop(.4,`hsla(${hue},40%,70%,.9)`);grad.addColorStop(1,`hsla(${hue+15},40%,27%,.8)`);g.fillStyle=`hsla(${hue},40%,63%,.4)`;g.beginPath();g.moveTo(-size*.65,0);g.lineTo(-size*1.45,-size*(.47+tail));g.quadraticCurveTo(-size*1.25,0,-size*1.45,size*(.47-tail));g.closePath();g.fill();g.beginPath();g.moveTo(size,0);g.bezierCurveTo(size*.2,-size*.62,-size*.5,-size*.45,-size*.8,0);g.bezierCurveTo(-size*.4,size*.38,size*.25,size*.48,size,0);g.fillStyle=grad;g.fill();g.fillStyle=`hsla(${hue},45%,70%,.22)`;g.beginPath();g.moveTo(0,-size*.25);g.lineTo(-size*.35,-size*.75);g.lineTo(-size*.6,-size*.2);g.fill();ellipse(size*.65,-size*.06,size*.07,size*.07,'#09232c');ellipse(size*.67,-size*.085,size*.019,size*.019,'#c5e4db');g.restore()}
+function swimmer(f,i){let speed=.006+f.z*.008;let x=viewX(((((f.x+fishClock*speed*f.dir)%1.24)+1.24)%1.24-.12)*w,f.z),y=viewY(h*(f.y+Math.sin(fishClock*.12+f.phase)*.023),f.z);let size=(10+f.z*16)*Math.max(.8,Math.min(w/900,h/700)),tail=Math.sin(fishClock*2.7+f.phase)*.23;g.save();g.translate(x,y);g.scale(f.dir,1);g.globalAlpha=.48+f.z*.48;let hue=f.group===0?32:f.group===1?176:205;let grad=g.createLinearGradient(-size,-size*.5,size,size*.5);grad.addColorStop(0,`hsla(${hue},35%,65%,.7)`);grad.addColorStop(.4,`hsla(${hue},40%,70%,.9)`);grad.addColorStop(1,`hsla(${hue+15},40%,27%,.8)`);g.fillStyle=`hsla(${hue},40%,63%,.4)`;g.beginPath();g.moveTo(-size*.65,0);g.lineTo(-size*1.45,-size*(.47+tail));g.quadraticCurveTo(-size*1.25,0,-size*1.45,size*(.47-tail));g.closePath();g.fill();g.beginPath();g.moveTo(size,0);g.bezierCurveTo(size*.2,-size*.62,-size*.5,-size*.45,-size*.8,0);g.bezierCurveTo(-size*.4,size*.38,size*.25,size*.48,size,0);g.fillStyle=grad;g.fill();g.fillStyle=`hsla(${hue},45%,70%,.22)`;g.beginPath();g.moveTo(0,-size*.25);g.lineTo(-size*.35,-size*.75);g.lineTo(-size*.6,-size*.2);g.fill();ellipse(size*.65,-size*.06,size*.07,size*.07,'#09232c');ellipse(size*.67,-size*.085,size*.019,size*.019,'#c5e4db');g.restore()}
 function medusa(j){let scale=Math.max(.62,Math.min(w/1050,h/760)),r=59*j.s*scale;let x=viewX(w*(j.x+Math.sin(t*.045+j.p)*.035),.45+j.s*.20),y=viewY(h*(j.y+Math.sin(t*.075+j.p)*.035),.48);let pulse=Math.sin(t*1.15+j.p),sx=1+pulse*.065,sy=1-pulse*.11;g.save();g.translate(x,y);g.rotate(Math.sin(t*.09+j.p)*.10);let halo=g.createRadialGradient(0,0,0,0,0,r*2.2);halo.addColorStop(0,`hsla(${j.hue},75%,65%,.08)`);halo.addColorStop(1,`hsla(${j.hue},75%,65%,0)`);g.fillStyle=halo;g.fillRect(-r*2.2,-r*2.2,r*4.4,r*4.4);
 // Long, fine tentacles bend in the same current, with a delayed wave down their lengths.
 for(let k=0;k<13;k++){let root=(k/12-.5)*r*1.65*sx,length=r*(1.25+rand(k+j.p*19)*1.5);g.beginPath();for(let q=0;q<=24;q++){let v=q/24,xx=root+Math.sin(t*.68-v*4.4+k*.6+j.p)*r*.14*v+Math.sin(v*6+t*.3)*r*.14*v,yy=r*.12+v*length;if(q===0)g.moveTo(xx,yy);else g.lineTo(xx,yy)}g.lineWidth=scale*(k%3===0?1.1:.6);g.strokeStyle=`hsla(${j.hue},65%,77%,${.18+(k%3)*.06})`;g.stroke()}
@@ -54,10 +54,39 @@ function anemones(){for(let i=0;i<9;i++){let x=viewX(w*(.06+i*.11+rand(i+90)*.04
 function littleShell(){let x=viewX(w*.52,.8),y=h*.925,u=Math.max(.7,Math.min(w/900,h/700));g.save();g.translate(x,y);g.fillStyle='#c3a7a380';g.beginPath();g.moveTo(-15*u,0);g.quadraticCurveTo(0,-18*u,15*u,0);g.quadraticCurveTo(0,5*u,-15*u,0);g.fill();g.strokeStyle='#f1d1b770';g.lineWidth=.8*u;for(let k=-2;k<=2;k++){g.beginPath();g.moveTo(0,1*u);g.lineTo(k*5*u,-8*u+Math.abs(k)*2*u);g.stroke()}g.restore()}
 let pearlUntil=0,plumeBoost=0;
 function ruins(){
- let U=Math.max(.62,Math.min(w/1050,h/760));
- function column(wx,height,depth,broken){let x=viewX(w*wx,depth),base=h*.88,wide=38*U,H=h*height;g.save();g.translate(x,base);let sh=g.createLinearGradient(-wide,0,wide,0);sh.addColorStop(0,'#30243d');sh.addColorStop(.5,'#8a6877');sh.addColorStop(1,'#49304a');g.fillStyle=sh;g.fillRect(-wide*.48,-H,wide*.96,H);g.fillStyle='#b18a93';g.fillRect(-wide*.72,-H-8*U,wide*1.44,9*U);g.fillStyle='#6d4d60';g.fillRect(-wide*.67,-8*U,wide*1.34,11*U);g.strokeStyle='#d9a1a33d';g.lineWidth=1.1*U;for(let j=-2;j<=2;j++){g.beginPath();g.moveTo(j*wide*.16,-H+6*U);g.lineTo(j*wide*.16,-12*U);g.stroke()}if(broken){g.strokeStyle='#d7a6ac65';g.beginPath();g.moveTo(-wide*.4,-H*.3);g.lineTo(-wide*.1,-H*.37);g.lineTo(-wide*.3,-H*.43);g.stroke()}g.restore()}
- column(-.22,.39,.38,true);column(.09,.56,.42,false);column(.83,.43,.36,true);column(1.25,.66,.38,true);
- let x=viewX(w*.49,.32),y=h*.76,scale=Math.min(w,h)*.31;g.save();g.translate(x,y);g.strokeStyle='#a5798a65';g.lineWidth=17*U;g.beginPath();g.moveTo(-scale,0);g.lineTo(-scale,-scale*.50);g.bezierCurveTo(-scale,-scale*1.22,scale,-scale*1.22,scale,-scale*.50);g.lineTo(scale,0);g.stroke();g.strokeStyle='#ebb7b63a';g.lineWidth=2*U;g.stroke();g.restore()
+  const U=Math.max(.62,Math.min(w/1050,h/760)),depth=.42,base=h*.88,span=.74*w;
+  // Both pillars and their arch occupy one world layer, so they never shear apart when panning.
+  const ax=viewX(w*.09,depth),bx=viewX(w*.83,depth),top=base-h*.49-9*U;
+  const mid=(ax+bx)*.5,rise=Math.min(h*.23,span*.48);
+  function archPath(){
+    g.beginPath();g.moveTo(ax,top);
+    g.bezierCurveTo(ax+span*.035,top-rise*.69,mid-span*.19,top-rise,mid,top-rise);
+    g.bezierCurveTo(mid+span*.19,top-rise,bx-span*.035,top-rise*.69,bx,top);
+  }
+  g.save();g.lineCap='butt';g.lineJoin='round';
+  archPath();g.lineWidth=28*U;g.strokeStyle='#30263c';g.stroke();
+  archPath();g.lineWidth=23*U;g.strokeStyle='#795d76';g.stroke();
+  archPath();g.lineWidth=14*U;g.strokeStyle='#a47d92';g.stroke();
+  // Carved seams follow the same arch, rather than acting as another scenery layer.
+  archPath();g.lineWidth=1.3*U;g.strokeStyle='#f4cbd061';g.stroke();
+  g.restore();
+  function column(wx,height,d,broken){
+    const x=viewX(w*wx,d),H=h*height,wide=38*U;
+    g.save();g.translate(x,base);
+    const sh=g.createLinearGradient(-wide,0,wide,0);
+    sh.addColorStop(0,'#30243d');sh.addColorStop(.5,'#8a6877');sh.addColorStop(1,'#49304a');
+    g.fillStyle=sh;g.fillRect(-wide*.48,-H,wide*.96,H);
+    g.fillStyle='#b18a93';g.fillRect(-wide*.72,-H-8*U,wide*1.44,9*U);
+    g.fillStyle='#6d4d60';g.fillRect(-wide*.67,-8*U,wide*1.34,11*U);
+    g.strokeStyle='#d9a1a33d';g.lineWidth=1.1*U;
+    for(let j=-2;j<=2;j++){g.beginPath();g.moveTo(j*wide*.16,-H+6*U);g.lineTo(j*wide*.16,-12*U);g.stroke()}
+    if(broken){g.strokeStyle='#d7a6ac65';g.beginPath();g.moveTo(-wide*.4,-H*.3);g.lineTo(-wide*.1,-H*.37);g.lineTo(-wide*.3,-H*.43);g.stroke()}
+    g.restore();
+  }
+  column(-.22,.39,.38,true);
+  column(.09,.49,depth,false);
+  column(.83,.49,depth,false);
+  column(1.25,.66,.38,true);
 }
 function coral(){let u=Math.max(.65,Math.min(w/950,h/740));for(let i=0;i<18;i++){let x=viewX(w*(-.48+i*.115),.83),y=h*(.88+rand(i+8)*.07),H=(24+rand(i+65)*60)*u;g.save();g.translate(x,y);let glow=g.createRadialGradient(0,-H*.45,0,0,-H*.45,H*1.5);glow.addColorStop(0,i%2?'#f28ab52b':'#f6b4c126');glow.addColorStop(1,'#f094ae00');g.fillStyle=glow;g.fillRect(-H*1.5,-H*2,H*3,H*3);g.strokeStyle=i%2?'#d785a8aa':'#e5a091aa';g.lineWidth=3*u;g.lineCap='round';g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(3*u,-H*.48,Math.sin(t*.22+i)*3*u,-H);for(let k=-2;k<=2;k++){let yy=-H*(.35+Math.abs(k)*.12);g.moveTo(0,yy);g.quadraticCurveTo(k*5*u,yy-4*u,k*9*u,yy-18*u)}g.stroke();g.fillStyle='#ffe4d5bb';for(let k=-2;k<=2;k++)ellipse(k*9*u,-H*(.35+Math.abs(k)*.12)-18*u,1.7*u,1.7*u,g.fillStyle);g.restore()}}
 function bubblePlume(){let x=viewX(w*.50,.58),base=h*.88,u=Math.max(.65,Math.min(w/950,h/740));g.save();let glow=g.createRadialGradient(x,base,0,x,base,100*u);glow.addColorStop(0,'#f7b2cf55');glow.addColorStop(1,'#e17dca00');g.fillStyle=glow;g.fillRect(x-100*u,base-100*u,200*u,200*u);for(let i=0;i<(Date.now()<plumeBoost?110:65);i++){let v=((i/110+t*(.035+(i%4)*.004))%1),bx=x+Math.sin(v*11+i*2+t*.7)*(5+v*25)*u,by=base-v*(h*.91),r=(1.3+(i%6)*.8)*u;g.lineWidth=.7*u;ellipse(bx,by,r,r,'#ffdaf018','#ffd8ef99');ellipse(bx-r*.3,by-r*.3,r*.22,r*.22,'#fff3f3a0')}g.restore()}
@@ -69,6 +98,62 @@ let crabUntil=0,seahorseUntil=0;
 const ripples=[];
 const sideStones=Array.from({length:20},(_,i)=>({x:i<10?-.74+rand(i+390)*.55:1.23+rand(i+451)*.55,y:.87+rand(i+550)*.16,r:22+rand(i+620)*55,z:.33+rand(i+740)*.67}));
 const starlings=Array.from({length:32},(_,i)=>({x:-.65+rand(i+72)*2.35,y:.19+rand(i+39)*.57,phase:i*.86,z:.2+rand(i+448)*.52}));
+
+function sandFloor(){
+  // The missing continuous seabed: dunes, watercolor-lit sediment and tiny grains.
+  const shoreline=h*.875,pan=camera*.87*Math.min(w*.79,660);
+  function bedY(x){let world=(x-pan)/Math.max(1,w);return shoreline+h*(.010*Math.sin(world*10+1.2)+.005*Math.sin(world*24))}
+  const sand=g.createLinearGradient(0,shoreline-20,0,h);
+  sand.addColorStop(0,'#937083');
+  sand.addColorStop(.28,'#62485f');
+  sand.addColorStop(.65,'#362f47');
+  sand.addColorStop(1,'#1b2134');
+  g.beginPath();g.moveTo(-12,h);g.lineTo(-12,bedY(-12));
+  for(let x=0;x<=w+12;x+=10)g.lineTo(x,bedY(x));
+  g.lineTo(w+12,h);g.closePath();g.fillStyle=sand;g.fill();
+  g.strokeStyle='#eab2bb32';g.lineWidth=1.5;g.stroke();
+  const shimmer=g.createRadialGradient(w*.50,h*.89,0,w*.50,h*.90,w*.7);
+  shimmer.addColorStop(0,'#e6a5c723');shimmer.addColorStop(1,'#d9b2cb00');
+  g.fillStyle=shimmer;g.fillRect(0,shoreline-10,w,h-shoreline+10);
+  for(let i=0;i<90;i++){
+    let x=((rand(i+2200)*w+pan*.46)%w+w)%w, y=shoreline+h*(.018+rand(i+2320)*.106);
+    if(y<bedY(x))continue;
+    const r=.45+rand(i+2460)*1.6;
+    ellipse(x,y,r,r*.48,i%13===0?'#efc4c479':'#bc9dba45');
+  }
+  // Scalloped horizontal sand ripples, deliberately subdued behind the stones.
+  g.save();g.globalAlpha=.22;
+  for(let i=0;i<4;i++){
+    const baseY=shoreline+h*(.042+i*.022);
+    g.beginPath();
+    for(let x=-12;x<=w+12;x+=10){
+      const y=baseY+Math.sin((x-pan)*.021+i*1.7)*3;
+      if(x===-12)g.moveTo(x,y);else g.lineTo(x,y);
+    }
+    g.strokeStyle=i%2?'#e8b4bb':'#8a688d';g.lineWidth=1.3;g.stroke();
+  }
+  g.restore();
+}
+function tinySchool(){
+  // Stillwater's little coordinated school, in one distinct cluster.
+  const u=Math.max(.7,Math.min(w/900,h/740));
+  const cx=viewX(w*(.47+.055*Math.sin(t*.05)),.4),cy=h*(.51+.035*Math.sin(t*.10));
+  for(let i=0;i<25;i++){
+    let a=i*2.399+Math.sin(t*.10+i)*.12;
+    let r=Math.sqrt((i+.6)/25);
+    let x=cx+Math.cos(a)*w*.15*r+Math.sin(t*.4+i)*2.5*u;
+    let y=cy+Math.sin(a)*h*.093*r;
+    let sz=(1.2+rand(i+993)*.63)*u;
+    g.save();g.translate(x,y);g.rotate(Math.sin(t*.19+i)*.08);
+    g.fillStyle=i%5===0?'#f1cadf':'#9adbd0';g.globalAlpha=.42+rand(i+901)*.27;
+    g.beginPath();g.moveTo(6*sz,0);g.quadraticCurveTo(-2*sz,-3*sz,-5*sz,0);
+    g.quadraticCurveTo(-2*sz,3*sz,6*sz,0);g.fill();
+    g.beginPath();g.moveTo(-4*sz,0);
+    g.lineTo(-8*sz,-3*sz);g.lineTo(-8*sz,3*sz);g.closePath();g.fill();
+    g.restore();
+  }
+}
+
 function oceanVeil(){
   g.save();
   for(let k=0;k<5;k++){
@@ -102,7 +187,7 @@ function farGarden(){
 function templeDetails(){
   let u=Math.max(.65,Math.min(w/980,h/750));
   g.save();g.lineCap='round';
-  const spots=[[-.22,.38],[.09,.42],[.83,.36],[1.25,.38]];
+  const spots=[[-.22,.38],[.09,.42],[.83,.42],[1.25,.38]];
   for(let q=0;q<spots.length;q++){
     let x=viewX(w*spots[q][0],spots[q][1]),Y=h*.88;
     g.strokeStyle='#f5c8bc28';g.lineWidth=1.3*u;
@@ -303,7 +388,7 @@ function render(){
   g.setTransform(dpr,0,0,dpr,0,0);
   oceanVeil();rays();glimmers();farGarden();ruins();templeDetails();bubblePlume();
   plants.filter(p=>p.depth<.6).forEach(p=>plant(p,false));
-  youngFish();
+  youngFish();tinySchool();
   fish.filter(f=>f.z<.5).forEach(swimmer);
   for(let i=0;i<30;i++){
     let x=(.08+((i*.173+t*.0018*(.4+(i%4)*.2))%.84))*w,
@@ -318,7 +403,7 @@ function render(){
   jelly.slice().reverse().forEach(medusa);
   if(visitor&&Date.now()<visitorUntil)drawVisitor();else visitor=null;
   fish.filter(f=>f.z>=.5).forEach(swimmer);
-  stones.forEach(rock);sideStones.forEach(rock);seabedLight();
+  sandFloor();seabedLight();stones.forEach(rock);sideStones.forEach(rock);
   stoneStatue();coral();fanCorals();anemones();littleShell();pearl();
   seaStars();tinyCrab();seahorseResident();
   plants.filter(p=>p.depth>=.6).forEach(p=>plant(p,true));
@@ -331,8 +416,8 @@ function render(){
   g.fillStyle=rim;g.fillRect(0,0,w,h*.085);
 }
 function drawVisitor(){let x=viewX(visitor.x*w,.85),y=viewY(visitor.y*h,.85)+Math.sin(t*.7)*4,u=Math.max(.65,Math.min(w/900,h/700));g.save();g.translate(x,y);g.globalAlpha=Math.min(1,(visitorUntil-Date.now())/900);g.shadowColor="#a9e4d7";g.shadowBlur=16*u;g.strokeStyle="#b2d8c5";g.fillStyle="#8fbd9e";g.lineWidth=1.6*u;g.beginPath();g.moveTo(0,10*u);g.bezierCurveTo(-9*u,6*u,-8*u,-3*u,-2*u,-6*u);g.bezierCurveTo(-3*u,-14*u,6*u,-16*u,9*u,-11*u);g.bezierCurveTo(12*u,-7*u,7*u,-2*u,3*u,-4*u);g.bezierCurveTo(12*u,-2*u,11*u,7*u,4*u,10*u);g.bezierCurveTo(3*u,14*u,12*u,13*u,9*u,18*u);g.bezierCurveTo(7*u,21*u,1*u,17*u,4*u,14*u);g.lineTo(-1*u,12*u);g.closePath();g.fill();g.stroke();g.shadowBlur=0;g.fillStyle="#e3f0cf";g.beginPath();g.arc(3*u,-10*u,1.15*u,0,TAU);g.fill();g.strokeStyle="#b2d8c5";g.beginPath();g.moveTo(-2*u,-5*u);g.lineTo(-7*u,-9*u);g.moveTo(-1*u,1*u);g.lineTo(-8*u,4*u);g.stroke();g.restore()}
-function frame(now){if(last&&now-last<29){requestAnimationFrame(frame);return}let dt=last?Math.min((now-last)/1000,.08):0;last=now;if(!paused&&!document.hidden){t+=dt*pace*(mode==='sleep'?.57:1);camera+=(cameraTarget-camera)*Math.min(1,dt*1.2);render()}if(deadline){let left=deadline-Date.now();$('shade').style.opacity=String(Math.max(1-brightness,1-Math.max(0,Math.min(1,left/60000))));if(left<=0){deadline=0;paused=true;pauseUI();$('timer').value='0'}}requestAnimationFrame(frame)}
-function save(){try{localStorage.setItem('pearl-cathedral-v1',JSON.stringify({mode,pace,brightness}))}catch{}}
+function frame(now){if(last&&now-last<29){requestAnimationFrame(frame);return}let dt=last?Math.min((now-last)/1000,.08):0;last=now;if(!paused&&!document.hidden){t+=dt*pace*(mode==='sleep'?.57:1);fishClock+=dt*fishSpeed*(mode==='sleep'?.60:1);camera+=(cameraTarget-camera)*Math.min(1,dt*1.2);render()}if(deadline){let left=deadline-Date.now();$('shade').style.opacity=String(Math.max(1-brightness,1-Math.max(0,Math.min(1,left/60000))));if(left<=0){deadline=0;paused=true;pauseUI();$('timer').value='0'}}requestAnimationFrame(frame)}
+function save(){try{localStorage.setItem('pearl-cathedral-v1',JSON.stringify({mode,pace,brightness,fishSpeed}))}catch{}}
 function setBrightness(){brightness=Number($('brightness').value)/100;$('shade').style.opacity=String(1-brightness);save()}
 function selectMode(next){mode=next;$('study').setAttribute('aria-pressed',String(mode==='study'));$('sleep').setAttribute('aria-pressed',String(mode==='sleep'));brightness=mode==='sleep'?.48:1;$('brightness').value=String(brightness*100);setBrightness();save()}
 function showControls(){document.body.classList.remove('idle');clearTimeout(idleTimer);idleTimer=setTimeout(()=>{if($('settings').hidden&&!$('dock').contains(document.activeElement))document.body.classList.add('idle')},4800)}
@@ -342,7 +427,7 @@ async function fullscreen(){try{if(document.fullscreenElement){await document.ex
 async function acquireWake(){if(!$('awake').checked||document.hidden)return;try{wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}catch{$('awake').checked=false;notify('This browser could not keep the screen awake. Your device’s normal screen timeout will apply.')}}
 $('study').onclick=()=>selectMode('study');$('sleep').onclick=()=>selectMode('sleep');$('pause').onclick=()=>{paused=!paused;pauseUI();if(!paused){deadline=0;$('timer').value='0';setBrightness()}};$('fullscreen').onclick=fullscreen;
 function panel(open){$('settings').hidden=!open;$('options').setAttribute('aria-expanded',String(open));showControls()}
-$('options').onclick=()=>panel($('settings').hidden);$('close').onclick=()=>{panel(false);$('options').focus()};$('brightness').oninput=setBrightness;$('speed').oninput=()=>{pace=Number($('speed').value)/100;save()};$('timer').onchange=()=>{const minutes=Number($('timer').value);deadline=minutes?Date.now()+minutes*60000:0;setBrightness();if(minutes){paused=false;pauseUI();notify(`The aquarium will fade to black in ${minutes} minutes.`)}};$('awake').onchange=async()=>{if($('awake').checked){if('wakeLock'in navigator)await acquireWake();else{$('awake').checked=false;notify('Keep-awake is unavailable in this browser.')}}else if(wakeLock){await wakeLock.release();wakeLock=null}};
+$('options').onclick=()=>panel($('settings').hidden);$('close').onclick=()=>{panel(false);$('options').focus()};$('brightness').oninput=setBrightness;$('speed').oninput=()=>{pace=Number($('speed').value)/100;save()};$('fishSpeed').oninput=()=>{fishSpeed=Number($('fishSpeed').value)/100;$('fishSpeedLabel').textContent=fishSpeed.toFixed(1)+'×';save()};$('timer').onchange=()=>{const minutes=Number($('timer').value);deadline=minutes?Date.now()+minutes*60000:0;setBrightness();if(minutes){paused=false;pauseUI();notify(`The aquarium will fade to black in ${minutes} minutes.`)}};$('awake').onchange=async()=>{if($('awake').checked){if('wakeLock'in navigator)await acquireWake();else{$('awake').checked=false;notify('Keep-awake is unavailable in this browser.')}}else if(wakeLock){await wakeLock.release();wakeLock=null}};
 document.addEventListener('visibilitychange',()=>{last=0;if(!document.hidden)acquireWake()});document.addEventListener('fullscreenchange',()=>{$('fullscreen').setAttribute('aria-label',document.fullscreenElement?'Exit fullscreen':'Enter fullscreen');showControls()});document.addEventListener('pointermove',showControls,{passive:true});document.addEventListener('pointerdown',showControls,{passive:true});document.addEventListener('keydown',e=>{showControls();if(e.target.matches('input,select,button'))return;if(e.code==='Space'){e.preventDefault();$('pause').click()}if(e.key.toLowerCase()==='f')fullscreen();if(e.key==='Escape')panel(false)});$('dock').addEventListener('pointerup',e=>{const button=e.target.closest('button');if(button)setTimeout(()=>button.blur(),0)});window.addEventListener('resize',resize,{passive:true});c.style.touchAction='none';
 c.addEventListener('pointerdown',e=>{dragStart={x:e.clientX,y:e.clientY,target:cameraTarget,moved:false};c.setPointerCapture(e.pointerId)});
 c.addEventListener('pointermove',e=>{if(dragStart){let dx=e.clientX-dragStart.x;if(Math.abs(dx)>8||Math.abs(e.clientY-dragStart.y)>10)dragStart.moved=true;cameraTarget=Math.max(-1.8,Math.min(1.8,dragStart.target+dx/Math.max(110,w*.37)));if(paused){camera=cameraTarget;render()}}else if(e.pointerType==='mouse'){cameraTarget=Math.max(-1.8,Math.min(1.8,(e.clientX/w-.5)*2.7))}});
@@ -374,7 +459,7 @@ c.addEventListener('pointerup',e=>{
   dragStart=null;showControls();
 });
 c.addEventListener('pointercancel',()=>{dragStart=null});
-try{const s=JSON.parse(localStorage.getItem('rose-below-v1')||'null');if(s){selectMode(s.mode==='sleep'?'sleep':'study');pace=Number.isFinite(s.pace)?Math.max(.15,Math.min(1,s.pace)):.65;brightness=Number.isFinite(s.brightness)?Math.max(.15,Math.min(1,s.brightness)):1;$('speed').value=String(pace*100);$('brightness').value=String(brightness*100);setBrightness()}}catch{}
+try{const s=JSON.parse(localStorage.getItem('rose-below-v1')||'null');if(s){selectMode(s.mode==='sleep'?'sleep':'study');pace=Number.isFinite(s.pace)?Math.max(.15,Math.min(1,s.pace)):.65;brightness=Number.isFinite(s.brightness)?Math.max(.15,Math.min(1,s.brightness)):1;fishSpeed=Number.isFinite(s.fishSpeed)?Math.max(.5,Math.min(4,s.fishSpeed)):2;$('fishSpeed').value=String(Math.round(fishSpeed*100));$('fishSpeedLabel').textContent=fishSpeed.toFixed(1)+'×';$('speed').value=String(pace*100);$('brightness').value=String(brightness*100);setBrightness()}}catch{}
 pauseUI();resize();showControls();requestAnimationFrame(frame);
 })();
 </script></body></html>
