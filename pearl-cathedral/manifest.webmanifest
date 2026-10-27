@@ -1,0 +1,18 @@
+{
+  "name": "The Pearl Cathedral — an underwater sanctuary",
+  "short_name": "Pearl Cathedral",
+  "description": "A tranquil, explorable rose-lit underwater sanctuary grown from three living aquariums.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#160d26",
+  "theme_color": "#1c102b",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
