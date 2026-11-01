@@ -264,21 +264,19 @@ star("magical star (wrist driven)",(.91,-.02,1.64),.19,.084,moon,"Hand.R")
 ellipse("star central jewel",(.91,-.068,1.64),(.045,.037,.045),gold,"Hand.R",12)
 
 # A graphic, architecturally interesting stage to show the 3D lighting.
-cyl("black stage plinth",(0,0,.02),(0,0,.105),1.5,stone,32)
-cyl("brass plinth edge",(0,0,.115),(0,0,.143),1.48,gold,32)
-for z,r in [(1.30,1.19),(2.05,1.14),(2.85,1.18)]:
-    pass
+cyl("black stage plinth",(0,0,.02),(0,0,.105),1.5,stone,vertices=32)
+cyl("brass plinth edge",(0,0,.115),(0,0,.143),1.48,gold,vertices=32)
 for a in [0,.25*math.pi,.50*math.pi,.75*math.pi,math.pi,1.25*math.pi,1.5*math.pi,1.75*math.pi]:
     x=1.25*math.cos(a)
     y=.80+1.25*math.sin(a)
-    cyl("floating architectural pillar", (x,y,.28),(x,y,3.68),.026,gold,12)
+    cyl("floating architectural pillar", (x,y,.28),(x,y,3.68),.026,gold,vertices=12)
 # A luminous ring behind the character, made from many small 3D tubes.
 for i in range(32):
     a=2*math.pi*i/32
     b=2*math.pi*(i+1)/32
     p=(1.28*math.cos(a),.83,2.09+1.39*math.sin(a))
     q=(1.28*math.cos(b),.83,2.09+1.39*math.sin(b))
-    cyl("celestial halo segment",p,q,.014,gold,8)
+    cyl("celestial halo segment",p,q,.014,gold,vertices=8)
 random.seed(11)
 for i in range(28):
     a=random.uniform(0,2*math.pi)
