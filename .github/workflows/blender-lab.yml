@@ -1,0 +1,44 @@
+name: Blender Lab — first moving character
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'blender_lab/scene.py'
+      - '.github/workflows/blender-lab.yml'
+permissions:
+  contents: write
+jobs:
+  first-motion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Install Blender and FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender ffmpeg
+          blender --version | head -2
+      - name: Build rig, save scene, render 24 frames
+        run: blender --background --factory-startup --python-exit-code 1 --python blender_lab/scene.py
+      - name: Create MP4
+        run: |
+          ffmpeg -y -framerate 12 -i blender_lab/output/frames/frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 22 -movflags +faststart blender_lab/output/first_motion.mp4
+      - name: Save downloadable Blender project, video, still
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-lab-first-motion
+          path: |
+            blender_lab/output/first_motion.blend
+            blender_lab/output/first_motion.mp4
+            blender_lab/output/poster.png
+          retention-days: 30
+      - name: Publish preview to GitHub repository
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add blender_lab/output/first_motion.mp4 blender_lab/output/poster.png
+          git commit -m 'Render Blender lab preview [skip ci]' || exit 0
+          git pull --rebase origin main
+          git push
