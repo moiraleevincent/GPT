@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#141520">
+<title>The Star Keeper · Character Lab</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;color:#f4e6da;background:radial-gradient(ellipse at 30% 0,#3c2b49 0,#191725 46%,#0a1018 100%);font-family:system-ui,-apple-system,sans-serif}
+main{width:min(94%,980px);margin:0 auto;padding:30px 0 72px}
+.kicker{font-size:11px;letter-spacing:.24em;color:#c5a1a0;text-transform:uppercase;font-weight:700}
+h1{font:normal clamp(3.4rem,11vw,7rem)/1.03 Georgia,serif;letter-spacing:-.065em;margin:12px 0 16px}
+h1 em{font-style:normal;color:#d5a65f}p{color:#c1bdc8;line-height:1.7}
+.intro{max-width:610px;font-size:15px}
+.stage{max-width:580px;margin:26px auto 18px;padding:12px;background:linear-gradient(140deg,#302b3c,#121721);border:1px solid #97817155;border-radius:23px;box-shadow:0 25px 70px #0008;position:relative}
+video{display:block;width:100%;aspect-ratio:4/5;object-fit:contain;background:#14141d;border-radius:15px}
+.stamp{position:absolute;top:27px;left:27px;font-size:10px;letter-spacing:.13em;color:#fff8e4c9;background:#201a2fbe;padding:9px 12px;border:1px solid #b6a08a55;border-radius:99px}
+.controls{display:flex;align-items:center;gap:12px;max-width:580px;margin:0 auto 8px}
+button,select{background:#392d43;color:#fff0db;border:1px solid #796d7a;border-radius:22px;padding:11px 15px;cursor:pointer}
+button{min-width:81px}input[type=range]{flex:1;accent-color:#d5a65f;min-width:35px}select{min-width:72px}
+.status{text-align:center;font-size:12px;min-height:26px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:28px 0 18px}
+.card{border:1px solid #96849641;background:#29253686;border-radius:15px;padding:16px}
+.card b{display:block;color:#e2b17a;margin-bottom:7px}
+.card span{display:block;font-size:12px;color:#c1bdc8;line-height:1.65}
+h2{font:normal 32px Georgia,serif;margin:42px 0 15px}
+a{color:#f8d297;text-underline-offset:4px}
+.links{display:flex;gap:14px;flex-wrap:wrap;padding:16px 0}
+footer{padding-top:18px;margin-top:38px;border-top:1px solid #9084994c;font-size:12px;color:#aeabb8}
+@media(max-width:650px){.cards{grid-template-columns:1fr}.stage{margin-top:20px}}
+</style></head><body><main>
+<div class="kicker">A procedural Blender experiment · Character 001</div>
+<h1>The <em>Star Keeper</em>.</h1>
+<p class="intro">A little night-sky sorceress, built entirely with Python inside Blender: shaped from connected geometry, given an articulated skeleton, dressed, lit and animated. Tap play to see her summon a star.</p>
+<section class="stage" aria-label="3D animation"><div class="stamp">MADE WITH BLENDER · ACTUAL 3D</div><video id="movie" poster="output/poster.png" playsinline autoplay muted loop controls preload="metadata"><source src="output/star_keeper.mp4" type="video/mp4"></video></section>
+<div class="controls"><button id="toggle">Pause</button><input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Animation position"><select id="speed" aria-label="Playback speed"><option value=".5">½×</option><option value="1" selected>1×</option><option value="2">2×</option></select></div>
+<p id="status" class="status">Loading the rendered animation…</p>
+<h2>Under the costume</h2>
+<div class="cards">
+<div class="card"><b>Connected geometry</b><span>Continuous rings of polygons at elbows and knees, with extra loops around the bends.</span></div>
+<div class="card"><b>Actual armature</b><span>Separate bones for the shoulders, forearms, hands, thighs and shins, with blended influence at joints.</span></div>
+<div class="card"><b>Procedural details</b><span>A custom silhouette, face, hair, velvet clothes, sculptural stage, celestial halo and cinematic lights.</span></div>
+</div>
+<h2>The files</h2>
+<p>This is a real editable Blender scene, not an image-generation video. You can inspect the geometry, bones and keyframes.</p>
+<div class="links"><a href="output/star_keeper.mp4">Watch MP4</a><a href="output/poster.png">Open still image</a><a href="https://github.com/moiraleevincent/GPT/actions/workflows/character-lab.yml">Get editable .blend from GitHub Actions</a><a href="https://github.com/moiraleevincent/GPT/blob/main/character_lab/scene.py">Inspect Python source</a></div>
+<footer>Character Lab · Our first proper procedural 3D character. Built as a foundation for more ambitious artwork.</footer>
+</main><script>
+const v=document.querySelector("#movie"),b=document.querySelector("#toggle"),s=document.querySelector("#scrub"),r=document.querySelector("#speed"),t=document.querySelector("#status");
+b.onclick=()=>v.paused?v.play():v.pause();
+v.onpause=()=>b.textContent="Play";v.onplay=()=>b.textContent="Pause";
+v.ontimeupdate=()=>{if(v.duration)s.value=v.currentTime/v.duration*1000};
+s.oninput=()=>{if(v.duration)v.currentTime=s.value/1000*v.duration};
+r.onchange=()=>v.playbackRate=Number(r.value);
+v.onloadeddata=()=>t.textContent="Rendered by Blender on GitHub Actions";
+v.onerror=()=>t.textContent="Video is still being published; check the render run on GitHub.";
+</script></body></html>
