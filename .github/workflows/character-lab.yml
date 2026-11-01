@@ -1,0 +1,47 @@
+name: Character Lab — render Star Keeper
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'character_lab/scene.py'
+      - '.github/workflows/character-lab.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Blender and FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y blender ffmpeg
+          blender -v | head -2
+      - name: Procedurally model, rig and render Star Keeper
+        run: blender -b -t 4 --factory-startup --python-exit-code 1 --python character_lab/scene.py
+      - name: Assemble animation
+        run: |
+          ffmpeg -y -framerate 12 -i character_lab/output/frames/frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 20 -movflags +faststart character_lab/output/star_keeper.mp4
+      - name: Publish editable Blender project and previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: star-keeper-3d-character
+          path: |
+            character_lab/output/star_keeper.blend
+            character_lab/output/poster.png
+            character_lab/output/star_keeper.mp4
+          retention-days: 30
+      - name: Put video and poster in repository for website
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add character_lab/output/poster.png character_lab/output/star_keeper.mp4
+          git commit -m "Publish Star Keeper render [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
