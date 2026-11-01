@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>First Motion · Blender Lab</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% -10%,#364d62 0,#18212e 40%,#0c1119 90%);color:#f4e6d0;font-family:system-ui,-apple-system,Arial,sans-serif;min-height:100vh}
+main{max-width:760px;margin:auto;padding:28px 16px 70px}
+small{color:#eac08c;letter-spacing:.24em;text-transform:uppercase;font-size:10px;font-weight:bold}
+h1{font:normal clamp(42px,9vw,72px) Georgia,serif;letter-spacing:-.05em;margin:12px 0}
+p{color:#becad3;line-height:1.65;font-size:14px}a{color:#ffce96}
+.stage{max-width:510px;margin:30px auto 14px;padding:12px;background:#1b2633;border:1px solid #66717e70;border-radius:22px;box-shadow:0 22px 60px #0008}
+video{width:100%;display:block;border-radius:13px;background:#e9dbbf;aspect-ratio:6/7;object-fit:cover}
+.controls{max-width:510px;margin:auto;display:flex;align-items:center;gap:12px;background:#1b2633;border:1px solid #59677375;border-radius:16px;padding:12px}
+button,select{padding:10px;border:1px solid #8190a266;background:#34495b;color:#ffecd3;border-radius:20px;cursor:pointer}input{flex:1;min-width:20px;accent-color:#ddb17b}
+h2{font:normal 30px Georgia,serif;margin:40px 0 15px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{padding:16px;background:#1b2735;border-radius:14px;border:1px solid #4f657844}
+.stat b{display:block;color:#e8b877;margin-bottom:7px}.stat span{font-size:12px;line-height:1.5;color:#becad3}
+.status{font-size:12px;text-align:center}footer{border-top:1px solid #65788b55;margin-top:45px;padding-top:20px}
+@media(max-width:520px){.stats{grid-template-columns:1fr}}
+</style></head><body><main>
+<small>Blender Lab · Experiment 001</small><h1>First Motion.</h1>
+<p>A tiny articulated puppet, made from actual Blender geometry and bones. The shoulder and elbow rotate independently, and Blender paints the in-between motion.</p>
+<div class="stage"><video id="movie" muted autoplay loop playsinline controls poster="output/poster.png"><source src="output/first_motion.mp4" type="video/mp4"></video></div>
+<p id="status" class="status">Loading the render…</p>
+<div class="controls"><button id="toggle" type="button">Pause</button><input id="seek" type="range" min="0" max="1000" value="0" aria-label="Animation timeline"><select id="speed"><option value=".5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></div>
+<h2>What is moving?</h2>
+<div class="stats"><div class="stat"><b>11 bones</b><span>A connected rig for the spine, head, arms and legs.</span></div><div class="stat"><b>7 key poses</b><span>Blender calculates the motion between our chosen poses.</span></div><div class="stat"><b>Editable</b><span>The .blend file contains meshes, bones, materials and animation keys.</span></div></div>
+<footer><p><a href="output/first_motion.mp4">Watch MP4</a> · <a href="output/poster.png">View still</a> · <a href="output/first_motion.blend">Blender scene</a> · <a href="https://github.com/moiraleevincent/GPT/tree/main/blender_lab">Source code</a></p><p>This is a technical test before we attempt the body silhouette we've been drawing together.</p></footer>
+</main><script>
+const v=document.querySelector('#movie'),b=document.querySelector('#toggle'),s=document.querySelector('#seek'),d=document.querySelector('#speed'),t=document.querySelector('#status');
+b.onclick=()=>v.paused?v.play():v.pause();
+v.onplay=()=>b.textContent='Pause';v.onpause=()=>b.textContent='Play';
+v.ontimeupdate=()=>{if(v.duration)s.value=v.currentTime/v.duration*1000};
+s.oninput=()=>{if(v.duration)v.currentTime=s.value/1000*v.duration};
+d.onchange=()=>v.playbackRate=Number(d.value);
+v.onloadeddata=()=>t.textContent='Rendered with Blender via GitHub Actions';
+v.onerror=()=>t.textContent='Preview not published yet. Check the GitHub Actions run.';
+</script></body></html>
