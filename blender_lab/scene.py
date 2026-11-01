@@ -16,6 +16,11 @@ bpy.ops.object.delete(use_global=False)
 s=bpy.context.scene
 s.render.engine="CYCLES"
 s.cycles.samples=8
+# Ubuntu package can lack OpenImageDenoiser; render without denoising.
+if hasattr(s.cycles, "use_denoising"):
+    s.cycles.use_denoising=False
+if hasattr(bpy.context.view_layer.cycles, "use_denoising"):
+    bpy.context.view_layer.cycles.use_denoising=False
 s.render.resolution_x=480
 s.render.resolution_y=560
 s.render.resolution_percentage=100
