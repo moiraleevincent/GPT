@@ -266,10 +266,9 @@ ellipse("star central jewel",(.91,-.068,1.64),(.045,.037,.045),gold,"Hand.R",12)
 # A graphic, architecturally interesting stage to show the 3D lighting.
 cyl("black stage plinth",(0,0,.02),(0,0,.105),1.5,stone,vertices=32)
 cyl("brass plinth edge",(0,0,.115),(0,0,.143),1.48,gold,vertices=32)
-for a in [0,.25*math.pi,.50*math.pi,.75*math.pi,math.pi,1.25*math.pi,1.5*math.pi,1.75*math.pi]:
-    x=1.25*math.cos(a)
-    y=.80+1.25*math.sin(a)
-    cyl("floating architectural pillar", (x,y,.28),(x,y,3.68),.026,gold,vertices=12)
+# Pillars deliberately behind the character, never crossing the face.
+for i,(x,y) in enumerate([(-1.56,1.16),(-1.34,1.32),(1.34,1.32),(1.56,1.16)]):
+    cyl("background pillar %d"%i, (x,y,.28),(x,y,3.68),.019,gold,vertices=12)
 # A luminous ring behind the character, made from many small 3D tubes.
 for i in range(32):
     a=2*math.pi*i/32
