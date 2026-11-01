@@ -1,0 +1,47 @@
+name: Publish Blender Lab viewer to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "blender_lab/index.html"
+      - "blender_lab/output/first_motion.mp4"
+      - "blender_lab/output/poster.png"
+      - ".github/workflows/blender-pages.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Assemble the Blender viewer site
+        run: |
+          mkdir -p site/blender_lab/output
+          cp blender_lab/index.html site/blender_lab/index.html
+          cp blender_lab/output/first_motion.mp4 site/blender_lab/output/
+          cp blender_lab/output/poster.png site/blender_lab/output/
+          printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=blender_lab/"><title>Blender Lab</title></head><body><p><a href="blender_lab/">Open Blender Lab</a></p></body></html>' > site/index.html
+          touch site/.nojekyll
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
