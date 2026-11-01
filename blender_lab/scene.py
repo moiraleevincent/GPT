@@ -15,7 +15,7 @@ bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.delete(use_global=False)
 s=bpy.context.scene
 s.render.engine="CYCLES"
-s.cycles.samples=8
+s.cycles.samples=24
 # Ubuntu package can lack OpenImageDenoiser; render without denoising.
 if hasattr(s.cycles, "use_denoising"):
     s.cycles.use_denoising=False
@@ -92,6 +92,12 @@ bpy.ops.object.mode_set(mode="OBJECT")
 rig.show_in_front=True
 
 def attach(o,bn):
+    # Place every mesh vertex in the same rest-space coordinate system as the rig.
+    # Without this, bone motion can displace limbs away from their joints.
+    bpy.ops.object.select_all(action="DESELECT")
+    o.select_set(True)
+    bpy.context.view_layer.objects.active=o
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     # Real vertex groups and an armature modifier, not pre-rendered frame swapping.
     g=o.vertex_groups.new(name=bn)
     g.add(list(range(len(o.data.vertices))),1,"REPLACE")
@@ -170,7 +176,9 @@ bpy.context.view_layer.objects.active=rig
 s.render.filepath=str(FRAMES/"frame_")
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/"first_motion.blend"))
 s.render.filepath=str(OUT/"poster.png")
+s.cycles.samples=64
 bpy.ops.render.render(write_still=True)
+s.cycles.samples=24
 s.render.filepath=str(FRAMES/"frame_")
 bpy.ops.render.render(animation=True)
 print("BLENDER_SMOKE_TEST_SUCCESS",OUT)
