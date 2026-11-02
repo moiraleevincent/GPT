@@ -1,0 +1,138 @@
+[
+  {
+    "id": 0,
+    "speaker": "M",
+    "text": "The tide was early again.",
+    "file": "audio/00.wav",
+    "duration": 2.975,
+    "pause": 0.55
+  },
+  {
+    "id": 1,
+    "speaker": "M",
+    "text": "It left a letter on the steps.",
+    "file": "audio/01.wav",
+    "duration": 3.35,
+    "pause": 1.05
+  },
+  {
+    "id": 2,
+    "speaker": "R",
+    "text": "That one is addressed to the sea.",
+    "file": "audio/02.wav",
+    "duration": 2.725,
+    "pause": 0.55
+  },
+  {
+    "id": 3,
+    "speaker": "M",
+    "text": "Everything here is addressed to the sea.",
+    "file": "audio/03.wav",
+    "duration": 4.225,
+    "pause": 0.55
+  },
+  {
+    "id": 4,
+    "speaker": "R",
+    "text": "Most people use a bottle.",
+    "file": "audio/04.wav",
+    "duration": 2.55,
+    "pause": 0.55
+  },
+  {
+    "id": 5,
+    "speaker": "M",
+    "text": "Most people have never met the sea.",
+    "file": "audio/05.wav",
+    "duration": 3.65,
+    "pause": 0.55
+  },
+  {
+    "id": 6,
+    "speaker": "R",
+    "text": "Is it going to answer?",
+    "file": "audio/06.wav",
+    "duration": 2.175,
+    "pause": 1.05
+  },
+  {
+    "id": 7,
+    "speaker": "M",
+    "text": "It already did.",
+    "file": "audio/07.wav",
+    "duration": 2.25,
+    "pause": 0.55
+  },
+  {
+    "id": 8,
+    "speaker": "M",
+    "text": "Look. The ink has come back.",
+    "file": "audio/08.wav",
+    "duration": 2.925,
+    "pause": 1.05
+  },
+  {
+    "id": 9,
+    "speaker": "R",
+    "text": "What does it say?",
+    "file": "audio/09.wav",
+    "duration": 1.9,
+    "pause": 0.55
+  },
+  {
+    "id": 10,
+    "speaker": "M",
+    "text": "It says: I remember the blue coat.",
+    "file": "audio/10.wav",
+    "duration": 3.975,
+    "pause": 0.55
+  },
+  {
+    "id": 11,
+    "speaker": "R",
+    "text": "That is all?",
+    "file": "audio/11.wav",
+    "duration": 1.675,
+    "pause": 0.55
+  },
+  {
+    "id": 12,
+    "speaker": "M",
+    "text": "Sometimes that is enough.",
+    "file": "audio/12.wav",
+    "duration": 3.05,
+    "pause": 1.05
+  },
+  {
+    "id": 13,
+    "speaker": "R",
+    "text": "Can I leave mine too?",
+    "file": "audio/13.wav",
+    "duration": 2.175,
+    "pause": 0.55
+  },
+  {
+    "id": 14,
+    "speaker": "M",
+    "text": "You can. But you have to let it go.",
+    "file": "audio/14.wav",
+    "duration": 3.8,
+    "pause": 0.55
+  },
+  {
+    "id": 15,
+    "speaker": "R",
+    "text": "I think I can do that.",
+    "file": "audio/15.wav",
+    "duration": 2.25,
+    "pause": 1.05
+  },
+  {
+    "id": 16,
+    "speaker": "M",
+    "text": "Then put it where the water can reach.",
+    "file": "audio/16.wav",
+    "duration": 3.55,
+    "pause": 0.55
+  }
+]
