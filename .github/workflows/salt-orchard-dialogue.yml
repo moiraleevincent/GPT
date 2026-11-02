@@ -1,0 +1,27 @@
+name: Record The Salt Orchard
+on:
+  push:
+    paths: ['salt_orchard/voices.py', '.github/workflows/salt-orchard-dialogue.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg espeak-ng
+      - run: pip install kokoro soundfile numpy scipy
+      - run: python salt_orchard/voices.py
+        env:
+          OMP_NUM_THREADS: '2'
+      - run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add salt_orchard/sound.mp3 salt_orchard/timing.json
+          git commit -m 'Publish Salt Orchard score and Kokoro performances [skip ci]'
+          git pull --rebase origin main
+          git push
