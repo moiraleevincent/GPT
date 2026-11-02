@@ -1,0 +1,37 @@
+name: Render The Tide Post
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lantern_post/generate.py'
+      - '.github/workflows/tide-post.yml'
+permissions:
+  contents: write
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install voice dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y espeak-ng
+          pip install kokoro soundfile numpy
+      - name: Render voices
+        run: python lantern_post/generate.py
+      - name: Verify and publish
+        run: |
+          test -s lantern_post/manifest.json
+          test -s lantern_post/audio/00.wav
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lantern_post/audio lantern_post/manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Render The Tide Post voices [skip ci]'
+            git pull --rebase origin main
+            git push
+          fi
