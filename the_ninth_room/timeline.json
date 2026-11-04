@@ -1,0 +1,189 @@
+{
+  "duration": 155.1,
+  "shots": [
+    {
+      "scene": "title",
+      "duration": 5.2,
+      "chapter": "A FILM IN THREE INCONVENIENT PARTS",
+      "start": 0.0,
+      "end": 5.2
+    },
+    {
+      "scene": "facade",
+      "duration": 8,
+      "speaker": "NARRATOR",
+      "text": "At the Hotel Bellwether, the guest register was always perfectly accurate.",
+      "audio": "audio/line_01.wav",
+      "speech_at": 6.05,
+      "speech_duration": 5.8,
+      "start": 5.2,
+      "end": 13.2
+    },
+    {
+      "scene": "lobby",
+      "duration": 9,
+      "speaker": "FELIX",
+      "text": "Mrs. Vale. I've counted the rooms three times.",
+      "audio": "audio/line_02.wav",
+      "speech_at": 14.05,
+      "speech_duration": 3.075,
+      "start": 13.2,
+      "end": 22.2
+    },
+    {
+      "scene": "lobby",
+      "duration": 7.2,
+      "speaker": "VALE",
+      "text": "And have you found them?",
+      "audio": "audio/line_03.wav",
+      "speech_at": 23.05,
+      "speech_duration": 1.825,
+      "start": 22.2,
+      "end": 29.4
+    },
+    {
+      "scene": "keys",
+      "duration": 8,
+      "speaker": "FELIX",
+      "text": "Eight rooms. Nine keys.",
+      "audio": "audio/line_04.wav",
+      "speech_at": 30.25,
+      "speech_duration": 2.225,
+      "start": 29.4,
+      "end": 37.4
+    },
+    {
+      "scene": "keys",
+      "duration": 7.5,
+      "speaker": "VALE",
+      "text": "Then one of them is late.",
+      "audio": "audio/line_05.wav",
+      "speech_at": 38.25,
+      "speech_duration": 2.0,
+      "start": 37.4,
+      "end": 44.9
+    },
+    {
+      "scene": "dining",
+      "duration": 8.6,
+      "speaker": "FELIX",
+      "text": "There are nine places set for dinner.",
+      "audio": "audio/line_06.wav",
+      "speech_at": 45.75,
+      "speech_duration": 2.625,
+      "start": 44.9,
+      "end": 53.5
+    },
+    {
+      "scene": "dining",
+      "duration": 8,
+      "speaker": "VALE",
+      "text": "We make an effort with our guests.",
+      "audio": "audio/line_07.wav",
+      "speech_at": 54.35,
+      "speech_duration": 2.3,
+      "start": 53.5,
+      "end": 61.5
+    },
+    {
+      "scene": "ledger",
+      "duration": 9.2,
+      "speaker": "FELIX",
+      "text": "The ninth signature. That's my name.",
+      "audio": "audio/line_08.wav",
+      "speech_at": 62.35,
+      "speech_duration": 2.675,
+      "start": 61.5,
+      "end": 70.7
+    },
+    {
+      "scene": "ledger",
+      "duration": 7.5,
+      "speaker": "VALE",
+      "text": "Your handwriting is excellent.",
+      "audio": "audio/line_09.wav",
+      "speech_at": 71.55,
+      "speech_duration": 2.35,
+      "start": 70.7,
+      "end": 78.2
+    },
+    {
+      "scene": "corridor",
+      "duration": 10.5,
+      "start": 78.2,
+      "end": 88.7
+    },
+    {
+      "scene": "door",
+      "duration": 8.6,
+      "speaker": "FELIX",
+      "text": "That door wasn't there yesterday.",
+      "audio": "audio/line_11.wav",
+      "speech_at": 89.55,
+      "speech_duration": 2.475,
+      "start": 88.7,
+      "end": 97.3
+    },
+    {
+      "scene": "door",
+      "duration": 8.5,
+      "speaker": "VALE",
+      "text": "It doesn't like to be noticed before midnight.",
+      "audio": "audio/line_12.wav",
+      "speech_at": 98.15,
+      "speech_duration": 3.125,
+      "start": 97.3,
+      "end": 105.8
+    },
+    {
+      "scene": "room",
+      "duration": 10.5,
+      "speaker": "FELIX",
+      "text": "That's my coat. I wore that to work.",
+      "audio": "audio/line_13.wav",
+      "speech_at": 106.65,
+      "speech_duration": 2.65,
+      "start": 105.8,
+      "end": 116.3
+    },
+    {
+      "scene": "mirror",
+      "duration": 10.5,
+      "speaker": "VALE",
+      "text": "You weren't hired, Mr. Ward. You arrived.",
+      "audio": "audio/line_14.wav",
+      "speech_at": 117.15,
+      "speech_duration": 3.05,
+      "start": 116.3,
+      "end": 126.8
+    },
+    {
+      "scene": "ledger_final",
+      "duration": 9.7,
+      "start": 126.8,
+      "end": 136.5
+    },
+    {
+      "scene": "facade_final",
+      "duration": 10.8,
+      "speaker": "NARRATOR",
+      "text": "In the morning, the hotel had eight rooms. As it always had.",
+      "audio": "audio/line_16.wav",
+      "speech_at": 137.35,
+      "speech_duration": 4.8,
+      "start": 136.5,
+      "end": 147.3
+    },
+    {
+      "scene": "end",
+      "duration": 7.8,
+      "speaker": "VALE",
+      "text": "Good night, Mr. Ward.",
+      "audio": "audio/line_17.wav",
+      "speech_at": 148.15,
+      "speech_duration": 2.225,
+      "start": 147.3,
+      "end": 155.1
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+[
+  {
+    "id": "line_01",
+    "speaker": "NARRATOR",
+    "text": "At the Hotel Bellwether, the guest register was always perfectly accurate.",
+    "voice": "am_michael",
+    "speed": 0.93,
+    "file": "audio/line_01.wav",
+    "duration": 5.8,
+    "start": 6.05
+  },
+  {
+    "id": "line_02",
+    "speaker": "FELIX",
+    "text": "Mrs. Vale. I've counted the rooms three times.",
+    "voice": "am_eric",
+    "speed": 0.98,
+    "file": "audio/line_02.wav",
+    "duration": 3.075,
+    "start": 14.05
+  },
+  {
+    "id": "line_03",
+    "speaker": "VALE",
+    "text": "And have you found them?",
+    "voice": "af_kore",
+    "speed": 0.93,
+    "file": "audio/line_03.wav",
+    "duration": 1.825,
+    "start": 23.05
+  },
+  {
+    "id": "line_04",
+    "speaker": "FELIX",
+    "text": "Eight rooms. Nine keys.",
+    "voice": "am_eric",
+    "speed": 0.96,
+    "file": "audio/line_04.wav",
+    "duration": 2.225,
+    "start": 30.25
+  },
+  {
+    "id": "line_05",
+    "speaker": "VALE",
+    "text": "Then one of them is late.",
+    "voice": "af_kore",
+    "speed": 0.91,
+    "file": "audio/line_05.wav",
+    "duration": 2.0,
+    "start": 38.25
+  },
+  {
+    "id": "line_06",
+    "speaker": "FELIX",
+    "text": "There are nine places set for dinner.",
+    "voice": "am_eric",
+    "speed": 0.95,
+    "file": "audio/line_06.wav",
+    "duration": 2.625,
+    "start": 45.75
+  },
+  {
+    "id": "line_07",
+    "speaker": "VALE",
+    "text": "We make an effort with our guests.",
+    "voice": "af_kore",
+    "speed": 0.94,
+    "file": "audio/line_07.wav",
+    "duration": 2.3,
+    "start": 54.35
+  },
+  {
+    "id": "line_08",
+    "speaker": "FELIX",
+    "text": "The ninth signature. That's my name.",
+    "voice": "am_eric",
+    "speed": 0.95,
+    "file": "audio/line_08.wav",
+    "duration": 2.675,
+    "start": 62.35
+  },
+  {
+    "id": "line_09",
+    "speaker": "VALE",
+    "text": "Your handwriting is excellent.",
+    "voice": "af_kore",
+    "speed": 0.91,
+    "file": "audio/line_09.wav",
+    "duration": 2.35,
+    "start": 71.55
+  },
+  {
+    "id": "line_11",
+    "speaker": "FELIX",
+    "text": "That door wasn't there yesterday.",
+    "voice": "am_eric",
+    "speed": 0.96,
+    "file": "audio/line_11.wav",
+    "duration": 2.475,
+    "start": 89.55
+  },
+  {
+    "id": "line_12",
+    "speaker": "VALE",
+    "text": "It doesn't like to be noticed before midnight.",
+    "voice": "af_kore",
+    "speed": 0.9,
+    "file": "audio/line_12.wav",
+    "duration": 3.125,
+    "start": 98.15
+  },
+  {
+    "id": "line_13",
+    "speaker": "FELIX",
+    "text": "That's my coat. I wore that to work.",
+    "voice": "am_eric",
+    "speed": 0.95,
+    "file": "audio/line_13.wav",
+    "duration": 2.65,
+    "start": 106.65
+  },
+  {
+    "id": "line_14",
+    "speaker": "VALE",
+    "text": "You weren't hired, Mr. Ward. You arrived.",
+    "voice": "af_kore",
+    "speed": 0.9,
+    "file": "audio/line_14.wav",
+    "duration": 3.05,
+    "start": 117.15
+  },
+  {
+    "id": "line_16",
+    "speaker": "NARRATOR",
+    "text": "In the morning, the hotel had eight rooms. As it always had.",
+    "voice": "am_michael",
+    "speed": 0.91,
+    "file": "audio/line_16.wav",
+    "duration": 4.8,
+    "start": 137.35
+  },
+  {
+    "id": "line_17",
+    "speaker": "VALE",
+    "text": "Good night, Mr. Ward.",
+    "voice": "af_kore",
+    "speed": 0.82,
+    "file": "audio/line_17.wav",
+    "duration": 2.225,
+    "start": 148.15
+  }
+]
