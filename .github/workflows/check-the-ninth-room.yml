@@ -1,0 +1,28 @@
+name: Check The Ninth Room film
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "the_ninth_room/film.js"
+      - "the_ninth_room/index.html"
+      - "the_ninth_room/script.json"
+      - ".github/workflows/check-the-ninth-room.yml"
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax check
+        run: node --check the_ninth_room/film.js
+      - name: Validate screenplay and shot schema
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path('the_ninth_room/script.json').read_text())
+          assert len(s)>=10
+          assert all('scene' in x and 'duration' in x for x in s)
+          assert all(float(x['duration'])>0 for x in s)
+          assert Path('the_ninth_room/index.html').exists()
+          print(len(s),'shots validated')
+          PY
