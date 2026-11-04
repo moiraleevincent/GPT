@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111719">
+<title>The Ninth Room — an original animated horror short</title>
+<style>
+:root{color-scheme:dark;--cream:#f3e5c9;--ink:#12191b;--muted:#98a7a1;--brass:#d9ae65}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#0b1012;color:var(--cream);font-family:Georgia,"Times New Roman",serif}
+body{display:flex;align-items:center;justify-content:center;padding:clamp(8px,2vw,30px)}
+main{width:min(100%,1190px)}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 2px 12px}
+.top .name{font-size:clamp(16px,2vw,25px);letter-spacing:.16em;text-transform:uppercase}
+.top .type{font:10px/1.4 ui-sans-serif,system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#97a69f}
+.frame{position:relative;width:100%;aspect-ratio:16/9;background:#141b1b;overflow:hidden;box-shadow:0 25px 85px #0009,0 0 0 1px #d0b78b5c}
+#art{display:block;width:100%;height:100%}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.21;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23noise)' opacity='.3'/%3E%3C/svg%3E")}
+.sprocket{position:absolute;inset:0;pointer-events:none;border:clamp(5px,.8vw,12px) solid #0b1012;box-shadow:inset 0 0 0 1px #e2c28f80,inset 0 0 140px #3f231d45}
+.subtitle{position:absolute;left:9%;right:9%;bottom:8%;z-index:2;text-align:center;min-height:1.35em;line-height:1.2;font:clamp(11px,2.05vw,25px)/1.3 Georgia,serif;color:#fff7db;text-shadow:0 2px 5px #14100d,0 0 16px #14100d,0 0 30px #14100d;pointer-events:none}
+.subtitle span{padding:3px 8px;box-decoration-break:clone;background:#1118168c}
+.curtain{position:absolute;inset:0;z-index:3;display:grid;place-items:center;text-align:center;background:#101b1cde;backdrop-filter:blur(4px);transition:opacity .5s}
+.curtain.hide{opacity:0;pointer-events:none}
+.curtain .inside{padding:24px}
+.curtain h1{font-weight:400;letter-spacing:.17em;font-size:clamp(25px,5vw,66px);margin:0 0 10px}
+.curtain p{font:clamp(10px,1.2vw,14px)/1.7 ui-sans-serif,system-ui,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#d6d2bb;margin:0 0 24px}
+.curtain button{background:#efd4a9;color:#2f2922;border:0;font:bold 12px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.17em;padding:17px 25px;text-transform:uppercase;cursor:pointer}
+.curtain button:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #ecca86;outline-offset:3px}
+.controls{display:flex;align-items:center;gap:12px;min-height:56px;padding:11px 3px;font:12px ui-sans-serif,system-ui,sans-serif}
+.controls button{background:#1e2a2a;border:1px solid #62736c7c;color:#f3e5c9;min-width:37px;min-height:35px;cursor:pointer}
+.controls button:hover{background:#31403d}
+.controls button#play{min-width:70px;font-weight:600}
+#seek{min-width:0;flex:1;accent-color:#c69e5d;cursor:pointer}
+#time{width:95px;text-align:right;color:#c6c0ad;font-variant-numeric:tabular-nums;white-space:nowrap}
+.foot{display:flex;gap:15px;justify-content:space-between;align-items:baseline;flex-wrap:wrap;font:11px/1.6 ui-sans-serif,system-ui,sans-serif;color:#899a93;letter-spacing:.045em}
+.foot em{font-style:normal;color:#c1b7a1}
+#status{font-size:11px;color:#d9cba8}
+@media(max-width:600px){body{padding:5px;display:block;margin-top:6vh}.top{margin:2px 3px 8px}.top .type{font-size:9px}.sprocket{border-width:5px}.subtitle{bottom:12%;left:5%;right:5%}.controls{gap:7px;padding:7px 3px}#time{width:75px;font-size:11px}.foot{padding:0 4px}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div class="name">The Ninth Room</div><div class="type">An original short film · Hotel Bellwether, 1931</div></div>
+<section class="frame" aria-label="Animated short film The Ninth Room">
+<svg id="art" viewBox="0 0 1280 720" role="img" aria-label="A stylized horror animation with symmetrical hotel interiors"></svg>
+<div class="grain"></div><div class="sprocket"></div>
+<div class="subtitle" id="subtitle" aria-live="off"></div>
+<div class="curtain" id="curtain"><div class="inside"><h1>THE NINTH ROOM</h1><p>A motion picture in three inconvenient parts<br>Sound is part of the picture</p><button id="begin">Enter the hotel</button></div></div>
+</section>
+<div class="controls">
+<button id="play" aria-label="Play or pause">Play</button>
+<button id="restart" aria-label="Restart">↺</button>
+<input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek film">
+<div id="time">0:00 / --:--</div>
+<button id="mute" aria-label="Mute or unmute">Sound on</button>
+<button id="fullscreen" aria-label="Fullscreen">⛶</button>
+</div>
+<div class="foot"><div><em>An immaculate arrangement of dreadful circumstances.</em> Original animation, characters, music and sound design.</div><div id="status">Loading the guest register…</div></div>
+<audio id="soundtrack" preload="auto" src="soundtrack.mp3"></audio>
+</main>
+<script src="film.js"></script>
+</body></html>
