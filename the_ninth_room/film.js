@@ -376,7 +376,7 @@ async function start(){
   if(!shots.length)return;
   if(current>=duration-.2){current=0;try{audio.currentTime=0;}catch(_){}}
   curtain.classList.add("hide");playing=true;playBtn.textContent="Pause";
-  if(audioReady){try{audio.currentTime=current;await audio.play();}catch(_){audioReady=false;statusEl.textContent="Subtitled visual edition";}}
+  try{audio.currentTime=current;await audio.play();audioReady=true;}catch(_){audioReady=false;statusEl.textContent="Subtitled visual edition";}
   lastFrame=performance.now();
 }
 function pause(){playing=false;audio.pause();playBtn.textContent="Play";}
