@@ -1,0 +1,135 @@
+[
+  {
+    "scene": "title",
+    "duration": 5.2,
+    "chapter": "A FILM IN THREE INCONVENIENT PARTS"
+  },
+  {
+    "scene": "facade",
+    "duration": 8,
+    "speaker": "NARRATOR",
+    "voice": "am_michael",
+    "speed": 0.93,
+    "text": "At the Hotel Bellwether, the guest register was always perfectly accurate."
+  },
+  {
+    "scene": "lobby",
+    "duration": 9,
+    "speaker": "FELIX",
+    "voice": "am_eric",
+    "speed": 0.98,
+    "text": "Mrs. Vale. I've counted the rooms three times."
+  },
+  {
+    "scene": "lobby",
+    "duration": 7.2,
+    "speaker": "VALE",
+    "voice": "af_kore",
+    "speed": 0.93,
+    "text": "And have you found them?"
+  },
+  {
+    "scene": "keys",
+    "duration": 8,
+    "speaker": "FELIX",
+    "voice": "am_eric",
+    "speed": 0.96,
+    "text": "Eight rooms. Nine keys."
+  },
+  {
+    "scene": "keys",
+    "duration": 7.5,
+    "speaker": "VALE",
+    "voice": "af_kore",
+    "speed": 0.91,
+    "text": "Then one of them is late."
+  },
+  {
+    "scene": "dining",
+    "duration": 8.6,
+    "speaker": "FELIX",
+    "voice": "am_eric",
+    "speed": 0.95,
+    "text": "There are nine places set for dinner."
+  },
+  {
+    "scene": "dining",
+    "duration": 8,
+    "speaker": "VALE",
+    "voice": "af_kore",
+    "speed": 0.94,
+    "text": "We make an effort with our guests."
+  },
+  {
+    "scene": "ledger",
+    "duration": 9.2,
+    "speaker": "FELIX",
+    "voice": "am_eric",
+    "speed": 0.95,
+    "text": "The ninth signature. That's my name."
+  },
+  {
+    "scene": "ledger",
+    "duration": 7.5,
+    "speaker": "VALE",
+    "voice": "af_kore",
+    "speed": 0.91,
+    "text": "Your handwriting is excellent."
+  },
+  {
+    "scene": "corridor",
+    "duration": 10.5
+  },
+  {
+    "scene": "door",
+    "duration": 8.6,
+    "speaker": "FELIX",
+    "voice": "am_eric",
+    "speed": 0.96,
+    "text": "That door wasn't there yesterday."
+  },
+  {
+    "scene": "door",
+    "duration": 8.5,
+    "speaker": "VALE",
+    "voice": "af_kore",
+    "speed": 0.9,
+    "text": "It doesn't like to be noticed before midnight."
+  },
+  {
+    "scene": "room",
+    "duration": 10.5,
+    "speaker": "FELIX",
+    "voice": "am_eric",
+    "speed": 0.95,
+    "text": "That's my coat. I wore that to work."
+  },
+  {
+    "scene": "mirror",
+    "duration": 10.5,
+    "speaker": "VALE",
+    "voice": "af_kore",
+    "speed": 0.9,
+    "text": "You weren't hired, Mr. Ward. You arrived."
+  },
+  {
+    "scene": "ledger_final",
+    "duration": 9.7
+  },
+  {
+    "scene": "facade_final",
+    "duration": 10.8,
+    "speaker": "NARRATOR",
+    "voice": "am_michael",
+    "speed": 0.91,
+    "text": "In the morning, the hotel had eight rooms. As it always had."
+  },
+  {
+    "scene": "end",
+    "duration": 7.8,
+    "speaker": "VALE",
+    "voice": "af_kore",
+    "speed": 0.82,
+    "text": "Good night, Mr. Ward."
+  }
+]
