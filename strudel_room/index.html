@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smokey's Strudel Room</title>
+<style>
+:root{color-scheme:dark}body{margin:0;background:#11151e;color:#f2eee7;font-family:system-ui,-apple-system,sans-serif}
+main{max-width:900px;margin:35px auto;padding:0 18px}h1{font-size:clamp(1.8rem,5vw,3rem);margin-bottom:5px}
+p{color:#bdc4d2;line-height:1.5}.tag{letter-spacing:.18em;text-transform:uppercase;color:#c9a97b;font-size:.72rem}
+.panel{border:1px solid #3a4250;border-radius:14px;overflow:hidden;margin-top:24px}
+strudel-editor{display:block;min-height:400px}
+a{color:#d8b68c}footer{margin-top:20px;font-size:.85rem}
+</style>
+<script src="https://unpkg.com/@strudel/repl@1.0.2"></script>
+</head>
+<body><main>
+<div class="tag">GitHub Pages × Strudel · experiment 01</div>
+<h1>Smokey's Strudel Room</h1>
+<p>A little original 86 BPM after-hours groove. Tap the <strong>play</strong> button inside the editor to hear it. You can edit the code and play again. Headphones recommended.</p>
+<div class="panel">
+<strudel-editor><!--
+setcps(86/60/4)
+stack(
+  s("bd ~ ~ bd ~ ~ bd ~").gain(.85),
+  s("~ ~ sd ~ ~ ~ sd ~").gain(.48),
+  s("hh*8").gain(.16),
+  note("c2 ~ c2 eb2 ~ bb1 g1 ~").s("sawtooth").lpf(380).gain(.26),
+  note("<[c4,eb4,g4,bb4] [ab3,c4,eb4,g4]>").s("triangle").slow(2).gain(.12)
+)
+--></strudel-editor>
+</div>
+<footer>Source lives in <a href="https://github.com/moiraleevincent/GPT/tree/main/strudel_room">GitHub</a>. First playback requires a tap because browsers block autoplay. This is a live synthesizer, not a prerecorded audio file.</footer>
+</main></body></html>
