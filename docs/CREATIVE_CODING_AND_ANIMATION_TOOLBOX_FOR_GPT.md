@@ -48,6 +48,24 @@ This is a **toolbox, not a mandatory stack**. Do not force every project into Bl
 - Transparent Procreate PNG may contain transparent line art rather than a filled silhouette, requiring interior-region reconstruction rather than treating alpha as a complete opaque character mask.
 - Retain local anatomical contour changes: many Bézier segments with thoughtfully chosen anchors are more useful than a single generic smooth curve.
 
+## Hosting interactive artwork on GitHub Pages — November 7, 2026
+
+**Concrete example:** [Face Study 01 · Expression Lab](https://moiraleevincent.github.io/GPT/face_expression_lab/) uses a single self-contained `face_expression_lab/index.html`. The page draws the character with inline SVG; JavaScript changes Bézier eyelid openings, gaze, eyebrows, mouth curves and head tilt. It offers Neutral, Suspicious, Delighted, a sequence preview and manual sliders. Source: [`face_expression_lab/index.html`](../face_expression_lab/index.html).
+
+**Important delivery distinction (especially on iPhone):** An HTML file attached inside the ChatGPT iOS app can open without functioning JavaScript controls. A local downloadable HTML file, a GitHub **source-code** URL (`github.com/…/blob/…`), and an actual **hosted webpage** are different results. For interactive art intended to work on Moira's phone, publishing to GitHub Pages is a useful option: send the `https://moiraleevincent.github.io/GPT/<project-folder>/` URL, rather than only the source link or an HTML download. Other hosting strategies remain available if better for the project.
+
+**How this repo's existing Pages deployment works (inspect current files before using):**
+
+1. Create a project folder such as `face_expression_lab/`, with `index.html` inside. A self-contained HTML/SVG/JS page needs no separate image file.
+2. Inspect [`.github/workflows/blender-pages.yml`](../.github/workflows/blender-pages.yml). Despite its Blender-specific name, it currently also deploys the Character Lab viewer and can serve additional project folders.
+3. **Explicitly add the new HTML path to that workflow's `on.push.paths` trigger** and add the corresponding `mkdir -p site/<project-folder>` and `cp <project-folder>/index.html site/<project-folder>/index.html` commands in the site-assembly step. Merely committing a folder does *not* automatically include it in this Actions-built site. Preserve existing site content and routes when extending the workflow.
+4. Commit the files through the connected GitHub tool. Confirm that the new Actions workflow is running, then that it completed successfully. If GitHub's own `pages build and deployment` job also appears, distinguish it from the project's custom site-assembly workflow.
+5. Open the **published Pages URL**, confirm it loads the actual artwork rather than source code, and exercise the controls on the intended device. A successful commit is not proof of successful deployment; an in-progress workflow is not a verified live page. If publication is delayed, say so explicitly.
+
+**Eye-animation implementation detail:** The iris and pupil remain separately drawn; a clipping path defines the eye's visible aperture. JavaScript updates the aperture's path coordinates and upper-lid contour as the lid descends; the iris appears occluded rather than being erased. To change an expression, combine coordinated shifts of brows, gaze, mouth geometry and head orientation. For visually faithful eyelids, inspect the changing upper **and** lower boundaries, not just the iris.
+
+**Tool behavior lesson:** Successful access to a GitHub connection earlier in a conversation does not guarantee it will be selected later when working on local SVG, Python render, MP4, GIF and HTML files. If webpage publication is part of the deliverable, treat **create → commit → Pages deploy → verify public page** as one connected production sequence. This is a helpful workflow pattern, not a universal requirement to publish every experiment.
+
 ## Complete toolbox by purpose
 
 | Area | Tools / libraries | What they provide | Status |
