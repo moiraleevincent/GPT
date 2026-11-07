@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Face Study 01 · Expression Lab</title>
+<style>
+:root{--dark:#181b22;--panel:#222731;--line:#47444b;--cream:#e8ddcf;--muted:#b7b0b0;--accent:#c69380;--paper:#c8b5a6}
+*{box-sizing:border-box} body{margin:0;background:var(--dark);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:var(--cream)}
+main{max-width:1340px;margin:0 auto;padding:22px} header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+h1{margin:0;font-size:clamp(22px,4vw,32px);font-weight:700;letter-spacing:-.03em} small{color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px;align-items:start}
+.stage{background:var(--paper);border-radius:16px;overflow:hidden;min-height:380px;display:flex;justify-content:center;align-items:center}
+.stage svg{width:100%;max-width:720px;max-height:calc(100svh - 140px);display:block;aspect-ratio:8/9}
+.panel{background:var(--panel);border:1px solid #3b3b43;padding:20px;border-radius:16px}
+.eyebrow{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.16em;font-weight:700;margin:0 0 7px}
+.intro{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 16px}
+.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 0}
+button{border:1px solid #5c5355;background:#34343d;color:var(--cream);padding:11px 10px;border-radius:10px;font-size:13px;cursor:pointer}
+button.primary{background:#b98274;color:#1a181c;border-color:#d0a093;font-weight:700}
+button:disabled{opacity:.65;cursor:default}
+.section{border-top:1px solid #414149;margin-top:18px;padding-top:16px}
+.control{display:block;padding:12px 0;border-top:1px solid #414149} .control:first-of-type{border-top:0;padding-top:0}
+.label{display:flex;justify-content:space-between;font-size:13px} .label output{color:var(--accent)}
+input[type=range]{width:100%;margin-top:10px;accent-color:var(--accent)}
+.pose{margin-top:10px;background:#1d2129;border:1px solid #343941;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);white-space:pre-wrap}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}
+</style></head><body>
+<main>
+<header><h1>Face Study 01 · Expression Lab</h1><small>GitHub Pages ready · neutral / suspicious / delighted</small></header>
+<div class="layout">
+  <div class="stage" id="stage"><svg xmlns="http://www.w3.org/2000/svg" width="800" height="900" viewBox="0 0 800 900">
+<title>Face Study 01 — independent vector layers</title>
+<desc>An original hand-coded, low-poly-inspired portrait intended for facial-animation tests. Facial features remain separately editable.</desc>
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e3d5c7"/><stop offset="1" stop-color="#c1aa9d"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#f6dfca" stop-opacity=".62"/><stop offset="1" stop-color="#f6dfca" stop-opacity="0"/></radialGradient>
+  <linearGradient id="skin" x1="0.1" y1="0.1" x2=".95" y2=".85"><stop stop-color="#f2c7a8"/><stop offset=".49" stop-color="#e7b495"/><stop offset=".81" stop-color="#d39c81"/><stop offset="1" stop-color="#bd806a"/></linearGradient>
+  <linearGradient id="neckskin" x1="0" x2=".92" y1="0" y2=".4"><stop stop-color="#b47b67"/><stop offset=".50" stop-color="#e7b18f"/><stop offset="1" stop-color="#9f695a"/></linearGradient>
+  <linearGradient id="hair" x1=".15" y1="0" x2=".85" y2="1"><stop stop-color="#533635"/><stop offset=".55" stop-color="#33292f"/><stop offset="1" stop-color="#211e27"/></linearGradient>
+  <linearGradient id="coat" x1=".1" y1="0" x2=".87" y2="1"><stop stop-color="#40424c"/><stop offset="1" stop-color="#222730"/></linearGradient>
+  <linearGradient id="lip" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#b77470"/><stop offset="1" stop-color="#9c5758"/></linearGradient>
+  <linearGradient id="eyewhite" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#bba7a1"/><stop offset=".55" stop-color="#f1ded0"/><stop offset="1" stop-color="#d8b9a6"/></linearGradient>
+  <linearGradient id="iris" x1=".1" y1=".1" x2=".95" y2=".85"><stop stop-color="#705648"/><stop offset="1" stop-color="#242833"/></linearGradient>
+  <linearGradient id="hairSheen" x1="0" y1="0" x2="1" y2=".5"><stop stop-color="#936451" stop-opacity=".30"/><stop offset="1" stop-color="#c39273" stop-opacity="0"/></linearGradient>
+  <filter id="soft" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="10"/></filter>
+  <filter id="tinysoft" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="4"/></filter>
+  <clipPath id="faceClip"><path d="M282 345 Q281 289 324 260 Q360 226 414 226 Q481 230 516 283 Q530 332 523 425 L514 523 Q508 578 480 627 Q455 666 412 687 Q398 691 382 681 Q331 647 305 588 Q286 536 281 453 Z"/></clipPath>
+  <clipPath id="eye-left-clip"><path id="eye-left-aperture" d="M311 461 C324 447 337 442 352 443 C371 443 383 450 392 460 C379 470 363 477 347 473 C332 471 319 467 311 461 Z"/></clipPath>
+  <clipPath id="eye-right-clip"><path id="eye-right-aperture" d="M425 460 C438 447 451 442 465 443 C483 444 496 451 504 460 C490 470 475 475 460 473 C444 471 433 467 425 460 Z"/></clipPath>
+</defs>
+
+<g id="background">
+  <rect width="800" height="900" fill="url(#paper)"/>
+  <ellipse cx="413" cy="391" rx="350" ry="365" fill="url(#halo)"/>
+  <path d="M91 0V900 M708 0V900" stroke="#988579" stroke-opacity=".13" stroke-width="1"/>
+  <path d="M0 787 H800" stroke="#927e72" stroke-opacity=".17" />
+</g>
+
+<!-- A small actor puppet: background, torso, neck, hair, skull, eyes, eyebrows, nose and mouth all have independent IDs. -->
+<g id="character">
+  <g id="shoulders">
+    <path d="M123 900 Q136 809 204 758 Q247 722 338 710 L397 742 L458 710 Q548 720 600 759 Q666 803 680 900 Z" fill="url(#coat)"/>
+    <path d="M122 900 Q147 799 236 752 L294 784 L244 900 Z" fill="#50515a" opacity=".58"/>
+    <path d="M521 748 Q626 798 670 900 L554 900 L508 780 Z" fill="#191e27" opacity=".45"/>
+    <path d="M286 740 L391 833 L353 900 L253 796 Z" fill="#222731"/>
+    <path d="M509 735 L403 833 L449 900 L552 784 Z" fill="#252833"/>
+    <path d="M323 735 Q404 770 479 733 L470 808 Q414 842 332 809 Z" fill="#29252d"/>
+    <path d="M356 785 L404 829 L456 783" fill="none" stroke="#a18c83" stroke-opacity=".35" stroke-width="3"/>
+  </g>
+
+  <g id="back-hair">
+    <path d="M245 396 Q218 300 266 223 Q312 164 395 151 Q492 151 543 226 Q588 289 568 397 L577 611 L545 719 L491 699 L300 708 L240 685 Q219 589 245 396Z" fill="url(#hair)"/>
+    <path d="M259 475 L226 636 L260 695 L317 711 L294 541 Z" fill="#271f29"/>
+    <path d="M536 453 L579 623 L549 713 L495 690 L509 535 Z" fill="#241d26"/>
+    <path d="M247 416 L235 607 Q247 538 264 507 Z" fill="#9d6d62" opacity=".18"/>
+  </g>
+
+  <g id="neck">
+    <path d="M350 636 L354 737 Q374 775 408 779 Q445 775 463 735 L457 634 Z" fill="url(#neckskin)"/>
+    <path d="M350 641 Q410 717 459 644 L458 701 Q429 742 390 744 Q362 726 352 706 Z" fill="#8e5d50" opacity=".37"/>
+    <path d="M353 734 Q406 788 463 734 L483 747 Q463 797 409 811 Q356 797 337 747 Z" fill="#d8a58b"/>
+    <path d="M339 742 Q403 799 480 741" fill="none" stroke="#f4c6a5" stroke-opacity=".42" stroke-width="4"/>
+  </g>
+
+  <g id="ears">
+    <path id="ear-left" d="M285 437 Q267 423 262 444 Q258 471 274 510 Q280 523 296 518 L302 469 Z" fill="#c68b76"/>
+    <path d="M285 454 Q271 439 272 461 Q271 483 285 502" fill="none" stroke="#9b685d" stroke-width="5" stroke-linecap="round"/>
+    <path id="ear-right" d="M519 440 Q540 426 541 454 Q542 487 527 512 Q520 525 507 511 L509 457 Z" fill="#b37b69"/>
+    <path d="M522 451 Q538 442 531 470 L521 496" fill="none" stroke="#88584d" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <g id="head">
+    <path id="face-base" d="M282 345 Q281 289 324 260 Q360 226 414 226 Q481 230 516 283 Q530 332 523 425 L514 523 Q508 578 480 627 Q455 666 412 687 Q398 691 382 681 Q331 647 305 588 Q286 536 281 453 Z" fill="url(#skin)"/>
+    <g clip-path="url(#faceClip)">
+      <!-- Broad planar construction, rather than an oval with pasted-on symbols -->
+      <path d="M278 344 L329 263 L372 238 L349 415 L327 539 L299 575 Z" fill="#f4c4a3" opacity=".47"/>
+      <path d="M469 255 L517 290 L537 430 L500 581 L466 634 L477 485 Z" fill="#a97164" opacity=".29"/>
+      <path d="M349 290 L414 240 L467 279 L460 396 L434 473 L363 471 L337 394 Z" fill="#f5c8a7" opacity=".19"/>
+      <path d="M282 478 L316 554 L350 600 L377 641 L390 688 L328 644 L290 577 Z" fill="#b47d66" opacity=".21"/>
+      <path d="M515 462 L493 548 L469 604 L438 669 L417 690 L468 670 L530 578 Z" fill="#815b58" opacity=".16"/>
+      <path d="M332 527 Q353 508 376 525" stroke="#b97971" stroke-width="22" opacity=".12" filter="url(#soft)" fill="none"/>
+      <path d="M445 528 Q475 513 491 533" stroke="#ad6c68" stroke-width="24" opacity=".15" filter="url(#soft)" fill="none"/>
+      <path d="M388 636 Q416 640 436 631" stroke="#fbd1af" stroke-width="21" opacity=".22" filter="url(#soft)" fill="none"/>
+      <path d="M370 672 Q412 689 449 667" fill="none" stroke="#835b55" stroke-opacity=".13" stroke-width="9" filter="url(#tinysoft)"/>
+    </g>
+
+    <g id="eye-sockets">
+      <path d="M301 450 Q325 414 354 418 Q382 419 397 447 L392 482 Q357 489 320 479 Z" fill="#9d6664" opacity=".16"/>
+      <path d="M417 449 Q447 417 474 420 Q499 428 509 452 L500 481 Q466 488 431 479 Z" fill="#9d6664" opacity=".14"/>
+      <path d="M315 435 Q348 417 383 434" fill="none" stroke="#7f585a" stroke-opacity=".23" stroke-width="9" filter="url(#tinysoft)"/>
+      <path d="M431 436 Q465 419 497 441" fill="none" stroke="#7f585a" stroke-opacity=".2" stroke-width="9" filter="url(#tinysoft)"/>
+    </g>
+
+    <g id="eyes">
+      <g id="eye-left">
+        <g id="eye-left-inside" clip-path="url(#eye-left-clip)">
+          <path d="M308 430 H398 V483 H308Z" fill="url(#eyewhite)"/>
+          <g id="pupil-left">
+            <ellipse cx="356" cy="460" rx="16.7" ry="20" fill="url(#iris)"/>
+            <ellipse cx="358" cy="459" rx="8.6" ry="14" fill="#252732"/>
+            <ellipse cx="350" cy="451" rx="3.9" ry="4.6" fill="#fae9d5" opacity=".91"/>
+          </g>
+          <path d="M308 439 H400 V451 H308Z" fill="#634748" opacity=".13"/>
+        </g>
+        <path id="eye-left-upper" d="M311 461 C324 447 337 442 352 443 C371 443 383 450 392 460" fill="none" stroke="#493b42" stroke-width="5.2" stroke-linecap="round"/>
+        <path id="eye-left-lower" d="M311 461 C319 467 332 471 347 473 C363 477 379 470 392 460" fill="none" stroke="#a66c63" stroke-opacity=".86" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M315 484 Q354 490 387 482" fill="none" stroke="#c18376" stroke-opacity=".49" stroke-width="2"/>
+      </g>
+      <g id="eye-right">
+        <g id="eye-right-inside" clip-path="url(#eye-right-clip)">
+          <path d="M421 431 H511 V483 H421Z" fill="url(#eyewhite)"/>
+          <g id="pupil-right">
+            <ellipse cx="462" cy="459" rx="16.5" ry="20" fill="url(#iris)"/>
+            <ellipse cx="463" cy="458" rx="8.6" ry="14" fill="#252732"/>
+            <ellipse cx="455" cy="450" rx="3.9" ry="4.6" fill="#fae9d5" opacity=".91"/>
+          </g>
+          <path d="M421 440 H510 V451 H421Z" fill="#634748" opacity=".13"/>
+        </g>
+        <path id="eye-right-upper" d="M425 460 C438 447 451 442 465 443 C483 444 496 451 504 460" fill="none" stroke="#493b42" stroke-width="5.2" stroke-linecap="round"/>
+        <path id="eye-right-lower" d="M425 460 C433 467 444 471 460 473 C475 475 490 470 504 460" fill="none" stroke="#a66c63" stroke-opacity=".86" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M429 484 Q465 489 498 482" fill="none" stroke="#c18376" stroke-opacity=".49" stroke-width="2"/>
+      </g>
+    </g>
+
+    <g id="brows">
+      <path id="brow-left" d="M307 421 Q320 414 335 410 Q357 406 380 414 Q389 418 392 421 Q370 414 356 415 Q332 415 309 425 Z" fill="#49343a"/>
+      <path id="brow-right" d="M421 420 Q433 410 451 406 Q475 406 498 417 L503 423 Q478 414 459 414 Q434 415 421 422 Z" fill="#47343c"/>
+      <path d="M317 421 Q341 408 367 412" fill="none" stroke="#916357" stroke-opacity=".25" stroke-width="1.3"/>
+    </g>
+
+    <g id="nose">
+      <path d="M398 446 Q398 485 391 518 L373 551 Q389 562 409 561 Q431 558 444 549 L424 519 Q415 483 418 453 Z" fill="#aa7166" opacity=".12"/>
+      <path d="M400 454 Q392 493 391 525 L375 550 L394 555" fill="#f9d5ad" opacity=".35"/>
+      <path d="M415 454 L426 524 L439 546 L421 554 Z" fill="#ac7266" opacity=".25"/>
+      <path d="M375 549 Q383 558 396 553" stroke="#925b55" stroke-opacity=".62" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M419 554 Q432 559 441 549" stroke="#8e5853" stroke-opacity=".62" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M397 555 Q408 561 420 555" stroke="#f9d7ba" stroke-opacity=".48" stroke-width="3" stroke-linecap="round" fill="none"/>
+    </g>
+
+    <g id="mouth">
+      <path id="philtrum" d="M396 563 L393 581 M419 563 L421 581" stroke="#aa766d" stroke-opacity=".28" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M375 590 Q393 579 405 584 Q416 577 440 588" fill="#d08b7e" opacity=".42"/>
+      <path id="mouth-opening" d="M374 596 Q403 596 442 595 Q408 596 374 596 Z" fill="#482f38" opacity="0"/>
+      <path id="upper-lip" d="M372 596 Q386 587 397 585 Q405 589 411 587 Q420 581 441 594 Q421 601 407 598 Q389 601 372 596 Z" fill="url(#lip)" opacity=".75"/>
+      <path id="mouth-line" d="M373 596 Q390 600 406 598 Q425 599 441 594" fill="none" stroke="#75474b" stroke-width="2.9" stroke-linecap="round"/>
+      <path id="lower-lip" d="M375 600 Q404 618 440 598 Q422 614 407 616 Q392 616 375 600 Z" fill="#d48c83" opacity=".7"/>
+      <path d="M386 627 Q409 632 430 624" stroke="#f0bd9c" stroke-opacity=".55" stroke-width="3.3" stroke-linecap="round" fill="none"/>
+    </g>
+  </g>
+
+  <g id="front-hair">
+    <!-- Uneven strands / planes, kept separate from the face -->
+    <path d="M274 384 Q266 277 306 222 Q339 182 401 177 Q482 178 518 247 Q535 302 526 379 L511 355 Q499 299 463 275 Q415 250 378 270 Q329 301 293 390 Z" fill="url(#hair)"/>
+    <path d="M274 376 Q255 465 285 568 L308 620 L289 688 Q255 666 239 592 Q231 525 247 435 Z" fill="#31242d"/>
+    <path d="M528 356 Q553 470 528 576 L501 674 L479 700 Q497 622 502 537 Q520 420 508 338 Z" fill="#30252c"/>
+    <path d="M298 288 Q343 238 401 232 Q456 232 500 286 L481 295 Q435 263 393 270 Q342 278 298 325 Z" fill="#684746" opacity=".35"/>
+    <path d="M290 299 Q335 231 408 209 Q469 219 504 273" fill="none" stroke="#c28b6f" stroke-opacity=".18" stroke-width="13" filter="url(#soft)"/>
+    <path d="M276 384 L290 464 L284 552 L264 502 Z" fill="#5e4040" opacity=".53"/>
+    <path d="M525 366 L507 456 L516 545 L544 472 Z" fill="#6d4745" opacity=".29"/>
+    <path d="M267 593 L295 642 L287 677 L257 647 Z" fill="#7d5047" opacity=".35"/>
+  </g>
+</g>
+</svg></div>
+  <aside class="panel">
+    <p class="eyebrow">Expression test</p>
+    <p class="intro">Three facial acting presets built on the same SVG face. Eyebrows, eyelids, gaze, mouth curve and head tilt move together.</p>
+    <div class="buttons">
+      <button id="neutral" class="primary">Neutral</button>
+      <button id="suspicious">Suspicious</button>
+      <button id="delighted">Delighted</button>
+      <button id="sequence">Play sequence</button>
+    </div>
+    <div class="section">
+      <p class="eyebrow">Manual controls</p>
+      <label class="control"><div class="label"><span>Blink / narrow eyes</span><output id="blinkOut"></output></div><input id="blink" type="range" min="0" max="100" value="0"></label>
+      <label class="control"><div class="label"><span>Gaze</span><output id="gazeOut"></output></div><input id="gaze" type="range" min="-100" max="100" value="0"></label>
+      <label class="control"><div class="label"><span>Left brow</span><output id="browLOut"></output></div><input id="browL" type="range" min="-100" max="100" value="0"></label>
+      <label class="control"><div class="label"><span>Right brow</span><output id="browROut"></output></div><input id="browR" type="range" min="-100" max="100" value="0"></label>
+      <label class="control"><div class="label"><span>Mouth open</span><output id="talkOut"></output></div><input id="talk" type="range" min="0" max="100" value="0"></label>
+      <label class="control"><div class="label"><span>Smile</span><output id="smileOut"></output></div><input id="smile" type="range" min="-100" max="100" value="0"></label>
+      <label class="control"><div class="label"><span>Mouth skew</span><output id="skewOut"></output></div><input id="skew" type="range" min="-100" max="100" value="0"></label>
+      <label class="control"><div class="label"><span>Head tilt</span><output id="tiltOut"></output></div><input id="tilt" type="range" min="-100" max="100" value="0"></label>
+      <div class="buttons"><button id="reset">Reset</button><button id="copy">Copy pose JSON</button></div>
+      <div class="pose" id="poseBox"></div>
+      <p class="note">This page is ready to drop into a GitHub Pages folder as <code>index.html</code>.</p>
+    </div>
+  </aside>
+</div>
+</main>
+<script>
+(()=>{'use strict';
+ const $=id=>document.getElementById(id);
+ const inputs=['blink','gaze','browL','browR','talk','smile','skew','tilt'];
+ const defaults={blink:0,gaze:0,browL:0,browR:0,talk:0,smile:0,skew:0,tilt:0};
+ let pose={...defaults}; let token=0;
+ const states={
+   neutral:   {blink:0,gaze:0,browL:0,browR:0,talk:0,smile:0,skew:0,tilt:0},
+   suspicious:{blink:18,gaze:32,browL:36,browR:-14,talk:0,smile:10,skew:24,tilt:14},
+   delighted: {blink:0,gaze:0,browL:18,browR:18,talk:28,smile:84,skew:0,tilt:-10}
+ };
+ const mix=(a,b,t)=>a+(b-a)*t;
+ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+ function eyePaths(side, blinkVal){
+   const b=clamp(blinkVal/100,0,1);
+   if(side==='left'){
+     const upper=`M311 461 C324 ${mix(447,469,b).toFixed(2)} 337 ${mix(442,473,b).toFixed(2)} 352 ${mix(443,473,b).toFixed(2)} C371 ${mix(443,473,b).toFixed(2)} 383 ${mix(450,469,b).toFixed(2)} 392 460`;
+     const aperture=upper+` C379 ${mix(470,463,b).toFixed(2)} 363 ${mix(477,464,b).toFixed(2)} 347 ${mix(473,463,b).toFixed(2)} C332 ${mix(471,462,b).toFixed(2)} 319 ${mix(467,461,b).toFixed(2)} 311 461 Z`;
+     const lower=`M311 461 C319 ${mix(467,461,b).toFixed(2)} 332 ${mix(471,462,b).toFixed(2)} 347 ${mix(473,463,b).toFixed(2)} C363 ${mix(477,464,b).toFixed(2)} 379 ${mix(470,463,b).toFixed(2)} 392 460`;
+     return {upper,aperture,lower};
+   }
+   const upper=`M425 460 C438 ${mix(447,469,b).toFixed(2)} 451 ${mix(442,473,b).toFixed(2)} 465 ${mix(443,473,b).toFixed(2)} C483 ${mix(444,473,b).toFixed(2)} 496 ${mix(451,469,b).toFixed(2)} 504 460`;
+   const aperture=upper+` C490 ${mix(470,463,b).toFixed(2)} 475 ${mix(475,464,b).toFixed(2)} 460 ${mix(473,463,b).toFixed(2)} C444 ${mix(471,462,b).toFixed(2)} 433 ${mix(467,461,b).toFixed(2)} 425 460 Z`;
+   const lower=`M425 460 C433 ${mix(467,461,b).toFixed(2)} 444 ${mix(471,462,b).toFixed(2)} 460 ${mix(473,463,b).toFixed(2)} C475 ${mix(475,464,b).toFixed(2)} 490 ${mix(470,463,b).toFixed(2)} 504 460`;
+   return {upper,aperture,lower};
+ }
+ function setButtonActive(id){['neutral','suspicious','delighted'].forEach(k=>$(k).classList.toggle('primary',k===id));}
+ function render(){
+   const g=pose.gaze/100, open=pose.talk/100, smile=pose.smile/100, skew=pose.skew/100, tilt=pose.tilt/100;
+   for(const s of ['left','right']){const p=eyePaths(s, pose.blink); $('eye-'+s+'-upper').setAttribute('d',p.upper); $('eye-'+s+'-aperture').setAttribute('d',p.aperture); $('eye-'+s+'-lower').setAttribute('d',p.lower);}
+   $('pupil-left').setAttribute('transform',`translate(${(g*10).toFixed(2)} 0)`);
+   $('pupil-right').setAttribute('transform',`translate(${(g*10).toFixed(2)} 0)`);
+   $('brow-left').setAttribute('transform',`translate(0 ${(-pose.browL*0.18).toFixed(2)}) rotate(${(-pose.browL*0.08).toFixed(2)} 350 420)`);
+   $('brow-right').setAttribute('transform',`translate(0 ${(-pose.browR*0.18).toFixed(2)}) rotate(${(pose.browR*0.08).toFixed(2)} 462 420)`);
+   const leftCorner=596 + smile*(-10) + skew*(7);
+   const rightCorner=594 + smile*(-10) - skew*(7);
+   const topMid=598 + smile*(-16) - open*(5);
+   const openBottom=596 + open*(26) + smile*(4);
+   const mouthOpen=`M374 596 Q390 ${topMid.toFixed(2)} 406 ${(topMid+skew*2).toFixed(2)} Q424 ${topMid.toFixed(2)} 441 594 Q436 ${(openBottom - skew*5).toFixed(2)} 409 ${(openBottom+7).toFixed(2)} Q390 ${(openBottom+6).toFixed(2)} 374 596 Z`;
+   const upperLip=`M372 596 Q387 ${(589 + smile*(-8) + skew*5).toFixed(2)} 399 ${(586 + smile*(-9) + skew*1).toFixed(2)} Q406 ${(589 + smile*(-6)).toFixed(2)} 413 ${(586 + smile*(-9) - skew*1).toFixed(2)} Q424 ${(581 + smile*(-8) - skew*5).toFixed(2)} 441 594 Q425 ${(602 + smile*(-2) - skew*2).toFixed(2)} 407 ${(598 + smile*(-3)).toFixed(2)} Q389 ${(602 + smile*(-2) + skew*2).toFixed(2)} 372 596 Z`;
+   const mouthLine=`M373 596 Q389 ${(600 + smile*(-7) + skew*4).toFixed(2)} 406 ${(598 + smile*(-9)).toFixed(2)} Q424 ${(600 + smile*(-7) - skew*4).toFixed(2)} 441 594`;
+   const lowerLip=`M375 600 Q404 ${(617 + smile*(-10) + open*10).toFixed(2)} 440 598 Q423 ${(614 + smile*(-6) - skew*4).toFixed(2)} 407 ${(616 + smile*(-5) + open*10).toFixed(2)} Q390 ${(616 + smile*(-6) + skew*4).toFixed(2)} 375 600 Z`;
+   $('mouth-opening').setAttribute('d', mouthOpen); $('mouth-opening').setAttribute('opacity',Math.max(0,Math.min(1,open*2.8)).toFixed(3));
+   $('upper-lip').setAttribute('d', upperLip); $('mouth-line').setAttribute('d', mouthLine); $('lower-lip').setAttribute('d', lowerLip); $('lower-lip').setAttribute('transform','');
+   $('mouth-line').setAttribute('opacity',(1-open*.55).toFixed(2));
+   $('character').setAttribute('transform',`rotate(${(tilt*7).toFixed(2)} 409 540)`);
+   const outs={blink:pose.blink+'%',gaze:pose.gaze,browL:pose.browL+'%',browR:pose.browR+'%',talk:pose.talk+'%',smile:pose.smile+'%',skew:pose.skew+'%',tilt:(tilt*7).toFixed(1)+'°'};
+   Object.entries(outs).forEach(([k,v])=>$(k+'Out').textContent=v);
+   $('poseBox').textContent = JSON.stringify(pose,null,2);
+ }
+ function syncInputs(){inputs.forEach(k=>$(k).value=pose[k])}
+ function animateTo(target, ms=420){
+   const start={...pose}, begin=performance.now(), my=++token;
+   function frame(now){
+     if(my!==token) return;
+     const t=clamp((now-begin)/ms,0,1), e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+     for(const k of inputs) pose[k]=Math.round(mix(start[k], target[k], e));
+     syncInputs(); render();
+     if(t<1) requestAnimationFrame(frame);
+   }
+   requestAnimationFrame(frame);
+ }
+ function setExpression(name){ setButtonActive(name); animateTo(states[name], 460); }
+ function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+ async function playSequence(){
+   const my=++token; $('sequence').disabled=true; $('sequence').textContent='Playing…';
+   const seq=[['neutral',500],['suspicious',1500],['delighted',1500],['neutral',900]];
+   for(const [name,hold] of seq){ if(my!==token) break; setButtonActive(name); animateTo(states[name], 450); await sleep(hold); }
+   if(my===token){ setButtonActive('neutral'); }
+   $('sequence').disabled=false; $('sequence').textContent='Play sequence';
+ }
+ inputs.forEach(k=>$(k).addEventListener('input',()=>{token++; pose[k]=Number($(k).value); render();}));
+ $('reset').addEventListener('click',()=>{token++; pose={...defaults}; syncInputs(); setButtonActive('neutral'); render();});
+ $('copy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(pose)); $('copy').textContent='Copied'; setTimeout(()=>$('copy').textContent='Copy pose JSON',1000); }catch(e){ $('copy').textContent='Clipboard unavailable'; } });
+ $('neutral').addEventListener('click',()=>setExpression('neutral'));
+ $('suspicious').addEventListener('click',()=>setExpression('suspicious'));
+ $('delighted').addEventListener('click',()=>setExpression('delighted'));
+ $('sequence').addEventListener('click',()=>playSequence());
+ window.setExpression = setExpression;
+ window.setPoseState = s=>{ token++; pose={...pose, ...s}; syncInputs(); render(); };
+ window.getPoseState = ()=>JSON.parse(JSON.stringify(pose));
+ syncInputs(); setButtonActive('neutral'); render();
+})();
+</script></body></html>
