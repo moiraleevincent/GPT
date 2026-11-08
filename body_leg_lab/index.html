@@ -94,17 +94,18 @@ const stationsOriginal=[
  // [y, centerX, halfWidth, zone]
  // First stations begin immediately below the pelvis so the legs, not the torso,
  // are responsible for the upper-thigh contour.
- [458,250,44,'thigh'], [495,250,46,'thigh'], [544,250,46,'thigh'],
+ [427,250,42,'thigh'], [495,250,46,'thigh'], [544,250,46,'thigh'],
  [592,249.5,45,'thigh'], [646,249,41.5,'thigh'], [704,248.5,34,'thigh'],
  [748,247.5,28,'thigh'], [783,246.5,22.5,'knee'], [801,247,22,'knee'],
  [825,249,22.2,'knee'], [850,250.5,26,'calf'], [880,249.5,30.5,'calf'],
  [909,249,28,'calf'], [946,248,22,'calf'], [989,246.5,16.5,'ankle'],
  [1020,245.5,15.5,'ankle']
 ];
-// Only the two highest thigh stations move upward. The knee, calf and foot
-// remain at their original positions. The same torso B and groin bridge are used.
+// The first station IS the torso's hip landmark: one shared coordinate.
+// Only the next outer-thigh shaping point changes between low and raised variants.
+// Later stations remain identical, as do the knee, calf, ankle and bridge.
 const stationsRaised=stationsOriginal.map(([y,cx,h,zone],i)=>
- i===0 ? [438,250,43,zone] : i===1 ? [467,250,46,zone] : i===2 ? [520,250,46,zone] : [y,cx,h,zone]
+ i===1 ? [475,250,49,zone] : [y,cx,h,zone]
 );
 const R=(n)=>Math.round(n*100)/100;
 function curve(points){
@@ -129,22 +130,27 @@ function profile(p){
  const hipX=CX+torsoB[torsoB.length-1][1];
  const currentStations=p.root==='raised'?stationsRaised:stationsOriginal;
  const map=currentStations.map(([y,center,half,zone],i)=>{
-  // Fade changes in upper-thigh fullness in gradually, starting at the fixed hip.
-  // Without the fade, the width slider can create a new step at the connection.
-  const thighWeight=p.root==='raised' ? (i===0 ? .08 : i===1 ? .45 : 1) : (i===0 ? .15 : i===1 ? .5 : 1);
+  // Exact shared hip: first station is 292,427 at every thigh-slider setting.
+  // Start varying thigh volume only at the NEXT shaping point.
+  const thighWeight=p.root==='raised' ? (i===0 ? 0 : i===1 ? .45 : 1) : (i===0 ? 0 : i===1 ? .5 : 1);
   const factor=zone==='thigh'?1+(p.thigh-1)*thighWeight:zone==='knee'?p.knee:zone==='calf'?p.calf:1;
   const h=half*factor;
-  // Keep the inside of either thigh on its own side of the midline when wide.
-  const cx=zone==='thigh'?Math.max(center,206+h):center;
+  // Preserve the leg's center axis as thigh width changes. The inner-thigh
+  // contour is limited separately below; shifting the entire leg sideways
+  // produces an artificial shoulder/shelf at the hip for wide thighs.
+  const cx=center;
   return {y,cx,h,zone};
  });
  // The outer thigh CONTINUES the torso's curve at hipX,hipY. Catmull–Rom
  // interpolation through this ordered sequence gives the shared hip tangent.
- const outer=[[hipX,hipY],...map.map(v=>[v.cx+v.h,v.y]),[261,1043]];
+ // No second, almost-coincident point at the hip: map[0] describes the
+ // SAME landmark and is deliberately omitted from the continuing curve.
+ if(map[0].y!==hipY || R(map[0].cx+map[0].h)!==hipX)throw Error('Duplicate hip landmark does not match torso');
+ const outer=[[hipX,hipY],...map.slice(1).map(v=>[v.cx+v.h,v.y]),[261,1043]];
  // Groin bridge is anchored at B's original 208,511 / 192,511 endpoints.
  // Start at that bridge, then travel ONLY downward. Skip the early outer-thigh
  // stations (y458,495) which caused the old inner contour to double back.
- const inner=[[208,511],...(p.root==='raised'?[]:[[208,526]]),...map.slice(2).map((v,i)=>[v.zone==='thigh'?Math.max(p.root==='raised'&&i===0?210:206,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
+ const inner=[[208,511],[208,526],...map.slice(2).map(v=>[v.zone==='thigh'?Math.max(206,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
  return {outer,inner,mark:map};
 }
 function makeBody(p){
@@ -189,7 +195,9 @@ function render(){
  const marks=$('markers');marks.replaceChildren();
  const anchors=$('attachment-points');anchors.replaceChildren();
  if(construction){
-  const points=[...torsoB.map(([y,w])=>[200+w,y]),...legs.outer,...legs.inner];
+  // Pink points = independent contour controls. Hip is rendered ONCE below
+  // as the blue shared attachment marker, not as nearby pink duplicates.
+  const points=[...torsoB.slice(0,-1).map(([y,w])=>[200+w,y]),...legs.outer.slice(1),...legs.inner];
   for(const [x,y] of points){for(const px of [x,400-x])element('circle',{cx:R(px),cy:R(y),r:3.7,fill:'#c27080',stroke:'#fff7ee','stroke-width':'1.1'},marks)}
   // Extra markers show the exact shared join, rather than implying two
   // independently placed pieces that merely overlap.
@@ -219,7 +227,7 @@ function render(){
  $('toggle-grid').setAttribute('aria-pressed',String(grid));
  for(const b of document.querySelectorAll('[data-root]'))b.setAttribute('aria-pressed',String(b.dataset.root===root));
  for(const b of document.querySelectorAll('[data-join]'))b.setAttribute('aria-pressed',String(b.dataset.join===join));
- $('join-explainer').textContent=(root==='raised'?'Thigh fullness starts close below the hip,':'Original thigh fullness starts farther down,')+(join==='defined'?' with a slight deliberate change of contour angle at the shared hip point.':' with a continuous smooth tangent through the hip point.');
+ $('join-explainer').textContent=(root==='raised'?'Thigh fullness starts close below the hip,':'Original thigh fullness starts farther down,')+(join==='defined'?' with a slight deliberate change of contour angle at the single shared hip point.':' with a continuous smooth tangent through the single shared hip point.');
  for(const zone of ['thigh','knee','calf'])$(zone+'-readout').textContent=$(zone).value+'%';
  $('thigh-metric').textContent=R(mid[2].h*2);$('calf-metric').textContent=R(mid[11].h*2);
 }
