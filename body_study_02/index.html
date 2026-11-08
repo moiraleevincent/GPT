@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Body Study 02 · Male & Female Comparison</title>
+<style>
+:root{color-scheme:dark;--bg:#1b202b;--panel:#272e39;--border:#48515c;--paper:#f4eae2;--text:#f1e9e2;--muted:#bfbac1;--accent:#e2a9a3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
+main{max-width:1260px;margin:0 auto;padding:12px}
+header{padding:5px 2px 13px}
+h1{font-size:clamp(22px,5vw,36px);letter-spacing:-.03em;line-height:1.1;margin:0 0 7px}
+header p{margin:0;font-size:13px;color:var(--muted);line-height:1.55}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+.stage{position:sticky;z-index:2;top:5px;height:min(68svh,750px);min-height:300px;background:#dfd6d1;border:1px solid #887c7b;border-radius:18px;overflow:hidden;transition:height .18s ease}
+body.scroll-active .stage{height:min(45svh,460px);min-height:250px}
+.gallery{height:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:5px}
+.figure-card{position:relative;height:100%;min-width:0;overflow:hidden;border-radius:11px;background:var(--paper)}
+.figure-svg,.fallback-figure{width:100%;height:100%;object-fit:contain;display:block}
+.card-label{position:absolute;top:8px;left:8px;z-index:1;background:#252936d9;color:#fff;padding:5px 9px;border-radius:7px;font-size:11px;font-weight:700}
+.view-male .female-card,.view-female .male-card{display:none}
+.view-both .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.overlay-box{position:absolute;inset:5px;background:var(--paper);border-radius:12px;overflow:hidden;display:grid;place-items:center}
+.overlay-box[hidden]{display:none!important}
+.overlay-box svg{position:absolute;width:100%;height:100%;inset:0}
+.overlay-legend{position:absolute;top:9px;right:9px;background:#f4e9e3ef;padding:7px 9px;border-radius:8px;color:#38383d;font-size:11px;font-weight:650}
+.overlay-female g[id$="-figure"]{opacity:.62}
+.overlay-male g[id$="-figure"]{opacity:.63}
+.overlay-female g[id$="-figure"] [fill]:not([fill="none"]),.overlay-female g[id$="-figure"] use{fill:#cb6e84!important;stroke:none!important;opacity:1!important}
+.overlay-male g[id$="-figure"] [fill]:not([fill="none"]),.overlay-male g[id$="-figure"] use{fill:#486e91!important;stroke:none!important;opacity:1!important}
+.overlay-box g[id$="-figure"] [fill="none"],.overlay-box g[id$="-figure"] path:not([fill]),.overlay-box g[id$="-figure"] path[stroke]:not([fill]){display:none!important}
+.mode-construction .figure-svg g[id$="-figure"]{opacity:.46}
+.mode-construction .figure-svg g[id$="-guide"]{opacity:1!important}
+.mode-silhouette .figure-svg g[id$="-figure"] [fill]:not([fill="none"]),.mode-silhouette .figure-svg g[id$="-figure"] use{fill:#34363d!important;stroke:none!important;opacity:1!important}
+.mode-silhouette .figure-svg g[id$="-figure"] [fill="none"],.mode-silhouette .figure-svg g[id$="-figure"] path:not([fill]){display:none!important}
+.mode-silhouette .figure-svg g[id$="-guide"]{display:none}
+.panel{background:var(--panel);border-radius:17px;border:1px solid var(--border);padding:17px 15px calc(25px + env(safe-area-inset-bottom,0px))}
+.tiny-title{font-size:11px;text-transform:uppercase;letter-spacing:.13em;font-weight:750;color:var(--accent);margin:3px 0 7px}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px}
+.tabs.three{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:11px}
+button{font:inherit;font-weight:650;font-size:12px;color:var(--text);background:#373e4b;border:1px solid #5b6474;border-radius:9px;padding:13px 4px;cursor:pointer;touch-action:manipulation}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#28252d}
+button:focus-visible{outline:3px solid #f8d6a2;outline-offset:3px}
+p{font-size:13px;line-height:1.55;margin:9px 0;color:var(--muted)}
+p strong{color:var(--text)}.source-links{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0 0}
+a{color:#f9d0c7;font-size:13px;text-underline-offset:3px}
+.compare-note{font-size:12px;color:#d4bfc1}
+@media(min-width:760px){main{padding:20px}.layout{grid-template-columns:minmax(0,1.7fr) minmax(290px,.76fr);gap:18px}.stage,body.scroll-active .stage{top:14px;height:min(84svh,920px);max-height:920px}.panel{padding:19px}.view-both .gallery{gap:8px;padding:7px}}
+@media(prefers-reduced-motion:reduce){.stage{transition:none}}
+</style></head>
+<body class="view-male mode-painted">
+<main>
+<header><h1>Body Study 02 · Compare anatomy</h1><p>Two original SVG drawings · same front view, height, stance, lighting style and construction system</p></header>
+<div class="layout">
+<section class="stage" aria-label="Female and male body comparison drawing">
+ <div class="gallery" id="gallery">
+  <div class="figure-card female-card"><span class="card-label">Female · Study 01</span><div class="svg-host" id="female-host"><img class="fallback-figure" src="../body_study_01/figure.svg" alt="Female body anatomy study"></div></div>
+  <div class="figure-card male-card"><span class="card-label">Male · Study 02</span><div class="svg-host" id="male-host"><img class="fallback-figure" src="figure.svg" alt="Male body anatomy study"></div></div>
+ </div>
+ <div class="overlay-box" id="overlay" hidden><span class="overlay-legend">Rose: female · Blue: male</span></div>
+</section>
+<aside class="panel">
+<div class="tiny-title">Which drawing?</div>
+<div class="tabs" role="group" aria-label="Choose bodies to compare">
+ <button id="male" data-view="male" aria-pressed="true">Male</button><button id="female" data-view="female" aria-pressed="false">Female</button><button id="both" data-view="both" aria-pressed="false">Both</button><button id="overlay-button" data-view="overlay" aria-pressed="false">Overlay</button>
+</div>
+<div class="tiny-title">What do we inspect?</div>
+<div class="tabs three" role="group" aria-label="Choose drawing layer">
+ <button id="painted" data-mode="painted" aria-pressed="true">Painted</button><button id="construction" data-mode="construction" aria-pressed="false">Structure</button><button id="silhouette" data-mode="silhouette" aria-pressed="false">Silhouette</button>
+</div>
+<p id="current-note">Male study: wider shoulder frame, flatter pectoral chest, comparatively narrower pelvis, straighter waist, and altered limbs and jaw.</p>
+<p><strong>Controlled comparison:</strong> Both figures use the same SVG coordinate scale and a deliberately similar pose. Differences in their shapes are intentional; similarities help expose where the underlying drawing method still needs work.</p>
+<p class="compare-note">These are two chosen adult body designs, not universal male/female proportions. Individual body types vary widely.</p>
+<p id="load-message" class="compare-note" role="status">Loading editable layers…</p>
+<div class="source-links"><a href="figure.svg">Male SVG</a><a href="../body_study_01/figure.svg">Female SVG</a></div>
+</aside></div></main>
+<script>
+(function(){
+'use strict';
+const body=document.body;
+const modes=['painted','construction','silhouette'],views=['male','female','both','overlay'];
+const notes={
+ male:'Male study: wider shoulder frame, flatter pectoral chest, comparatively narrower pelvis, straighter waist, and altered limbs and jaw.',
+ female:'Female study: comparatively fuller hip silhouette, narrower shoulder frame, breast/upper torso shapes, and a more pronounced waist-to-hip transition.',
+ both:'Both at identical scale: compare shoulder width, waist/hip transitions, chest volumes, knees and arm attachment.',
+ overlay:'Colored contours place both bodies at the same height and position. Rose is the female construction, blue is the male.'
+};
+let view=window.matchMedia('(min-width:760px)').matches?'both':'male';
+let mode='painted';
+const loaded={};
+function activeButtons(){
+ for(const v of views)document.getElementById(v==='overlay'?'overlay-button':v).setAttribute('aria-pressed',String(view===v));
+ for(const m of modes)document.getElementById(m).setAttribute('aria-pressed',String(mode===m));
+ document.getElementById('current-note').textContent=notes[view];
+}
+function update(){
+ for(const v of views)body.classList.remove('view-'+v);
+ for(const m of modes)body.classList.remove('mode-'+m);
+ body.classList.add('view-'+view,'mode-'+mode);
+ document.getElementById('overlay').hidden=view!=='overlay';
+ activeButtons();
+}
+for(const v of views) document.getElementById(v==='overlay'?'overlay-button':v).addEventListener('click',()=>{view=v;update()});
+for(const m of modes) document.getElementById(m).addEventListener('click',()=>{mode=m;update()});
+window.addEventListener('scroll',()=>body.classList.toggle('scroll-active',window.scrollY>110),{passive:true});
+// Put matching IDs in separate namespaces, allowing two native SVGs in the same HTML page.
+function namespaceSvg(source,prefix){
+ return source.replace(/\bid="([^"]+)"/g,(_,id)=>'id="'+prefix+'-'+id+'"')
+              .replace(/url\(#([^)]+)\)/g,(_,id)=>'url(#'+prefix+'-'+id+')')
+              .replace(/\bhref="#([^"]+)"/g,(_,id)=>'href="#'+prefix+'-'+id+'"');
+}
+function makeOverlaySvg(svg,sex){
+ const copy=svg.cloneNode(true);
+ copy.classList.add('overlay-'+sex);
+ // Keep just the figure (and its defs), without the background, guides or labels.
+ for(const child of [...copy.children]){
+  if(child.tagName.toLowerCase()==='defs')continue;
+  if(child.id===sex+'-figure')continue;
+  child.remove();
+ }
+ copy.setAttribute('aria-hidden','true');
+ return copy;
+}
+async function loadFigure(sex,url){
+ const response=await fetch(url,{cache:'no-cache'});
+ if(!response.ok)throw new Error(sex+' source '+response.status);
+ const source=namespaceSvg(await response.text(),sex);
+ const parsed=new DOMParser().parseFromString(source,'image/svg+xml');
+ if(parsed.querySelector('parsererror'))throw new Error('SVG parsing failed for '+sex);
+ const svg=document.importNode(parsed.documentElement,true);
+ svg.classList.add('figure-svg');
+ svg.removeAttribute('id');
+ svg.setAttribute('aria-label',sex==='male'?'Male figure':'Female figure');
+ const host=document.getElementById(sex+'-host');
+ host.replaceChildren(svg);
+ loaded[sex]=svg;
+}
+async function prepare(){
+ try{
+  await Promise.all([loadFigure('male','figure.svg'),loadFigure('female','../body_study_01/figure.svg')]);
+  const overlay=document.getElementById('overlay');
+  overlay.appendChild(makeOverlaySvg(loaded.female,'female'));
+  overlay.appendChild(makeOverlaySvg(loaded.male,'male'));
+  document.getElementById('load-message').textContent='Editable SVG layers ready. Switch between painted, structure, silhouette and overlay.';
+  update();
+ }catch(error){
+  document.getElementById('load-message').textContent='The standard drawings are still available, but overlay/structure views need the SVG sources to load. '+error.message;
+ }
+}
+update();prepare();
+})();
+</script></body></html>
