@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#182029">
-<title>Body Study 03 — Curvier upper-thigh slider</title>
+<title>Body Study 03 — Recovered full upper-thigh contour</title>
 <style>
 :root{--bg:#18212b;--panel:#25303a;--line:#455460;--ink:#f5eee6;--muted:#bdc4ca;--accent:#e0ac9f}
 *{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0}
@@ -29,7 +29,7 @@ a{color:#f5cbbb;text-underline-offset:3px}.source{font-size:12px;padding:13px 0 
 </style></head>
 <body>
 <main>
-<header><h1>Body Study 03 · Shared hip + curvier upper thigh</h1><p>One shared anatomical grid. Torso B measuring landmarks preserved; the outer hip and leg now share one anchor and smooth tangent, while the inner thigh starts at the groin bridge. Original SVG geometry — no generated pictures. <strong>Updated join:</strong> no duplicated hip edge or reversing inner thigh. <span id="version-stamp" style="display:inline-block;margin:5px 0;padding:2px 7px;background:#e0ac9f;color:#1f2730;border-radius:5px;font-size:11px;font-weight:750;letter-spacing:.025em">Revision THIGH-CURVE-1108-C</span></p></header>
+<header><h1>Body Study 03 · Recovered fuller thigh</h1><p>One shared anatomical grid. Torso B measuring landmarks preserved; the outer hip and leg now share one anchor and smooth tangent, while the inner thigh starts at the groin bridge. Original SVG geometry — no generated pictures. <strong>Updated join:</strong> no duplicated hip edge or reversing inner thigh. <span id="version-stamp" style="display:inline-block;margin:5px 0;padding:2px 7px;background:#e0ac9f;color:#1f2730;border-radius:5px;font-size:11px;font-weight:750;letter-spacing:.025em">Revision THIGH-BASE-1108-D</span></p></header>
 <div class="layout">
 <section class="stage" aria-label="Interactive vector torso and legs"><div class="stage-title" id="stage-label">Connected silhouette · revised hip join</div><svg xmlns="http://www.w3.org/2000/svg" viewBox="40 -65 320 1330" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Frontal vector study of a torso connected to two legs, with adjustable anatomical proportions" id="figure">
 <defs>
@@ -105,10 +105,11 @@ const stationsOriginal=[
 // Curvier raised-thigh profile: stronger fullness high up, then earlier taper.
 // This preserves the shared hip join while restoring a more anatomical upper-thigh bulge.
 const stationsRaised=stationsOriginal.map(([y,cx,h,zone],i)=>{
- if(i===1) return [472,250,50.5,zone];
- if(i===2) return [535,250,48,zone];
- if(i===3) return [590,249.5,44,zone];
- if(i===4) return [644,249,39.5,zone];
+ // Preserve the recovered upper-thigh contour, slightly fuller high up.
+ // Never move the shared pelvis/leg anchor at i=0.
+ if(i===1) return [475,250,50.5,zone];
+ if(i===2) return [544,250,47.5,zone];
+ if(i===3) return [592,249.5,45.5,zone];
  return [y,cx,h,zone];
 });
 const R=(n)=>Math.round(n*100)/100;
