@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Torso Lab · How many landmarks?</title>
+<style>
+:root{--bg:#172029;--panel:#252f39;--text:#f2eee8;--muted:#c4c7c8;--accent:#e7b49c;--line:#4b5660}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1220px;margin:0 auto;padding:13px}header{margin:4px 1px 13px}h1{font-size:clamp(24px,4.8vw,38px);letter-spacing:-.035em;line-height:1.12;margin:0 0 6px}header p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}.stage{position:sticky;top:5px;z-index:2;border-radius:17px;overflow:hidden;height:min(63svh,690px);min-height:320px;background:#f0e8e0;border:1px solid #908980;box-shadow:0 8px 27px #060a1250}.gallery{height:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:5px;padding:8px}.study{height:100%;position:relative;min-width:0;border-radius:12px;background:#faf6f0;overflow:hidden}.study svg{display:block;width:100%;height:100%}.chip{position:absolute;top:10px;left:10px;z-index:2;border-radius:7px;color:#fdf8f0;background:#303b48e8;padding:6px 9px;font-size:11px;font-weight:700}.chip span{opacity:.75}.stage[data-selected="all"] .gallery{grid-template-columns:repeat(3,minmax(0,1fr))}.stage[data-selected="all"] .chip{font-size:10px;padding:5px}.study[hidden]{display:none!important}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 15px calc(23px + env(safe-area-inset-bottom,0px))}.group-label{margin:6px 0 8px;color:var(--accent);font-size:11px;font-weight:750;letter-spacing:.12em;text-transform:uppercase}.choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:17px}.choices.three{grid-template-columns:repeat(3,minmax(0,1fr))}button{font:inherit;font-size:12px;font-weight:650;cursor:pointer;border-radius:9px;border:1px solid #64717a;background:#36434e;color:var(--text);padding:12px 3px;touch-action:manipulation}button[aria-pressed="true"]{background:var(--accent);color:#272a30;border-color:var(--accent)}button:focus-visible{outline:3px solid #fff0c1;outline-offset:2px}
+.key{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;margin:8px 0}.key .dot{height:9px;width:9px;border-radius:50%;background:#bd6672;flex:none}.key .dot.teal{background:#4b8792}.key .dot.blue{background:#657da0}.analysis{font-size:13px;line-height:1.6;color:var(--muted);margin:15px 0 6px}.analysis strong{color:var(--text)}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px}.stat{background:#1a2530;padding:10px 8px;border:1px solid #465261;border-radius:9px}.stat b{display:block;color:#f4ccbb;font-size:16px}.stat small{font-size:10px;color:var(--muted)}.links{margin-top:14px;display:flex;gap:15px;flex-wrap:wrap}.links a{font-size:12px;color:#f5cabc;text-underline-offset:3px}
+@media(min-width:800px){main{padding:20px}.layout{grid-template-columns:minmax(0,1.62fr) minmax(310px,.76fr);gap:16px}.stage{height:min(83svh,850px);top:14px}.panel{padding:19px}}
+@media(max-width:799px){.stage[data-selected="all"] .chip{font-size:9px}.stage[data-selected="all"] .gallery{padding:4px;gap:3px}.stage[data-selected="all"] .study svg{min-width:0}}
+</style></head><body>
+<main><header><h1>Torso Lab · How many landmarks?</h1><p>One adult torso, three construction methods. Identical shoulder, waist and hip widths; only the contour instructions change.</p></header>
+<div class="layout"><section class="stage" id="stage" data-selected="all" aria-label="Comparative SVG torso drawings"><div class="gallery" id="gallery"></div></section>
+<aside class="panel"><div class="group-label">Compare the drawings</div><div class="choices" id="choose-figure" role="group" aria-label="Select comparison figure">
+<button data-figure="minimal" aria-pressed="false">A · Basic</button><button data-figure="medium" aria-pressed="false">B · Forms</button><button data-figure="detailed" aria-pressed="false">C · Detailed</button><button data-figure="all" aria-pressed="true">All three</button></div>
+<div class="group-label">What do you see?</div><div class="choices three" role="group" aria-label="Select drawing display"><button data-display="shape" aria-pressed="true">Silhouette</button><button data-display="volume" aria-pressed="false">Volume</button><button data-display="landmarks" aria-pressed="false">Grid + dots</button></div>
+<p class="analysis" id="description">The three figures keep exactly the same measured widths. Differences between their outlines come only from the additional landmarks and the curves joining them.</p>
+<div class="stats"><div class="stat"><b>174</b><small>Shoulders · width</small></div><div class="stat"><b>100</b><small>Waist · width</small></div><div class="stat"><b>184</b><small>Hips · width</small></div></div>
+<p class="analysis"><strong>Experiment:</strong> Do extra curve landmarks improve the anatomy, or mostly add complexity? The pink dots indicate actual curve anchors. Blue and teal ellipses show construction volumes, not extra measurements.</p>
+<div class="links"><a href="https://github.com/moiraleevincent/GPT/blob/main/torso_landmark_lab/index.html">Editable code in GitHub</a></div></aside></div></main>
+<script>
+(()=>{'use strict';
+const NS='http://www.w3.org/2000/svg',gallery=document.getElementById('gallery'),stage=document.getElementById('stage');
+const CX=200;
+// Each item [y, half-width]. Three fixed measuring stations always match:
+// SHOULDER y=132 width=174; WAIST y=329 width=100; HIP y=427 width=184.
+const landmarks={
+ minimal:[[132,87],[329,50],[427,92],[502,76]],
+ medium:[[132,87],[178,68],[229,75],[284,60],[329,50],[378,70],[427,92],[466,88],[502,76]],
+ detailed:[[132,87],[151,82],[180,68],[209,73],[233,77],[255,74],[283,62],[305,54],[329,50],[348,56],[372,68],[394,81],[415,91],[427,92],[444,90],[465,86],[485,81],[502,76]]
+};
+const colors={minimal:'#b16d76',medium:'#568893',detailed:'#6f7d9a'};
+function el(tag,attrs={}){let o=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))o.setAttribute(k,v);return o}
+function add(parent,tag,attrs){const n=el(tag,attrs);parent.appendChild(n);return n}
+function smoothContour(points){ // Catmull–Rom points → cubic Bézier: the curve passes through every anchor.
+ let d='M '+points[0][0]+' '+points[0][1];
+ for(let i=0;i<points.length-1;i++){
+  const p0=points[Math.max(0,i-1)],p1=points[i],p2=points[i+1],p3=points[Math.min(points.length-1,i+2)];
+  const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
+  const c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+  d+=' C '+c1[0].toFixed(2)+' '+c1[1].toFixed(2)+' '+c2[0].toFixed(2)+' '+c2[1].toFixed(2)+' '+p2[0]+' '+p2[1];
+ }
+ return d;
+}
+// Shoulder, waist and hip anchor coordinates are identical in all three variants.
+function outline(anchors){
+ const right=anchors.map(([y,w])=>[CX+w,y]), left=[...anchors].reverse().map(([y,w])=>[CX-w,y]);
+ return 'M 174 80 L 226 80 C 231 99 252 111 287 132 '+smoothContour(right).replace(/^M \S+ \S+/,'')+
+  ' Q 276 526 263 548 L 235 548 Q 218 515 200 513 Q 182 515 165 548 L 137 548 Q 124 526 124 502 '+
+   smoothContour(left).replace(/^M \S+ \S+/,'')+' C 148 111 169 99 174 80 Z';
+}
+// The rounded shoulder/neck shell and thigh cutoffs are equal; differences are ONLY the side contours.
+function draw(name,display){
+ const anchors=landmarks[name],color=colors[name];
+ const svg=el('svg',{viewBox:'82 45 236 530',preserveAspectRatio:'xMidYMid meet',role:'img','aria-label':name+' torso vector drawing'});
+ add(svg,'rect',{x:0,y:0,width:400,height:595,fill:'#fbf7f1'});
+ const defs=add(svg,'defs');const grad=add(defs,'linearGradient',{id:'skin-'+name,x1:'.05',x2:'.9',y1:'.1',y2:'.65'});
+ add(grad,'stop',{offset:'0','stop-color':'#f1c9ad'});add(grad,'stop',{offset:'.5','stop-color':'#dbab92'});add(grad,'stop',{offset:'1','stop-color':'#bd8577'});
+ const path=outline(anchors);
+ add(svg,'path',{d:path,fill:display==='volume'?'url(#skin-'+name+')':'#3d454d',stroke:display==='volume'?'#986d62':'#3d454d','stroke-width':'2.3','stroke-linejoin':'round'});
+ if(display==='volume'){
+  add(svg,'path',{d:'M 162 198 Q 200 177 238 198 Q 256 234 241 265 Q 227 280 200 279 Q 173 280 159 265 Q 144 234 162 198Z',fill:'#9c6b65',opacity:'.11'});
+  add(svg,'path',{d:'M 165 197 Q 183 182 198 199 M 235 197 Q 217 182 202 199',fill:'none',stroke:'#98695e','stroke-width':2,opacity:'.40'});
+  add(svg,'path',{d:'M 196 228 L 197 322 M 204 228 L 204 322',stroke:'#946b5e','stroke-width':2,opacity:'.22'});
+  add(svg,'path',{d:'M 174 334 Q 199 350 226 334 M 166 397 Q 199 414 234 397',stroke:'#98695e','stroke-width':2,fill:'none',opacity:'.19'});
+  add(svg,'ellipse',{cx:200,cy:367,rx:3,ry:4.7,fill:'#9b6860',opacity:'.63'});
+  add(svg,'path',{d:'M 155 143 Q 186 156 199 157 Q 214 156 245 143',stroke:'#f8d9ba','stroke-width':4,fill:'none',opacity:'.7'});
+ }
+ if(display==='landmarks'){
+  for(let y=55;y<=560;y+=25)add(svg,'line',{x1:94,y1:y,x2:306,y2:y,stroke:'#b7aaa6','stroke-width':'.65',opacity:'.46'});
+  for(let x=100;x<=300;x+=25)add(svg,'line',{x1:x,y1:55,x2:x,y2:558,stroke:'#b7aaa6','stroke-width':'.65',opacity:'.46'});
+  add(svg,'line',{x1:200,y1:65,x2:200,y2:555,stroke:'#65858a','stroke-width':'1.5','stroke-dasharray':'5 5'});
+  add(svg,'ellipse',{cx:200,cy:238,rx:66,ry:86,stroke:'#478c95','stroke-width':2.5,'stroke-dasharray':'7 5',fill:'none'});
+  add(svg,'path',{d:'M 136 382 Q 200 346 264 382 Q 281 432 200 481 Q 119 432 136 382 Z',stroke:'#c27b85','stroke-width':2.4,'stroke-dasharray':'6 4',fill:'none'});
+  for(const [y,w] of anchors){for(const side of [-1,1])add(svg,'circle',{cx:CX+side*w,cy:y,r:3.6,fill:'#bc6571',stroke:'#fff9f5','stroke-width':1.1});}
+  for(const y of [132,329,427]){
+   const w=landmarks.minimal.find(v=>v[0]===y)[1];add(svg,'line',{x1:200-w,y1:y,x2:200+w,y2:y,stroke:'#276a8a','stroke-width':2,'stroke-dasharray':'5 3'});
+  }
+ }
+ add(svg,'text',{x:200,y:573,'font-size':11,'text-anchor':'middle',fill:'#716760','font-family':'system-ui'}).textContent=anchors.length+' points per side';
+ return svg;
+}
+const labels={minimal:'A · Basic',medium:'B · Forms',detailed:'C · Detailed'};
+let figure='all',display='shape';
+function update(){
+ stage.dataset.selected=figure;
+ gallery.replaceChildren();
+ for(const name of Object.keys(landmarks)){
+  if(figure!=='all'&&figure!==name)continue;
+  const section=document.createElement('section');section.className='study';
+  const chip=document.createElement('span');chip.className='chip';chip.textContent=labels[name];section.appendChild(chip);
+  section.appendChild(draw(name,display));gallery.appendChild(section);
+ }
+ for(const b of document.querySelectorAll('[data-figure]'))b.setAttribute('aria-pressed',String(b.dataset.figure===figure));
+ for(const b of document.querySelectorAll('[data-display]'))b.setAttribute('aria-pressed',String(b.dataset.display===display));
+ const messages={minimal:'A uses just the measured shoulder, waist, hip and lower-body points. The connecting curves interpolate the missing anatomy.',medium:'B adds ribcage, flank and pelvis landmarks while keeping the same measured shoulder, waist and hip widths.',detailed:'C adds local contour changes near the armpit, chest wall, floating ribs and hip-to-thigh transition, without changing the three reference widths.',all:'The three figures keep exactly the same measured widths. Differences between their outlines come only from additional landmarks and the curves joining them.'};
+ document.getElementById('description').textContent=messages[figure];
+}
+for(const b of document.querySelectorAll('[data-figure]'))b.addEventListener('click',()=>{figure=b.dataset.figure;update()});
+for(const b of document.querySelectorAll('[data-display]'))b.addEventListener('click',()=>{display=b.dataset.display;update()});
+update();
+})();
+</script></body></html>
