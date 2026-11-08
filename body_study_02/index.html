@@ -108,12 +108,15 @@ function namespaceSvg(source,prefix){
               .replace(/\bhref="#([^"]+)"/g,(_,id)=>'href="#'+prefix+'-'+id+'"');
 }
 function makeOverlaySvg(svg,sex){
- const copy=svg.cloneNode(true);
+ // Give the overlay a separate namespace so mirrored limbs resolve correctly.
+ const isolated=namespaceSvg(svg.outerHTML,sex+'-outline');
+ const parsed=new DOMParser().parseFromString(isolated,'image/svg+xml');
+ const copy=document.importNode(parsed.documentElement,true);
  copy.classList.add('overlay-'+sex);
  // Keep just the figure (and its defs), without the background, guides or labels.
  for(const child of [...copy.children]){
   if(child.tagName.toLowerCase()==='defs')continue;
-  if(child.id===sex+'-figure')continue;
+  if(child.id.endsWith('-figure'))continue;
   child.remove();
  }
  copy.setAttribute('aria-hidden','true');
