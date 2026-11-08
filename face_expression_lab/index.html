@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Face Study 01 · Expression Lab</title>
+<title>Mara · Expression Lab</title>
 <style>
 :root{--dark:#181b22;--panel:#222731;--line:#47444b;--cream:#e8ddcf;--muted:#b7b0b0;--accent:#c69380;--paper:#c8b5a6}
 *{box-sizing:border-box} body{margin:0;background:var(--dark);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:var(--cream)}
@@ -37,10 +37,10 @@ input[type=range]{width:100%;height:30px;margin-top:8px;accent-color:var(--accen
 }
 </style></head><body>
 <main>
-<header><h1>Face Study 01 · Expression Lab</h1><small>GitHub Pages ready · neutral / suspicious / delighted</small></header>
+<header><h1>Mara · Expression Lab</h1><small>GitHub Pages ready · neutral / suspicious / delighted</small></header>
 <div class="layout">
   <div class="stage" id="stage"><svg id="portrait-svg" xmlns="http://www.w3.org/2000/svg" width="800" height="900" viewBox="160 148 480 635" preserveAspectRatio="xMidYMid slice">
-<title>Face Study 01 — independent vector layers</title>
+<title>Mara — facial expression study</title>
 <desc>An original hand-coded, low-poly-inspired portrait intended for facial-animation tests. Facial features remain separately editable.</desc>
 <defs>
   <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e3d5c7"/><stop offset="1" stop-color="#c1aa9d"/></linearGradient>
@@ -171,10 +171,10 @@ input[type=range]{width:100%;height:30px;margin-top:8px;accent-color:var(--accen
     <g id="mouth">
       <path id="philtrum" d="M396 563 L393 581 M419 563 L421 581" stroke="#aa766d" stroke-opacity=".28" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path d="M375 590 Q393 579 405 584 Q416 577 440 588" fill="#d08b7e" opacity=".42"/>
-      <path id="mouth-opening" d="M374 596 Q403 596 442 595 Q408 596 374 596 Z" fill="#482f38" opacity="0"/>
-      <path id="upper-lip" d="M372 596 Q386 587 397 585 Q405 589 411 587 Q420 581 441 594 Q421 601 407 598 Q389 601 372 596 Z" fill="url(#lip)" opacity=".75"/>
-      <path id="mouth-line" d="M373 596 Q390 600 406 598 Q425 599 441 594" fill="none" stroke="#75474b" stroke-width="2.9" stroke-linecap="round"/>
-      <path id="lower-lip" d="M375 600 Q404 618 440 598 Q422 614 407 616 Q392 616 375 600 Z" fill="#d48c83" opacity=".7"/>
+      <path id="mouth-opening" d="M373 596 C385 599 395 599 407 598 C420 599 431 598 441 594 C431 598 420 599 407 598 C395 599 385 599 373 596 Z" fill="#482f38" opacity="0"/>
+      <path id="upper-lip" d="M373 596 C383 589 393 586 399 585 C404 588 408 587 413 585 C423 583 434 588 441 594 C431 598 420 599 407 598 C395 599 385 599 373 596 Z" fill="url(#lip)" opacity=".90"/>
+      <path id="mouth-line" d="M373 596 C385 599 395 599 407 598 C420 599 431 598 441 594" fill="none" stroke="#75474b" stroke-width="2.9" stroke-linecap="round"/>
+      <path id="lower-lip" d="M373 596 C385 599 395 599 407 598 C420 599 431 598 441 594 C431 602 421 614 407 614 C394 613 384 604 373 596 Z" fill="#d48c83" opacity=".89"/>
       <path d="M386 627 Q409 632 430 624" stroke="#f0bd9c" stroke-opacity=".55" stroke-width="3.3" stroke-linecap="round" fill="none"/>
     </g>
   </g>
@@ -193,7 +193,7 @@ input[type=range]{width:100%;height:30px;margin-top:8px;accent-color:var(--accen
 </g>
 </svg></div>
   <aside class="panel">
-    <p class="eyebrow">Expression test</p>
+    <p class="eyebrow">Mara · expression test</p>
     <p class="intro">Three facial acting presets built on the same SVG face. Eyebrows, eyelids, gaze, mouth curve and head tilt move together.</p>
     <div class="buttons">
       <button id="neutral" class="primary">Neutral</button>
@@ -244,18 +244,43 @@ input[type=range]{width:100%;height:30px;margin-top:8px;accent-color:var(--accen
  };
  const mix=(a,b,t)=>a+(b-a)*t;
  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
- function eyePaths(side, blinkVal){
-   const b=clamp(blinkVal/100,0,1);
-   if(side==='left'){
-     const upper=`M311 461 C324 ${mix(447,469,b).toFixed(2)} 337 ${mix(442,473,b).toFixed(2)} 352 ${mix(443,473,b).toFixed(2)} C371 ${mix(443,473,b).toFixed(2)} 383 ${mix(450,469,b).toFixed(2)} 392 460`;
-     const aperture=upper+` C379 ${mix(470,463,b).toFixed(2)} 363 ${mix(477,464,b).toFixed(2)} 347 ${mix(473,463,b).toFixed(2)} C332 ${mix(471,462,b).toFixed(2)} 319 ${mix(467,461,b).toFixed(2)} 311 461 Z`;
-     const lower=`M311 461 C319 ${mix(467,461,b).toFixed(2)} 332 ${mix(471,462,b).toFixed(2)} 347 ${mix(473,463,b).toFixed(2)} C363 ${mix(477,464,b).toFixed(2)} 379 ${mix(470,463,b).toFixed(2)} 392 460`;
-     return {upper,aperture,lower};
+ // Every SVG boundary is derived from shared landmark points.
+ // A sequence of cubic Bézier segments is 1 anchor followed by groups of 3 points:
+ // control 1, control 2, next anchor.
+ const fmtPoint=p=>p[0].toFixed(2)+' '+p[1].toFixed(2);
+ function forwardPath(p){
+   let d='M'+fmtPoint(p[0]);
+   for(let i=1;i<p.length;i+=3) d+=' C'+fmtPoint(p[i])+' '+fmtPoint(p[i+1])+' '+fmtPoint(p[i+2]);
+   return d;
+ }
+ function reversePath(p){
+   let d='';
+   for(let i=p.length-2;i>=1;i-=3) d+=' C'+fmtPoint(p[i])+' '+fmtPoint(p[i-1])+' '+fmtPoint(p[i-2]);
+   return d;
+ }
+ const lerpPoints=(start,end,t)=>start.map((p,i)=>[mix(p[0],end[i][0],t),mix(p[1],end[i][1],t)]);
+ const eyes={
+   left:{
+     upper:[[311,461],[324,447],[337,442],[352,443],[371,443],[383,450],[392,460]],
+     lower:[[311,461],[319,467],[332,471],[347,473],[363,477],[379,470],[392,460]],
+     closed:[[311,461],[323,462],[337,464],[350,463],[366,463],[382,461],[392,460]]
+   },
+   right:{
+     upper:[[425,460],[438,447],[451,442],[465,443],[483,444],[496,451],[504,460]],
+     lower:[[425,460],[433,467],[444,471],[460,473],[475,475],[490,470],[504,460]],
+     closed:[[425,460],[439,462],[452,464],[464,463],[482,463],[495,461],[504,460]]
    }
-   const upper=`M425 460 C438 ${mix(447,469,b).toFixed(2)} 451 ${mix(442,473,b).toFixed(2)} 465 ${mix(443,473,b).toFixed(2)} C483 ${mix(444,473,b).toFixed(2)} 496 ${mix(451,469,b).toFixed(2)} 504 460`;
-   const aperture=upper+` C490 ${mix(470,463,b).toFixed(2)} 475 ${mix(475,464,b).toFixed(2)} 460 ${mix(473,463,b).toFixed(2)} C444 ${mix(471,462,b).toFixed(2)} 433 ${mix(467,461,b).toFixed(2)} 425 460 Z`;
-   const lower=`M425 460 C433 ${mix(467,461,b).toFixed(2)} 444 ${mix(471,462,b).toFixed(2)} 460 ${mix(473,463,b).toFixed(2)} C475 ${mix(475,464,b).toFixed(2)} 490 ${mix(470,463,b).toFixed(2)} 504 460`;
-   return {upper,aperture,lower};
+ };
+ function eyePaths(side,blinkVal){
+   const t=clamp(blinkVal/100,0,1), eye=eyes[side];
+   // Both lids converge to precisely the SAME 7 points at a full blink.
+   const top=lerpPoints(eye.upper,eye.closed,t);
+   const bottom=lerpPoints(eye.lower,eye.closed,t);
+   return {
+     upper:forwardPath(top),
+     lower:forwardPath(bottom),
+     aperture:forwardPath(top)+reversePath(bottom)+' Z'
+   };
  }
  function setButtonActive(id){['neutral','suspicious','delighted'].forEach(k=>$(k).classList.toggle('primary',k===id));}
  function render(){
@@ -265,17 +290,55 @@ input[type=range]{width:100%;height:30px;margin-top:8px;accent-color:var(--accen
    $('pupil-right').setAttribute('transform',`translate(${(g*10).toFixed(2)} 0)`);
    $('brow-left').setAttribute('transform',`translate(0 ${(-pose.browL*0.18).toFixed(2)}) rotate(${(-pose.browL*0.08).toFixed(2)} 350 420)`);
    $('brow-right').setAttribute('transform',`translate(0 ${(-pose.browR*0.18).toFixed(2)}) rotate(${(pose.browR*0.08).toFixed(2)} 462 420)`);
-   const leftCorner=596 + smile*(-10) + skew*(7);
-   const rightCorner=594 + smile*(-10) - skew*(7);
-   const topMid=598 + smile*(-16) - open*(5);
-   const openBottom=596 + open*(26) + smile*(4);
-   const mouthOpen=`M374 596 Q390 ${topMid.toFixed(2)} 406 ${(topMid+skew*2).toFixed(2)} Q424 ${topMid.toFixed(2)} 441 594 Q436 ${(openBottom - skew*5).toFixed(2)} 409 ${(openBottom+7).toFixed(2)} Q390 ${(openBottom+6).toFixed(2)} 374 596 Z`;
-   const upperLip=`M372 596 Q387 ${(589 + smile*(-8) + skew*5).toFixed(2)} 399 ${(586 + smile*(-9) + skew*1).toFixed(2)} Q406 ${(589 + smile*(-6)).toFixed(2)} 413 ${(586 + smile*(-9) - skew*1).toFixed(2)} Q424 ${(581 + smile*(-8) - skew*5).toFixed(2)} 441 594 Q425 ${(602 + smile*(-2) - skew*2).toFixed(2)} 407 ${(598 + smile*(-3)).toFixed(2)} Q389 ${(602 + smile*(-2) + skew*2).toFixed(2)} 372 596 Z`;
-   const mouthLine=`M373 596 Q389 ${(600 + smile*(-7) + skew*4).toFixed(2)} 406 ${(598 + smile*(-9)).toFixed(2)} Q424 ${(600 + smile*(-7) - skew*4).toFixed(2)} 441 594`;
-   const lowerLip=`M375 600 Q404 ${(617 + smile*(-10) + open*10).toFixed(2)} 440 598 Q423 ${(614 + smile*(-6) - skew*4).toFixed(2)} 407 ${(616 + smile*(-5) + open*10).toFixed(2)} Q390 ${(616 + smile*(-6) + skew*4).toFixed(2)} 375 600 Z`;
-   $('mouth-opening').setAttribute('d', mouthOpen); $('mouth-opening').setAttribute('opacity',Math.max(0,Math.min(1,open*2.8)).toFixed(3));
-   $('upper-lip').setAttribute('d', upperLip); $('mouth-line').setAttribute('d', mouthLine); $('lower-lip').setAttribute('d', lowerLip); $('lower-lip').setAttribute('transform','');
-   $('mouth-line').setAttribute('opacity',(1-open*.55).toFixed(2));
+   // Shared corners, closed seam, and separate inner lip boundaries.
+   // At open=0 both inner boundaries equal seam point-for-point.
+   // The dark opening uses those EXACT SAME curves as the visible lips.
+   const left=[373,596-9*smile+5*skew];
+   const right=[441,594-9*smile-5*skew];
+   const seam=[
+     left,
+     [385,599-8*smile+3*skew],
+     [395,599-8*smile+skew],
+     [407,598-8*smile],
+     [420,599-8*smile-skew],
+     [431,598-8*smile-3*skew],
+     right
+   ];
+   const raise=[0,2,4,4,4,2,0], drop=[0,6,17,19,17,6,0];
+   const topInner=seam.map((p,i)=>[p[0],p[1]-open*raise[i]]);
+   const bottomInner=seam.map((p,i)=>[p[0],p[1]+open*drop[i]]);
+   // These outer curves make lip volume while the inside edges remain connected.
+   // The lower outline uses a wide rounded arc, not a central pointed vertex.
+   const topOuter=[
+     left,
+     [383,left[1]-7],
+     [393,586-8*smile+2*skew],
+     [399,585-8*smile+skew],
+     [404,588-8*smile],
+     [408,587-8*smile],
+     [413,585-8*smile-skew],
+     [423,583-8*smile-2*skew],
+     [434,right[1]-6],
+     right
+   ];
+   const bottomOuter=[
+     left,
+     [384,left[1]+8+3*open],
+     [394,613-7*smile+18*open],
+     [407,614-7*smile+17*open],
+     [421,614-7*smile+17*open],
+     [431,right[1]+8+3*open],
+     right
+   ];
+   const mouthOpen=forwardPath(topInner)+reversePath(bottomInner)+' Z';
+   const upperLip=forwardPath(topOuter)+reversePath(topInner)+' Z';
+   const lowerLip=forwardPath(bottomInner)+reversePath(bottomOuter)+' Z';
+   $('mouth-opening').setAttribute('d',mouthOpen);
+   $('mouth-opening').setAttribute('opacity',open<=0?0:1);
+   $('upper-lip').setAttribute('d',upperLip);
+   $('lower-lip').setAttribute('d',lowerLip);
+   $('mouth-line').setAttribute('d',forwardPath(topInner));
+   $('mouth-line').setAttribute('opacity',(1-open*.48).toFixed(2));
    $('character').setAttribute('transform',`rotate(${(tilt*7).toFixed(2)} 409 540)`);
    const outs={blink:pose.blink+'%',gaze:pose.gaze,browL:pose.browL+'%',browR:pose.browR+'%',talk:pose.talk+'%',smile:pose.smile+'%',skew:pose.skew+'%',tilt:(tilt*7).toFixed(1)+'°'};
    Object.entries(outs).forEach(([k,v])=>$(k+'Out').textContent=v);
