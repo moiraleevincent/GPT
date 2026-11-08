@@ -15,6 +15,8 @@ on:
       - "character_lab/index.html"
       - "face_expression_lab/index.html"
       - "wave_avatar_lab/index.html"
+      - "body_study_01/index.html"
+      - "body_study_01/figure.svg"
       - "character_lab/output/star_keeper.mp4"
       - "character_lab/output/poster.png"
       - ".github/workflows/blender-pages.yml"
@@ -52,6 +54,9 @@ jobs:
           cp face_expression_lab/index.html site/face_expression_lab/index.html
           mkdir -p site/wave_avatar_lab
           cp wave_avatar_lab/index.html site/wave_avatar_lab/index.html
+          mkdir -p site/body_study_01
+          cp body_study_01/index.html site/body_study_01/index.html
+          cp body_study_01/figure.svg site/body_study_01/figure.svg
           printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=blender_lab/"><title>Blender Lab</title></head><body><p><a href="blender_lab/">Open Blender Lab</a></p></body></html>' > site/index.html
           touch site/.nojekyll
       - name: Configure GitHub Pages
