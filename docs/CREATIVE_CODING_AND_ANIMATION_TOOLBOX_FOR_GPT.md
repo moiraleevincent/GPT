@@ -77,6 +77,16 @@ This is a **toolbox, not a mandatory stack**. Do not force every project into Bl
 - **Keep separate from viewport changes:** The sticky mobile portrait and tablet side-by-side layout are camera/HTML/CSS choices. They do not require widening the actual character or modifying the facial rig coordinates. Phone users need a **working GitHub Pages URL** to interact with controls.
 - **Testing:** Check 0%, 50%, 100% blink; 0% and 100% mouth-open; smile combined with opening; mouth skew in both directions; preset transitions; and the sticky mobile viewer. These are useful acceptance tests, **not a claim that every device has been tested**. Inspect the current source and the published page before claiming a deployment is live.
 
+### Little Wave Lab: connected SVG body joints — November 8, 2026
+
+- Source: [`wave_avatar_lab/index.html`](../wave_avatar_lab/index.html); mobile-friendly interactive demo: https://moiraleevincent.github.io/GPT/wave_avatar_lab/
+- Separate project from Mara's face lab; do not overwrite `face_expression_lab/`.
+- **Core idea:** SVG `<g>` groups form a parent-child rig. Place the upper arm in a shoulder group; nest a forearm group translated to its elbow; nest the hand group translated to the wrist. Rotating the shoulder then carries the elbow, forearm and hand along, without manually repositioning every shape.
+- **Other movements:** Two hip groups each contain a shin/knee group; the torso can lean independently. A single `requestAnimationFrame` loop changes joint parameters for wave/dance motions. Manual sliders control the exact same parameters so the character can be inspected as an interactive puppet.
+- **Visualization:** A Show joints control makes SVG pivot markers visible to clarify what each parent group rotates around. This is a teaching tool and a foundation for richer body rigging.
+- **Publishing:** The GitHub Pages site-assembly workflow `.github/workflows/blender-pages.yml` must include both a push-path trigger and a copy into `site/wave_avatar_lab/`. For interactive iOS use, send the Pages URL rather than a downloaded HTML file.
+- **Verification:** Source and workflow were checked after committing; actual published mobile behavior remains a separate verification step.
+
 ## Complete toolbox by purpose
 
 | Area | Tools / libraries | What they provide | Status |
