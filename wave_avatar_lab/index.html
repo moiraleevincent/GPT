@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Little Wave Lab · Body Rig</title>
+<style>
+:root{color-scheme:dark;--ink:#eae8f7;--muted:#c1c1d6;--panel:#242840;--bg:#16192b;--pink:#f5b6c4;--line:#424866}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 22% -10%,#333958,#16192b 60%);color:var(--ink)}
+main{max-width:1130px;margin:auto;padding:14px}
+header{padding:8px 3px 14px}
+h1{font-size:clamp(25px,5vw,37px);line-height:1.12;letter-spacing:-.035em;margin:0 0 5px}
+header p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.stage{position:sticky;top:6px;z-index:3;overflow:hidden;height:min(48svh,500px);min-height:255px;border:1px solid #4c567a;border-radius:19px;background:#242c48;box-shadow:0 9px 30px #0a0c1990}
+.stage svg{height:100%;width:100%;display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px 17px calc(20px + env(safe-area-inset-bottom,0px))}
+.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+button{font:inherit;cursor:pointer;border-radius:11px;padding:13px 10px;border:1px solid #636a89;background:#343c57;color:var(--ink);font-size:14px;font-weight:650;touch-action:manipulation}
+button:active{transform:scale(.99)}
+button.primary{background:var(--pink);color:#282331;border-color:var(--pink)}
+button:focus-visible,input:focus-visible{outline:3px solid #fbda80;outline-offset:2px}
+.status{margin:12px 0 8px;min-height:20px;color:#f1cbd4;font-size:13px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.13em;color:var(--pink);margin:19px 0 10px}
+.control{display:block;padding:13px 0;border-top:1px solid var(--line)}
+.control:first-of-type{border-top:0}
+.control-head{display:flex;justify-content:space-between;gap:9px;font-size:14px}
+.control output{color:#f5c1ce;min-width:32px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{display:block;width:100%;height:30px;margin:8px 0 0;accent-color:#f5b6c4}
+.tip{color:var(--muted);font-size:13px;line-height:1.55;margin:15px 0 0}
+.tip strong{color:var(--ink)}
+#joints-button.active{background:#476978;border-color:#83d9cf}
+.joint-dot{opacity:0;pointer-events:none}
+.show-joints .joint-dot{opacity:1}
+@media(min-width:760px){
+ main{padding:20px}
+ .layout{grid-template-columns:minmax(0,1.2fr) minmax(330px,.85fr);gap:18px}
+ .stage{top:18px;height:min(78svh,730px);min-height:460px}
+ .panel{padding:22px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Little Wave Lab</h1><p>A tiny study companion with real SVG joints. Made to wave at you.</p></header>
+<div class="layout">
+<section class="stage" aria-label="Interactive animated character">
+<svg id="puppet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 560" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A small character with dark fox ears and a blue sweater, waving one arm">
+<defs>
+ <linearGradient id="space" x2=".8" y2="1"><stop stop-color="#3a466c"/><stop offset="1" stop-color="#22283e"/></linearGradient>
+ <linearGradient id="hoodie" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#6088a5"/><stop offset=".58" stop-color="#36516d"/><stop offset="1" stop-color="#28374f"/></linearGradient>
+ <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f9d8be"/><stop offset="1" stop-color="#d99c91"/></linearGradient>
+ <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#41394e"/><stop offset="1" stop-color="#222739"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="9"/></filter>
+</defs>
+<rect width="520" height="560" fill="url(#space)"/>
+<circle cx="260" cy="240" r="171" fill="#a5b9e4" opacity=".12"/>
+<circle cx="260" cy="240" r="131" fill="#f6c0cf" opacity=".10"/>
+<g fill="#f9e8c5" opacity=".66">
+ <circle cx="100" cy="72" r="2.2"/><circle cx="443" cy="98" r="2"/><circle cx="73" cy="287" r="1.7"/>
+ <circle cx="422" cy="338" r="1.6"/><circle cx="160" cy="145" r="1.9"/><circle cx="383" cy="181" r="1.2"/>
+</g>
+<ellipse cx="259" cy="536" rx="122" ry="10" fill="#111725" opacity=".27"/>
+<!-- Hierarchy: figure > legs, body > upper arms > forearms > hands, and head. -->
+<g id="figure">
+ <g id="left-leg" transform="translate(228 392)">
+  <path d="M-27 0 Q-5 -7 23 3 L18 75 Q5 85 -14 76 Z" fill="#394458" stroke="#242b40" stroke-width="3"/>
+  <g id="left-shin" transform="translate(0 73)">
+   <path d="M-14 -2 Q0 1 17 -2 L15 65 Q1 75 -17 65 Z" fill="#333e53" stroke="#242b40" stroke-width="3"/>
+   <path d="M-18 60 Q-7 58 12 61 Q24 67 29 78 Q7 83 -21 79 Z" fill="#eee0df" stroke="#c8bac6" stroke-width="3"/>
+   <circle class="joint-dot" cx="0" cy="0" r="7" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+  </g>
+  <circle class="joint-dot" r="7" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+ </g>
+ <g id="right-leg" transform="translate(292 392)">
+  <path d="M-20 2 Q7 -6 26 1 L17 75 Q0 84 -15 76 Z" fill="#394458" stroke="#242b40" stroke-width="3"/>
+  <g id="right-shin" transform="translate(0 73)">
+   <path d="M-16 -2 Q-2 1 16 -2 L17 65 Q0 75 -16 65 Z" fill="#343e53" stroke="#242b40" stroke-width="3"/>
+   <path d="M-19 60 Q-6 58 12 61 Q29 68 34 78 Q7 84 -20 80 Z" fill="#eee0df" stroke="#c8bac6" stroke-width="3"/>
+   <circle class="joint-dot" r="7" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+  </g>
+  <circle class="joint-dot" r="7" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+ </g>
+ <g id="body" transform="rotate(0 260 370)">
+  <!-- Other arm -->
+  <g id="left-arm" transform="translate(196 337)">
+   <path d="M-7 -12 Q-23 -7 -27 14 L-24 90 Q-11 108 4 95 L18 23 Q16 -2 -7 -12 Z" fill="url(#hoodie)" stroke="#293348" stroke-width="4"/>
+   <path d="M-23 88 Q-9 99 5 90 L4 106 Q-8 118 -21 105 Z" fill="#d6a7a5"/>
+   <circle class="joint-dot" r="7" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+  </g>
+  <!-- Primary moving arm: shoulder pivots entire forearm and hand -->
+  <g id="right-upper" transform="translate(323 333) rotate(-10)">
+   <path d="M-14 -9 Q3 -17 18 -1 L39 72 Q44 92 26 100 Q6 104 3 84 L-20 19 Q-25 0 -14 -9Z" fill="url(#hoodie)" stroke="#293348" stroke-width="4"/>
+   <path d="M10 78 Q23 87 38 77 L41 91 Q27 101 14 96Z" fill="#26374e" opacity=".7"/>
+   <circle class="joint-dot" r="8" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+   <g id="right-forearm" transform="translate(24 88) rotate(7)">
+    <path d="M-10 -8 Q3 -15 14 -4 L19 70 Q14 88 -1 88 Q-17 84 -18 69 L-20 9 Q-20 -4 -10 -8Z" fill="#527796" stroke="#293348" stroke-width="3.5"/>
+    <path d="M-17 66 Q2 74 18 65 L18 80 Q4 93 -16 80 Z" fill="#34465e"/>
+    <circle class="joint-dot" r="7.2" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+    <g id="right-hand" transform="translate(0 84) rotate(0)">
+      <path d="M-13 -3 Q-20 8 -17 20 L-12 28 Q-6 41 9 35 Q23 31 24 16 Q29 0 19 -3 Q15 -8 10 -5 Q7 -13 1 -8 Q-3 -12 -8 -6 Q-11 -8 -13 -3 Z" fill="url(#skin)" stroke="#9c6a6b" stroke-width="2.8" stroke-linejoin="round"/>
+      <path d="M-8 5 L-8 16 M1 1 L2 16 M10 3 L10 16" stroke="#c38788" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>
+      <circle class="joint-dot" r="7" fill="#9bedde" stroke="#244b58" stroke-width="2"/>
+    </g>
+   </g>
+  </g>
+  <!-- Torso in front of arm roots -->
+  <path d="M218 317 Q236 304 260 309 Q291 304 310 318 Q324 340 326 369 L310 412 Q262 434 207 412 L193 367 Q197 330 218 317Z" fill="url(#hoodie)" stroke="#26374a" stroke-width="5"/>
+  <path d="M221 329 Q259 347 302 326 L299 393 Q260 413 223 393 Z" fill="#446a87" opacity=".56"/>
+  <path d="M240 321 L260 344 L280 321" fill="none" stroke="#b0c9d5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M260 347 L260 411" fill="none" stroke="#d0d8e0" opacity=".45" stroke-width="3"/>
+  <path d="M219 400 Q261 416 306 400" fill="none" stroke="#1f3245" stroke-width="6" stroke-linecap="round"/>
+  <path d="M250 375 L258 366 L264 374 L273 376 L265 385 L267 394 L258 389 L250 394 L251 384 L245 378 Z" fill="#f7d8a6" opacity=".92"/>
+  <!-- Neck, ears, head -->
+  <path d="M242 288 L243 329 Q260 341 277 329 L277 285Z" fill="#e2a9a0"/>
+  <g id="head" transform="rotate(0 260 245)">
+   <!-- fox-like hair tufts / hood ears -->
+   <path d="M207 216 L205 134 Q232 141 242 170 L260 161 Q284 129 311 126 L313 215Z" fill="#232b3f" stroke="#253044" stroke-width="5"/>
+   <path d="M216 195 L216 150 Q238 165 239 185Z" fill="#a77f8b" opacity=".8"/>
+   <path d="M280 178 Q295 153 302 147 L301 199Z" fill="#a77f8b" opacity=".8"/>
+   <path d="M203 234 Q197 166 259 162 Q321 166 318 239 L314 277 Q296 315 260 321 Q221 311 205 276Z" fill="url(#hair)"/>
+   <path d="M215 223 Q215 174 259 177 Q305 179 306 228 L301 276 Q288 301 261 307 Q233 301 218 276Z" fill="url(#skin)"/>
+   <path d="M210 223 Q216 176 260 175 Q302 176 311 229 Q297 206 293 206 Q273 213 246 204 Q230 218 210 223Z" fill="url(#hair)"/>
+   <path d="M214 207 Q225 186 241 187 Q254 189 265 204 Q245 195 234 209Z" fill="#373249"/>
+   <path d="M269 198 Q296 182 306 205 Q296 199 280 210Z" fill="#323043"/>
+   <ellipse cx="218" cy="255" rx="5" ry="12" fill="#d6a099"/>
+   <ellipse cx="303" cy="255" rx="5" ry="12" fill="#c58e8d"/>
+   <path d="M229 240 Q239 235 250 240 M271 240 Q282 235 292 240" fill="none" stroke="#634654" stroke-width="3" stroke-linecap="round"/>
+   <g id="eyes-open">
+    <ellipse cx="240" cy="249" rx="5.8" ry="7" fill="#262a3d"/>
+    <ellipse cx="280" cy="249" rx="5.8" ry="7" fill="#262a3d"/>
+    <circle cx="242" cy="246" r="2.1" fill="#fff1e6"/><circle cx="282" cy="246" r="2.1" fill="#fff1e6"/>
+   </g>
+   <g id="eyes-closed" opacity="0">
+    <path d="M231 249 Q240 257 250 249 M271 249 Q280 257 290 249" stroke="#403247" stroke-width="3" stroke-linecap="round" fill="none"/>
+   </g>
+   <ellipse cx="226" cy="263" rx="12" ry="6.5" fill="#ec9caa" opacity=".49"/>
+   <ellipse cx="296" cy="263" rx="12" ry="6.5" fill="#ec9caa" opacity=".49"/>
+   <path d="M255 260 Q260 263 265 260" fill="none" stroke="#b67d7b" stroke-width="2.5" stroke-linecap="round"/>
+   <path d="M248 280 Q259 292 272 280" fill="none" stroke="#9a5f6a" stroke-width="3" stroke-linecap="round"/>
+  </g>
+ </g>
+</g>
+<text x="260" y="549" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" fill="#e7e4f7" opacity=".66">SVG body rig · shoulder → elbow → wrist</text>
+</svg>
+</section>
+<aside class="panel">
+<div class="buttons">
+<button id="wave" class="primary" type="button">Wave hello</button>
+<button id="dance" type="button">Little dance</button>
+<button id="rest" type="button">Rest pose</button>
+<button id="joints-button" type="button" aria-pressed="false">Show joints</button>
+</div>
+<p class="status" id="status" role="status" aria-live="polite">Tap “Wave hello” to say hi.</p>
+<h2>Move the puppet yourself</h2>
+<label class="control"><span class="control-head"><span>Shoulder — lift arm</span><output id="shoulder-out">0%</output></span><input id="shoulder" type="range" min="0" max="100" value="0"/></label>
+<label class="control"><span class="control-head"><span>Elbow — bend arm</span><output id="elbow-out">0%</output></span><input id="elbow" type="range" min="0" max="100" value="0"/></label>
+<label class="control"><span class="control-head"><span>Wrist — rotate hand</span><output id="wrist-out">0°</output></span><input id="wrist" type="range" min="-100" max="100" value="0"/></label>
+<label class="control"><span class="control-head"><span>Torso — lean</span><output id="lean-out">0°</output></span><input id="lean" type="range" min="-100" max="100" value="0"/></label>
+<label class="control"><span class="control-head"><span>Legs — step</span><output id="step-out">0%</output></span><input id="step" type="range" min="-100" max="100" value="0"/></label>
+<p class="tip"><strong>What's happening?</strong> The shoulder turns the upper arm. Because the forearm and hand are nested inside it, they travel along automatically. Turn on <strong>Show joints</strong> to see the pivot points. No separate drawing frames are needed.</p>
+</aside>
+</div>
+</main>
+<script>
+(function(){
+ 'use strict';
+ const byId=id=>document.getElementById(id);
+ const puppet=byId('puppet');
+ const inputs=['shoulder','elbow','wrist','lean','step'];
+ const rest={shoulder:0,elbow:0,wrist:0,lean:0,step:0};
+ let pose=Object.assign({},rest),run=0;
+ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+ const mix=(a,b,t)=>a+(b-a)*t;
+ function apply(){
+   const upperAngle=-10-1.06*pose.shoulder;
+   const elbowAngle=7-1.68*pose.elbow;
+   const handAngle=.37*pose.wrist;
+   const leanAngle=.12*pose.lean;
+   const walk=pose.step*.28;
+   byId('body').setAttribute('transform','rotate('+leanAngle.toFixed(2)+' 260 370)');
+   byId('head').setAttribute('transform','rotate('+(-leanAngle*.35).toFixed(2)+' 260 245)');
+   byId('right-upper').setAttribute('transform','translate(323 333) rotate('+upperAngle.toFixed(2)+')');
+   byId('right-forearm').setAttribute('transform','translate(24 88) rotate('+elbowAngle.toFixed(2)+')');
+   byId('right-hand').setAttribute('transform','translate(0 84) rotate('+handAngle.toFixed(2)+')');
+   byId('left-leg').setAttribute('transform','translate(228 392) rotate('+walk.toFixed(2)+')');
+   byId('right-leg').setAttribute('transform','translate(292 392) rotate('+(-walk).toFixed(2)+')');
+   byId('left-shin').setAttribute('transform','translate(0 73) rotate('+Math.max(0,-walk*.7).toFixed(2)+')');
+   byId('right-shin').setAttribute('transform','translate(0 73) rotate('+Math.max(0,walk*.7).toFixed(2)+')');
+   for(const key of inputs){
+     byId(key).value=Math.round(pose[key]);
+     byId(key+'-out').textContent=key==='wrist'?Math.round(handAngle)+'°':key==='lean'?leanAngle.toFixed(1)+'°':Math.round(pose[key])+'%';
+   }
+ }
+ function status(message){byId('status').textContent=message}
+ function stop(){run++}
+ function settle(duration){
+   const id=++run,begin=performance.now(),from=Object.assign({},pose);
+   function step(now){
+     if(id!==run)return;
+     const t=clamp((now-begin)/duration,0,1),smooth=t*t*(3-2*t);
+     for(const k of inputs)pose[k]=mix(from[k],rest[k],smooth);
+     apply();
+     if(t<1)requestAnimationFrame(step);
+     else status('Ready for another wave.');
+   }
+   requestAnimationFrame(step);
+ }
+ function performancePlay(type){
+   const id=++run,start=performance.now(),wave=type==='wave',length=wave?3300:4200;
+   status(wave?'Waving hello!':'A little dance for you.');
+   function frame(now){
+     if(id!==run)return;
+     const t=now-start;
+     const fadeIn=clamp(t/440,0,1),fadeOut=clamp((length-t)/450,0,1);
+     const a=fadeIn*fadeOut;
+     if(wave){
+       pose.shoulder=92*a;
+       pose.elbow=87*a;
+       pose.wrist=Math.sin(t*.018)*80*a;
+       pose.lean=Math.sin(t*.004)*8*a;
+       pose.step=0;
+     }else{
+       pose.shoulder=(38+27*Math.sin(t*.006))*a;
+       pose.elbow=(45+17*Math.sin(t*.006+1))*a;
+       pose.wrist=25*Math.sin(t*.012)*a;
+       pose.lean=43*Math.sin(t*.005)*a;
+       pose.step=85*Math.sin(t*.008)*a;
+     }
+     apply();
+     if(t<length)requestAnimationFrame(frame);
+     else{pose=Object.assign({},rest);apply();status('Ready for another wave.')}
+   }
+   requestAnimationFrame(frame);
+ }
+ byId('wave').addEventListener('click',()=>performancePlay('wave'));
+ byId('dance').addEventListener('click',()=>performancePlay('dance'));
+ byId('rest').addEventListener('click',()=>{stop();settle(380)});
+ byId('joints-button').addEventListener('click',function(){
+   const show=puppet.classList.toggle('show-joints');
+   this.classList.toggle('active',show);
+   this.setAttribute('aria-pressed',String(show));
+   this.textContent=show?'Hide joints':'Show joints';
+ });
+ for(const key of inputs)byId(key).addEventListener('input',function(){
+   stop();pose[key]=Number(this.value);apply();status('You are controlling the joints.');
+ });
+ apply();
+ window.getAvatarPose=()=>Object.assign({},pose);
+ window.setAvatarPose=next=>{stop();for(const k of inputs)if(Object.prototype.hasOwnProperty.call(next,k))pose[k]=clamp(Number(next[k])||0,Number(byId(k).min),Number(byId(k).max));apply()};
+})();
+</script>
+</body>
+</html>
