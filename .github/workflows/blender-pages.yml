@@ -14,6 +14,7 @@ on:
       - "blender_lab/output/poster.png"
       - "character_lab/index.html"
       - "face_expression_lab/index.html"
+      - "wave_avatar_lab/index.html"
       - "character_lab/output/star_keeper.mp4"
       - "character_lab/output/poster.png"
       - ".github/workflows/blender-pages.yml"
@@ -49,6 +50,8 @@ jobs:
           if [ -f character_lab/output/poster.png ]; then cp character_lab/output/poster.png site/character_lab/output/; fi
           mkdir -p site/face_expression_lab
           cp face_expression_lab/index.html site/face_expression_lab/index.html
+          mkdir -p site/wave_avatar_lab
+          cp wave_avatar_lab/index.html site/wave_avatar_lab/index.html
           printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=blender_lab/"><title>Blender Lab</title></head><body><p><a href="blender_lab/">Open Blender Lab</a></p></body></html>' > site/index.html
           touch site/.nojekyll
       - name: Configure GitHub Pages
