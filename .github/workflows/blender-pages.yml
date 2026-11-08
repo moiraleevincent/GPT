@@ -20,6 +20,7 @@ on:
       - "body_study_02/index.html"
       - "body_study_02/figure.svg"
       - "torso_landmark_lab/index.html"
+      - "body_leg_lab/index.html"
       - "character_lab/output/star_keeper.mp4"
       - "character_lab/output/poster.png"
       - ".github/workflows/blender-pages.yml"
@@ -65,6 +66,8 @@ jobs:
           cp body_study_02/figure.svg site/body_study_02/figure.svg
           mkdir -p site/torso_landmark_lab
           cp torso_landmark_lab/index.html site/torso_landmark_lab/index.html
+          mkdir -p site/body_leg_lab
+          cp body_leg_lab/index.html site/body_leg_lab/index.html
           printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=blender_lab/"><title>Blender Lab</title></head><body><p><a href="blender_lab/">Open Blender Lab</a></p></body></html>' > site/index.html
           touch site/.nojekyll
       - name: Configure GitHub Pages
