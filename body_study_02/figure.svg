@@ -1,0 +1,112 @@
+<svg id="body-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1180" role="img" aria-label="Original SVG drawing of an athletic adult man with anatomically distinct upper body, hips and legs, wearing shorts">
+<title>Body Study 02 — a comparable male body built from editable SVG forms</title>
+<defs>
+ <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8efe8"/><stop offset="1" stop-color="#e9ded6"/></linearGradient>
+ <linearGradient id="skin" x1=".1" y1=".1" x2=".87" y2=".76"><stop stop-color="#f2c7ab"/><stop offset=".48" stop-color="#d99e80"/><stop offset="1" stop-color="#bd806e"/></linearGradient>
+ <linearGradient id="limbSkin" x1=".04" y1=".15" x2=".98" y2=".63"><stop stop-color="#edbd9e"/><stop offset=".47" stop-color="#dda488"/><stop offset="1" stop-color="#b87e71"/></linearGradient>
+ <linearGradient id="faceSkin" x1="0" y1="0" x2="1" y2=".7"><stop stop-color="#f4c8ad"/><stop offset=".58" stop-color="#e4ac91"/><stop offset="1" stop-color="#c38b78"/></linearGradient>
+ <linearGradient id="hair" x1=".25" y1="0" x2=".87" y2=".94"><stop stop-color="#6b4843"/><stop offset=".46" stop-color="#42323b"/><stop offset="1" stop-color="#292a36"/></linearGradient>
+ <linearGradient id="sports" x1=".02" y1="0" x2=".96" y2=".9"><stop stop-color="#6c5665"/><stop offset=".47" stop-color="#574753"/><stop offset="1" stop-color="#343444"/></linearGradient>
+ <linearGradient id="shorts" x1=".12" y1=".2" x2=".95" y2=".7"><stop stop-color="#404453"/><stop offset=".5" stop-color="#343847"/><stop offset="1" stop-color="#272e3d"/></linearGradient>
+ <linearGradient id="floorShadow" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#836c6e" stop-opacity="0"/><stop offset=".5" stop-color="#836c6e" stop-opacity=".22"/><stop offset="1" stop-color="#836c6e" stop-opacity="0"/></linearGradient>
+ <clipPath id="torsoClip"><path d="M357 245 C342 250 318 252 295 261 C277 268 267 276 269 295 C273 325 291 369 308 402 C321 427 329 455 326 477 C324 498 318 524 316 548 C317 576 326 596 342 613 C358 627 380 636 400 636 C420 636 442 627 458 613 C474 596 483 576 484 548 C482 524 476 498 474 477 C471 455 479 427 492 402 C509 369 527 325 531 295 C533 276 523 268 505 261 C482 252 458 250 443 245 L435 224 L365 224Z"/></clipPath>
+</defs>
+<rect width="800" height="1180" fill="url(#paper)"/>
+<path d="M110 1146 H690" stroke="#b5a39e" stroke-width="1.8" opacity=".6"/>
+<ellipse cx="400" cy="1132" rx="145" ry="18" fill="url(#floorShadow)"/>
+<g id="figure" stroke-linejoin="round" stroke-linecap="round">
+  <!-- Two legs: one editable painted leg mirrored as a construction baseline. -->
+  <g id="legs" stroke="#916859" stroke-width="2">
+    <g id="left-leg">
+ <path d="M322 589 C309 624 310 669 315 714 C318 757 324 796 334 823 C330 853 334 873 338 909 C342 946 347 984 353 1019 L349 1058 C337 1070 326 1087 326 1103 C325 1115 336 1120 351 1120 L382 1120 C394 1120 394 1109 389 1099 C378 1081 375 1064 376 1052 L383 1007 C389 962 388 938 393 904 C399 866 391 837 385 815 C388 781 388 749 390 716 C394 680 399 643 400 633 C378 616 350 602 322 589Z" fill="url(#limbSkin)"/>
+ <path d="M321 676 C321 722 330 760 344 800 M382 758 Q379 793 387 816 M337 874 Q339 922 351 948" fill="none" stroke="#a16c5f" stroke-width="5" opacity=".28"/>
+ <path d="M336 822 Q358 809 384 822 Q388 845 360 853 Q335 847 336 822Z" fill="#dba88f" opacity=".64" stroke="none"/>
+ <path d="M339 819 Q360 810 382 822 M348 849 Q365 857 381 845" fill="none" stroke="#9e6d60" stroke-width="2.8" opacity=".48"/>
+ <path d="M335 904 Q337 879 351 859 M393 862 Q384 908 375 943 M351 1018 Q365 1025 377 1019" fill="none" stroke="#a06c5c" stroke-width="3.2" opacity=".32"/>
+ <path d="M349 1058 Q366 1064 375 1055" fill="none" stroke="#9d7066" opacity=".4"/>
+ <path d="M328 1107 Q334 1115 341 1114 M340 1107 Q347 1117 354 1114 M352 1107 Q358 1116 365 1114 M365 1108 Q375 1115 380 1110" fill="none" stroke="#9f7468" stroke-width="1.9"/>
+ </g>
+    <use href="#left-leg" transform="translate(800 0) scale(-1 1)"/>
+  </g>
+  <!-- Arms sit behind shoulder/body mass so joins are covered naturally. -->
+  <g id="arms" stroke="#9d6d62" stroke-width="2.1">
+    <g id="left-arm">
+ <path d="M293 266 C263 259 249 280 239 310 C229 343 239 386 243 413 C238 454 226 496 215 527 C202 564 189 596 190 618 C188 634 193 642 201 646 L197 668 C193 688 192 710 198 727 C201 736 210 732 212 721 L215 691 C218 713 224 730 231 730 C241 727 239 711 239 700 L243 671 C253 657 258 632 260 606 C264 574 278 539 289 504 C310 449 327 411 328 368 C330 336 328 302 313 279 Q304 269 293 266Z" fill="url(#limbSkin)"/>
+ <path d="M248 328 C240 359 250 400 256 424 M251 469 Q237 517 222 551 M202 595 Q215 613 215 638" fill="none" stroke="#f3c9ae" stroke-width="9" opacity=".28"/>
+ <path d="M316 340 Q312 382 297 421 M276 478 Q258 522 246 555 M204 655 Q220 669 235 653" stroke="#9f6d5f" stroke-width="3.4" fill="none" opacity=".33"/>
+ <path d="M206 668 L204 716 M220 668 L224 721 M233 670 L235 708" fill="none" stroke="#986c61" stroke-width="1.8"/>
+ <path d="M237 391 Q257 407 277 401" fill="none" stroke="#a06e63" opacity=".3" stroke-width="3"/>
+ </g>
+    <use href="#left-arm" transform="translate(800 0) scale(-1 1)"/>
+  </g>
+  <!-- Neck is an actual tapered volume, not a line. -->
+  <path d="M364 207 L362 241 C347 252 335 258 321 262 Q400 294 479 262 C465 258 451 252 438 241 L436 207Z" fill="url(#faceSkin)" stroke="#b98270" stroke-width="1.7"/>
+  <path d="M367 226 Q400 253 433 226 L438 250 Q400 274 361 250Z" fill="#9b645e" opacity=".14"/>
+  <!-- Central torso volume -->
+  <path id="torso" d="M357 245 C342 250 318 252 295 261 C277 268 267 276 269 295 C273 325 291 369 308 402 C321 427 329 455 326 477 C324 498 318 524 316 548 C317 576 326 596 342 613 C358 627 380 636 400 636 C420 636 442 627 458 613 C474 596 483 576 484 548 C482 524 476 498 474 477 C471 455 479 427 492 402 C509 369 527 325 531 295 C533 276 523 268 505 261 C482 252 458 250 443 245 L435 224 L365 224Z" fill="url(#skin)" stroke="#9c6b60" stroke-width="2.3"/>
+  <g clip-path="url(#torsoClip)">
+  <path d="M287 291 Q285 348 315 397 Q329 439 327 474 Q325 508 318 537 L333 600 L355 616 Q347 537 364 492 Q350 441 362 395Z" fill="#f9d3b4" opacity=".2"/>
+  <path d="M513 291 Q515 348 485 397 Q471 439 473 474 Q475 508 482 537 L467 600 L445 616 Q453 537 436 492 Q450 441 438 395Z" fill="#915d57" opacity=".14"/>
+  <path d="M349 396 Q359 433 360 453 M451 396 Q441 433 440 453" fill="none" stroke="#925f55" opacity=".25" stroke-width="8"/>
+  <path d="M386 407 Q379 438 381 459 M414 407 Q421 438 419 459" stroke="#986358" opacity=".13" stroke-width="9" fill="none"/>
+  <path d="M399 402 L399 489 M365 458 Q400 472 435 458 M363 489 Q401 500 437 489" fill="none" stroke="#885950" opacity=".26" stroke-width="2.5"/>
+  <path d="M352 491 Q360 507 382 515 M448 491 Q440 507 418 515" fill="none" stroke="#956456" opacity=".28" stroke-width="3"/>
+  <ellipse cx="400" cy="521" rx="3.5" ry="5" fill="#ab7363" opacity=".67"/>
+  <path d="M362 247 Q337 252 310 271 M438 247 Q463 252 490 271" fill="none" stroke="#f9d9bb" opacity=".63" stroke-width="4"/>
+ </g>
+  <!-- Sports bra follows the ribcage, with two soft curved chest volumes. -->
+  <g id="pectorals">
+  <path d="M290 293 Q319 276 352 286 Q376 293 396 300 Q402 324 385 348 C373 359 352 366 326 356 Q302 344 291 320Z" fill="#f2c19f" opacity=".29"/>
+  <path d="M510 293 Q481 276 448 286 Q424 293 404 300 Q398 324 415 348 C427 359 448 366 474 356 Q498 344 509 320Z" fill="#ad7769" opacity=".20"/>
+  <path d="M300 326 Q322 347 358 351 Q382 355 397 327 M500 326 Q478 347 442 351 Q418 355 403 327" stroke="#935c54" opacity=".45" stroke-width="3.5" fill="none"/>
+  <path d="M322 292 Q347 297 375 300 M478 292 Q453 297 425 300" stroke="#fad2b0" opacity=".48" stroke-width="5" fill="none"/>
+  <circle cx="345" cy="326" r="4" fill="#ad796a" opacity=".58"/><circle cx="455" cy="326" r="4" fill="#ad796a" opacity=".58"/>
+ </g>
+  <!-- Shorts describe the pelvis/hip envelope, with an explicit central seam. -->
+  <g id="shorts">
+  <path d="M317 547 Q360 559 400 558 Q440 559 483 547 Q495 587 490 657 L423 669 Q411 661 400 657 Q389 661 377 669 L310 657 Q305 587 317 547Z" fill="url(#shorts)" stroke="#2a3040" stroke-width="3"/>
+  <path d="M320 557 Q400 569 480 557" stroke="#90939f" opacity=".37" stroke-width="4" fill="none"/>
+  <path d="M400 558 V657" stroke="#1c2535" stroke-width="2.5" fill="none"/>
+  <path d="M313 651 Q344 662 376 667 M424 667 Q456 662 487 651" stroke="#7f8491" stroke-width="2.5" opacity=".41" fill="none"/>
+ </g>
+  <!-- Head painted on top of shoulders, with low-detail facial features. -->
+  <g id="head">
+  <path d="M342 157 C337 114 358 80 400 79 C444 80 463 112 458 157 L461 211 Q446 237 428 246 L372 246 Q352 233 340 208Z" fill="url(#hair)" stroke="#39323a" stroke-width="3"/>
+  <path d="M347 137 Q352 101 400 97 Q448 101 453 137 L452 189 Q448 210 429 225 Q418 232 400 234 Q381 232 371 225 Q352 210 348 190Z" fill="url(#faceSkin)" stroke="#aa7667" stroke-width="2.1"/>
+  <path d="M349 156 Q335 146 338 169 Q344 186 355 183 M451 156 Q465 146 462 169 Q456 186 445 183" fill="#d69d87" stroke="#ac7869" stroke-width="2"/>
+  <path d="M343 154 Q338 120 349 101 Q365 78 399 82 Q436 78 451 105 Q466 130 455 154 Q449 135 439 120 C422 126 399 120 379 119 Q360 122 343 154Z" fill="url(#hair)"/>
+  <path d="M353 123 Q372 107 393 109 M396 106 Q430 100 447 119" stroke="#926359" stroke-width="5" opacity=".29" fill="none"/>
+  <path d="M363 160 Q376 154 390 159 M410 159 Q423 154 438 160" stroke="#584248" stroke-width="4.1" fill="none"/>
+  <path d="M364 169 Q376 165 390 169 M410 169 Q423 165 437 169" stroke="#72514d" stroke-width="2" fill="none"/>
+  <ellipse cx="378" cy="169" rx="4" ry="4" fill="#40363a"/><ellipse cx="423" cy="169" rx="4" ry="4" fill="#40363a"/>
+  <path d="M400 168 L395 188 Q400 193 407 188" stroke="#a87567" stroke-width="2.5" fill="none"/>
+  <path d="M386 203 Q401 210 414 203" fill="none" stroke="#955e5c" stroke-width="2.8"/>
+  <path d="M368 206 Q379 227 400 227 Q421 227 432 206" fill="none" stroke="#97695e" opacity=".21" stroke-width="6"/>
+ </g>
+</g>
+<!-- Separate vector-only construction marks. The site shows or hides these without redrawing the body. -->
+<g id="guide" fill="none" stroke="#4d8295" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" pointer-events="none" opacity="0">
+  <path d="M400 82 L400 635" stroke-dasharray="7 9" opacity=".8"/>
+  <ellipse cx="400" cy="157" rx="58" ry="79"/>
+  <path d="M345 158 H455 M400 85 V233" opacity=".45"/>
+  <path d="M294 282 Q400 255 506 282 Q524 344 400 427 Q276 344 294 282Z" fill="#5e99a0" fill-opacity=".12"/>
+  <path d="M323 530 Q400 505 477 530 Q485 585 400 637 Q315 585 323 530Z" fill="#d17d81" fill-opacity=".13" stroke="#ba7e87"/>
+  <path d="M400 230 L291 283 L251 417 L211 622 M400 230 L509 283 L549 417 L589 622"/>
+  <path d="M343 615 L360 826 L365 1052 M457 615 L440 826 L435 1052" stroke="#bb878b"/>
+  <g fill="#f9f4e8" stroke="#4d8295" stroke-width="3">
+   <circle cx="291" cy="283" r="8"/><circle cx="509" cy="283" r="8"/>
+   <circle cx="251" cy="417" r="8"/><circle cx="549" cy="417" r="8"/>
+   <circle cx="211" cy="622" r="7"/><circle cx="589" cy="622" r="7"/>
+   <circle cx="343" cy="615" r="8"/><circle cx="457" cy="615" r="8"/>
+   <circle cx="360" cy="826" r="9"/><circle cx="440" cy="826" r="9"/>
+   <circle cx="365" cy="1052" r="7"/><circle cx="435" cy="1052" r="7"/>
+  </g>
+  <g font-family="system-ui,sans-serif" font-size="18" font-weight="600" fill="#436b7b" stroke="none">
+  <text x="543" y="315">Ribcage</text><text x="528" y="541" fill="#ad6876">Pelvis</text>
+  <text x="540" y="820" fill="#ad6876">Knee</text>
+  </g>
+ </g>
+<g id="signature" font-family="system-ui,sans-serif" text-anchor="middle" fill="#8e7772">
+ <text x="400" y="1166" font-size="14" letter-spacing="2.2">BODY STUDY 02 · MALE BODY CONSTRUCTION</text>
+</g>
+</svg>
