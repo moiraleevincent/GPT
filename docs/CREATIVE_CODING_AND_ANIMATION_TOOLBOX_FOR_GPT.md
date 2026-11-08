@@ -66,6 +66,17 @@ This is a **toolbox, not a mandatory stack**. Do not force every project into Bl
 
 **Tool behavior lesson:** Successful access to a GitHub connection earlier in a conversation does not guarantee it will be selected later when working on local SVG, Python render, MP4, GIF and HTML files. If webpage publication is part of the deliverable, treat **create → commit → Pages deploy → verify public page** as one connected production sequence. This is a helpful workflow pattern, not a universal requirement to publish every experiment.
 
+### Mara: facial rig landmarks and shared boundaries — November 8, 2026
+
+- Character: **Mara**, in [the interactive expression lab](../face_expression_lab/index.html). Published viewer route: https://moiraleevincent.github.io/GPT/face_expression_lab/
+- **Eyeblink lesson (diagnosed from actual phone screenshots):** The previous upper lid traveled *past* the lower lid at full blink, showing the eye again inside an inverted opening. Its central upper-lid target was near Y=473, but the lower target was near Y=463.
+- **Implementation:** Each eye has two open-state cubic Bézier chains (upper/lower), and one **shared closed-state chain** (seven landmarks: anchors and handles). Interpolate each open chain toward the same closed chain. The eye's clip/aperture is the forward upper curve followed by the **reversed lower curve**. At 100%, the two chains are identical, so the opening collapses to zero instead of reopening.
+- **Mouth lesson:** The original dark mouth opening, upper lip, lower lip and seam each used separately calculated curves. The open mouth became pointy, its lower lip failed to follow, and the neutral shapes did not share corners.
+- **Implementation:** Define **shared left/right mouth corners and one neutral seam**. Derive the upper and lower *inner* lip curves from that seam by applying opening offsets to selected Bézier points. At mouth-open=0 they coincide exactly. At larger openings, the dark cavity is bounded by the **same inner curves** that bound the visible lip fills. The lip *outer* contours give volume independently; the lower contour uses a broad rounded curve rather than a single bottom tip. The seam remains attached to the upper inner curve.
+- **General rule:** Different SVG shapes can remain independently drawn layers while sharing exact mathematical edges. Matching only the central Y coordinate is not enough: match the full Bézier geometry (endpoints *and* control handles). If a shape becomes pointy, inspect the control handles and continuity, not merely the number of anchor points.
+- **Keep separate from viewport changes:** The sticky mobile portrait and tablet side-by-side layout are camera/HTML/CSS choices. They do not require widening the actual character or modifying the facial rig coordinates. Phone users need a **working GitHub Pages URL** to interact with controls.
+- **Testing:** Check 0%, 50%, 100% blink; 0% and 100% mouth-open; smile combined with opening; mouth skew in both directions; preset transitions; and the sticky mobile viewer. These are useful acceptance tests, **not a claim that every device has been tested**. Inspect the current source and the published page before claiming a deployment is live.
+
 ## Complete toolbox by purpose
 
 | Area | Tools / libraries | What they provide | Status |
