@@ -15,7 +15,7 @@
 <aside class="panel"><div class="group-label">Compare the drawings</div><div class="choices" id="choose-figure" role="group" aria-label="Select comparison figure">
 <button data-figure="minimal" aria-pressed="false">A · Basic</button><button data-figure="medium" aria-pressed="false">B · Forms</button><button data-figure="detailed" aria-pressed="false">C · Detailed</button><button data-figure="all" aria-pressed="true">All three</button></div>
 <div class="group-label">What do you see?</div><div class="choices three" role="group" aria-label="Select drawing display"><button data-display="shape" aria-pressed="true">Silhouette</button><button data-display="volume" aria-pressed="false">Volume</button><button data-display="landmarks" aria-pressed="false">Grid + dots</button></div>
-<p class="analysis" id="description">The three figures keep exactly the same measured widths. Differences between their outlines come only from the additional landmarks and the curves joining them.</p>
+<p class="analysis" id="description">The three figures keep exactly the same measured widths. Differences between their outlines come from contour landmarks and a targeted leg-separation patch in B.</p>
 <div class="stats"><div class="stat"><b>174</b><small>Shoulders · width</small></div><div class="stat"><b>100</b><small>Waist · width</small></div><div class="stat"><b>184</b><small>Hips · width</small></div></div>
 <p class="analysis"><strong>Experiment:</strong> Do extra curve landmarks improve the anatomy, or mostly add complexity? The pink dots indicate actual curve anchors. Blue and teal ellipses show construction volumes, not extra measurements.</p>
 <div class="links"><a href="https://github.com/moiraleevincent/GPT/blob/main/torso_landmark_lab/index.html">Editable code in GitHub</a></div></aside></div></main>
@@ -44,20 +44,24 @@ function smoothContour(points){ // Catmull–Rom points → cubic Bézier: the c
  return d;
 }
 // Shoulder, waist and hip anchor coordinates are identical in all three variants.
-function outline(anchors){
+function outline(anchors,variant){
  const right=anchors.map(([y,w])=>[CX+w,y]), left=[...anchors].reverse().map(([y,w])=>[CX-w,y]);
+ // Only version B gains a short horizontal groin bridge and independently
+ // curved inner-thigh attachments. The outer hip/waist measurements stay fixed.
+ const lowerEdge=variant==='medium'
+  ? ' Q 276 526 263 548 L 235 548 C 227 538 222 524 211 514 L 208 511 L 192 511 L 189 514 C 178 524 173 538 165 548 L 137 548 Q 124 526 124 502 '
+  : ' Q 276 526 263 548 L 235 548 Q 218 515 200 513 Q 182 515 165 548 L 137 548 Q 124 526 124 502 ';
  return 'M 174 80 L 226 80 C 231 99 252 111 287 132 '+smoothContour(right).replace(/^M \S+ \S+/,'')+
-  ' Q 276 526 263 548 L 235 548 Q 218 515 200 513 Q 182 515 165 548 L 137 548 Q 124 526 124 502 '+
-   smoothContour(left).replace(/^M \S+ \S+/,'')+' C 148 111 169 99 174 80 Z';
+  lowerEdge+smoothContour(left).replace(/^M \S+ \S+/,'')+' C 148 111 169 99 174 80 Z';
 }
-// The rounded shoulder/neck shell and thigh cutoffs are equal; differences are ONLY the side contours.
+// The shoulder/neck shell, outer thigh cutoffs and measured width stations stay fixed; B now has a distinct inner-thigh split.
 function draw(name,display){
  const anchors=landmarks[name],color=colors[name];
  const svg=el('svg',{viewBox:'82 45 236 530',preserveAspectRatio:'xMidYMid meet',role:'img','aria-label':name+' torso vector drawing'});
  add(svg,'rect',{x:0,y:0,width:400,height:595,fill:'#fbf7f1'});
  const defs=add(svg,'defs');const grad=add(defs,'linearGradient',{id:'skin-'+name,x1:'.05',x2:'.9',y1:'.1',y2:'.65'});
  add(grad,'stop',{offset:'0','stop-color':'#f1c9ad'});add(grad,'stop',{offset:'.5','stop-color':'#dbab92'});add(grad,'stop',{offset:'1','stop-color':'#bd8577'});
- const path=outline(anchors);
+ const path=outline(anchors,name);
  add(svg,'path',{d:path,fill:display==='volume'?'url(#skin-'+name+')':'#3d454d',stroke:display==='volume'?'#986d62':'#3d454d','stroke-width':'2.3','stroke-linejoin':'round'});
  if(display==='volume'){
   add(svg,'path',{d:'M 162 198 Q 200 177 238 198 Q 256 234 241 265 Q 227 280 200 279 Q 173 280 159 265 Q 144 234 162 198Z',fill:'#9c6b65',opacity:'.11'});
@@ -94,7 +98,7 @@ function update(){
  }
  for(const b of document.querySelectorAll('[data-figure]'))b.setAttribute('aria-pressed',String(b.dataset.figure===figure));
  for(const b of document.querySelectorAll('[data-display]'))b.setAttribute('aria-pressed',String(b.dataset.display===display));
- const messages={minimal:'A uses just the measured shoulder, waist, hip and lower-body points. The connecting curves interpolate the missing anatomy.',medium:'B adds ribcage, flank and pelvis landmarks while keeping the same measured shoulder, waist and hip widths.',detailed:'C adds local contour changes near the armpit, chest wall, floating ribs and hip-to-thigh transition, without changing the three reference widths.',all:'The three figures keep exactly the same measured widths. Differences between their outlines come only from additional landmarks and the curves joining them.'};
+ const messages={minimal:'A uses just the measured shoulder, waist, hip and lower-body points. The connecting curves interpolate the missing anatomy.',medium:'B adds ribcage, flank and pelvis landmarks while keeping the same shoulder, waist and hip widths. Its lower center now has a short groin bridge with two separately curved inner-thigh attachment edges.',detailed:'C adds local contour changes near the armpit, chest wall, floating ribs and hip-to-thigh transition, without changing the three reference widths.',all:'The three figures keep exactly the same measured widths. Differences between their outlines come from contour landmarks and B’s targeted groin-bridge adjustment.'};
  document.getElementById('description').textContent=messages[figure];
 }
 for(const b of document.querySelectorAll('[data-figure]'))b.addEventListener('click',()=>{figure=b.dataset.figure;update()});
