@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#19222d"><title>Mara · Body Study 04 — Arms</title>
+<style>
+:root{--bg:#1a222c;--panel:#27323d;--line:#52606c;--ink:#f5eee9;--muted:#c3c6cc;--accent:#e4ae9f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1180px;margin:auto;padding:12px}
+header{padding:5px 4px 13px}h1{font-size:clamp(23px,5vw,36px);letter-spacing:-.04em;margin:0 0 6px}header p{margin:0;color:var(--muted);line-height:1.5;font-size:13px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:13px;align-items:start}
+.stage{height:min(70svh,760px);min-height:315px;position:sticky;top:5px;z-index:3;background:#f5eee8;border:1px solid #9f9b98;border-radius:18px;overflow:hidden;box-shadow:0 7px 32px #070b145e}
+.stage svg{display:block;height:100%;width:100%;touch-action:pan-y}.stage-title{position:absolute;left:9px;top:9px;background:#343a45e8;color:#fff;font-size:12px;font-weight:700;border-radius:9px;padding:7px 10px;pointer-events:none}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px 15px calc(24px + env(safe-area-inset-bottom,0px))}
+h2{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.13em;margin:13px 0 8px}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.tabs.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+button{background:#374553;color:var(--ink);border:1px solid #6c7581;border-radius:10px;font:inherit;font-weight:700;font-size:12px;padding:12px 4px;cursor:pointer;touch-action:manipulation}
+button[aria-pressed=true]{background:var(--accent);color:#2b2e37;border-color:var(--accent)}button:focus-visible,input:focus-visible{outline:3px solid #eec9a2;outline-offset:3px}
+.controls{display:grid;gap:13px;padding-top:4px}.label-row{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:650}output{font-weight:760;color:#f3c8b8;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;height:26px;accent-color:#e7b5a6}.scale{display:flex;justify-content:space-between;font-size:10px;color:#bcc6cc}
+p{font-size:13px;line-height:1.55;color:var(--muted);margin:11px 0}.note{margin-top:14px}.note strong{color:var(--ink)}
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}.pill{border:1px solid #66717a;background:#202b34;border-radius:999px;padding:5px 9px;font-size:11px;color:#e5d7cc}
+a{color:#ffd7c9;text-underline-offset:3px}.links{font-size:12px;margin:17px 0 0}
+@media(min-width:760px){main{padding:20px}.layout{grid-template-columns:minmax(0,1.35fr) minmax(310px,.72fr);gap:19px}.stage{top:12px;height:min(86svh,920px)}.panel{padding:22px}}
+</style></head><body><main>
+<header><h1>Mara · Body Study 04</h1><p>Our approved torso and legs, now with two measured, mirrored arms. The hands are deliberately simple placeholders. <strong style="color:#edc1b3">Revision ARM-BASE-1108-A</strong></p></header>
+<div class="layout">
+<section class="stage" aria-label="Interactive full-body SVG with arms"><div class="stage-title" id="status">Silhouette · arms attached</div>
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 -45 400 1270" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Vector construction of a female torso and two connected legs with adjustable arms">
+<defs>
+ <linearGradient id="skin" x1=".08" y1=".1" x2=".88" y2=".74"><stop stop-color="#f2c7ac"/><stop offset=".5" stop-color="#dca78f"/><stop offset="1" stop-color="#b77f75"/></linearGradient>
+ <linearGradient id="softLight" x1="0" y1=".1" x2="1" y2=".9"><stop stop-color="#ffddc0" stop-opacity=".23"/><stop offset=".55" stop-color="#eed3b4" stop-opacity="0"/><stop offset="1" stop-color="#7b5257" stop-opacity=".22"/></linearGradient>
+ <clipPath id="body-clip"><path id="clip-figure" d=""/></clipPath>
+</defs>
+<rect x="0" y="0" width="400" height="1210" fill="#f5eee8"/>
+<g id="grid" pointer-events="none"></g>
+<path id="body" d="" fill="#3b434e" stroke="#3b434e" stroke-width="1.75" stroke-linejoin="round"/>
+<g id="volume" clip-path="url(#body-clip)" style="display:none" pointer-events="none">
+ <path fill="url(#softLight)" d="M8 80 H392 V1145 H8Z"/>
+ <path d="M160 208 Q200 188 240 208 M168 292 Q200 302 232 292 M167 397 Q200 405 233 397" fill="none" stroke="#805854" opacity=".18" stroke-width="3"/>
+ <path id="arms-highlight" d="" fill="none" stroke="#ffe0be" stroke-width="8" stroke-linecap="round" opacity=".34"/>
+ <path id="arms-shadow" d="" fill="none" stroke="#936458" stroke-width="8" stroke-linecap="round" opacity=".19"/>
+ <path d="M147 532 Q170 562 157 680 M253 532 Q229 562 243 680" fill="none" stroke="#f0b99c" opacity=".19" stroke-width="9"/>
+ <path d="M183 782 Q200 793 216 782" fill="none" stroke="#aa7867" stroke-width="2.3" opacity=".35"/>
+</g>
+<g id="construction" pointer-events="none" style="display:none">
+ <path d="M147 190 Q200 159 253 190 Q266 247 200 322 Q135 247 147 190Z" fill="#6ea4ae" fill-opacity=".12" stroke="#558a9b" stroke-dasharray="7 6" stroke-width="2"/>
+ <path d="M117 380 Q200 345 283 380 Q291 460 200 514 Q109 460 117 380Z" fill="#c9859b" fill-opacity=".11" stroke="#c17b8e" stroke-dasharray="7 6" stroke-width="2"/>
+ <path d="M200 77 V1127" stroke="#72a0a4" stroke-width="1.4" stroke-dasharray="5 8" opacity=".7"/>
+ <g id="anatomy-lines"></g><g id="markers"></g>
+</g>
+<text x="200" y="1165" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" letter-spacing="1.3" fill="#877971">MARA · SHARED SHOULDERS · CONNECTED LEGS</text>
+</svg>
+</section>
+<aside class="panel">
+<h2>What to inspect</h2><div class="tabs" role="group" aria-label="Drawing layer"><button data-layer="silhouette" aria-pressed="true">Silhouette</button><button data-layer="construction" aria-pressed="false">Grid + joints</button><button data-layer="volume" aria-pressed="false">Volume</button></div>
+<h2>Zoom</h2><div class="tabs" role="group" aria-label="Drawing region"><button data-camera="full" aria-pressed="true">Full</button><button data-camera="shoulders" aria-pressed="false">Shoulder</button><button data-camera="hands" aria-pressed="false">Arm + hand</button></div>
+<h2>Compare construction</h2><div class="tabs two" role="group" aria-label="Arm construction"><button data-arms="on" aria-pressed="true">With arms</button><button data-arms="off" aria-pressed="false">Torso + legs</button></div>
+<p class="note"><strong>The experiment:</strong> One outer shoulder point and one underarm point belong to both torso and arm. No arms layered over the body; the visible outline traces the shoulders, arms, hands, torso and legs in one continuous path.</p>
+<h2>Adjust the arms</h2><div class="controls">
+ <div><div class="label-row"><label for="upper">Upper-arm thickness</label><output id="upper-out">100%</output></div><input id="upper" type="range" min="70" max="135" step="1" value="100"><div class="scale"><span>slimmer</span><span>reference</span><span>fuller</span></div></div>
+ <div><div class="label-row"><label for="forearm">Forearm thickness</label><output id="forearm-out">100%</output></div><input id="forearm" type="range" min="70" max="135" step="1" value="100"><div class="scale"><span>slimmer</span><span>reference</span><span>fuller</span></div></div>
+ <div><div class="label-row"><label for="thigh">Thigh width (approved curve)</label><output id="thigh-out">100%</output></div><input id="thigh" type="range" min="75" max="135" step="1" value="100"><div class="scale"><span>narrower</span><span>reference</span><span>fuller</span></div></div>
+ </div>
+<div class="tabs two" style="margin-top:13px"><button id="reset" type="button">Restore proportions</button><button id="grid-toggle" type="button" aria-pressed="false">Grid lines</button></div>
+<p class="note">A pair of tapered mitt-like hands is included to establish wrist and hand length. Fingers, palms, and realistic poses are a later study.</p>
+<div class="pills"><span class="pill">One contour</span><span class="pill">Mirrored arms</span><span class="pill">Shared attachment points</span><span class="pill">Original SVG + JavaScript</span></div>
+<p class="links"><a href="https://github.com/moiraleevincent/GPT/blob/main/body_arm_lab/index.html">View editable code</a> · <a href="../body_leg_lab/">Original legs study</a></p>
+</aside></div></main>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',CX=200;
+const torsoB=[[132,87],[178,68],[229,75],[284,60],[329,50],[378,70],[427,92]];
+const legStations=[
+ [427,250,42,'thigh'],[475,250,50.5,'thigh'],[544,250,47.5,'thigh'],
+ [592,249.5,45.5,'thigh'],[646,249,41.5,'thigh'],[704,248.5,34,'thigh'],
+ [748,247.5,28,'thigh'],[783,246.5,22.5,'knee'],[801,247,22,'knee'],
+ [825,249,22.2,'knee'],[850,250.5,26,'calf'],[880,249.5,30.5,'calf'],
+ [909,249,28,'calf'],[946,248,22,'calf'],[989,246.5,16.5,'ankle'],[1020,245.5,15.5,'ankle']
+];
+const upperOuter=[
+ [287,132,0],[307,156,28],[324,211,38],[330,270,38],[333,334,30],
+ [338,397,27],[347,464,23],[351,515,0],[350,527,0]
+];
+const upperInner=[
+ [330,527,0],[330,515,0],[322,464,23],[313,397,27],[304,334,30],
+ [299,270,38],[287,211,38],[274,180,0],[268,178,0]
+];
+const handBaseline=[
+ [350,527],[353,544],[358,562],[359,584],[356,598],[350,610],
+ [341,612],[334,603],[330,584],[324,574],[321,561],[324,556],
+ [329,558],[330,527]
+];
+const R=n=>Math.round(n*100)/100;
+const reflect=points=>points.map(([x,y])=>[400-x,y]);
+function curve(points){
+ let out='M '+R(points[0][0])+' '+R(points[0][1]);
+ for(let i=0;i<points.length-1;i++){
+  const p0=points[Math.max(0,i-1)],p1=points[i],p2=points[i+1],p3=points[Math.min(points.length-1,i+2)];
+  const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
+  const c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+  out+=' C '+R(c1[0])+' '+R(c1[1])+' '+R(c2[0])+' '+R(c2[1])+' '+R(p2[0])+' '+R(p2[1]);
+ }
+ return out;
+}
+const cont=points=>curve(points).replace(/^M\s+[-\d.]+\s+[-\d.]+/,'');
+const point=(parent,x,y,color,r=4)=>{let c=document.createElementNS(NS,'circle');c.setAttribute('cx',R(x));c.setAttribute('cy',R(y));c.setAttribute('r',r);c.setAttribute('fill',color);c.setAttribute('stroke','#f9f1e7');c.setAttribute('stroke-width','1.7');parent.append(c)};
+let layer='silhouette',camera='full',armsOn=true,grid=false;
+function legProfile(thigh){
+ const map=legStations.map(([y,cx,half,zone],i)=>{
+  const weight=(i===0?0:i===1?.45:1);
+  return {y,cx,h:half*(zone==='thigh'?(1+(thigh-1)*weight):1),zone};
+ });
+ if(R(map[0].cx+map[0].h)!==CX+torsoB[torsoB.length-1][1]||map[0].y!==427)throw Error('Hip anchor moved');
+ const outer=[[292,427],...map.slice(1).map(v=>[v.cx+v.h,v.y]),[261,1043]];
+ const inner=[[208,511],[208,526],...map.slice(2).map(v=>[v.zone==='thigh'?Math.max(206,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
+ return {outer,inner};
+}
+function armProfile(upper,forearm){
+ function shape(raw,isOuter){
+  return raw.map(([x,y,width],i)=>{
+   const zone=y<351?'upper':y<510?'forearm':'anchor';
+   const factor=zone==='upper'?upper:zone==='forearm'?forearm:1;
+   const shift=width*.5*(factor-1)*(isOuter?1:-1);
+   return [x+shift,y];
+  });
+ }
+ const outer=shape(upperOuter,true),inner=shape(upperInner,false),hand=handBaseline;
+ if(outer[0][0]!==287||outer[0][1]!==132||inner.at(-1)[0]!==268||inner.at(-1)[1]!==178)throw Error('Shoulder join changed');
+ return {outer,inner,hand};
+}
+function bodyPath(p){
+ const right=torsoB.map(([y,w])=>[200+w,y]);
+ const leg=legProfile(p.thigh);
+ const down=[...right.slice(1),...leg.outer.slice(1)];
+ const up=reflect([...down].reverse());
+ const arm=armProfile(p.upper,p.forearm);
+ let d='M 174 80 L 226 80 C 231 99 252 111 287 132';
+ if(p.armsOn)d+=cont(arm.outer)+cont(arm.hand)+cont(arm.inner)+cont(down);
+ else d+=cont([...right,...leg.outer.slice(1)]);
+ d+=' C 268 1060 275 1082 286 1098 Q 293 1107 293 1116 Q 290 1126 280 1127 L 222 1127 Q 213 1124 214 1116 Q 214 1093 224 1075 Q 229 1058 230 1043';
+ d+=cont([...leg.inner].reverse())+' L 192 511';
+ d+=cont(reflect(leg.inner));
+ d+=' Q 171 1058 176 1075 Q 186 1093 186 1116 Q 187 1124 178 1127 L 120 1127 Q 110 1126 107 1116 Q 107 1107 114 1098 C 125 1082 132 1060 139 1043';
+ if(p.armsOn)d+=cont(up)+cont(reflect([...arm.inner].reverse()))+cont(reflect([...arm.hand].reverse()))+cont(reflect([...arm.outer].reverse()));
+ else d+=cont(reflect([...right,...leg.outer.slice(1)].reverse()));
+ return {d,arm,leg};
+}
+const boxes={full:'0 -45 400 1270',shoulders:'68 78 264 480',hands:'16 290 368 450'};
+function render(){
+ const p={upper:Number($('upper').value)/100,forearm:Number($('forearm').value)/100,thigh:Number($('thigh').value)/100,armsOn};
+ const {d,arm,leg}=bodyPath(p);
+ $('body').setAttribute('d',d);$('clip-figure').setAttribute('d',d);
+ $('body').setAttribute('fill',layer==='volume'?'url(#skin)':'#3b434e');
+ $('body').setAttribute('stroke',layer==='volume'?'#aa796e':'#3b434e');
+ $('volume').style.display=layer==='volume'?'':'none';$('construction').style.display=layer==='construction'?'':'none';
+ $('figure').setAttribute('viewBox',boxes[camera]);
+ const gr=$('grid');gr.replaceChildren();
+ if(grid||layer==='construction'){
+  for(let x=40;x<=360;x+=40){let el=document.createElementNS(NS,'line');Object.entries({x1:x,x2:x,y1:55,y2:1130,stroke:'#b4a9a3','stroke-width':'.8',opacity:'.4'}).forEach(([k,v])=>el.setAttribute(k,v));gr.append(el)}
+  for(let y=80;y<=1120;y+=40){let el=document.createElementNS(NS,'line');Object.entries({x1:25,x2:375,y1:y,y2:y,stroke:'#b4a9a3','stroke-width':'.8',opacity:'.4'}).forEach(([k,v])=>el.setAttribute(k,v));gr.append(el)}
+ }
+ const guides=$('anatomy-lines'),marks=$('markers');guides.replaceChildren();marks.replaceChildren();
+ if(armsOn && layer==='construction'){
+  for(const [x,y] of [...arm.outer,...arm.inner.slice(0,-1)]){point(marks,x,y,'#c36d86',3.4);point(marks,400-x,y,'#c36d86',3.4)}
+  for(const [x,y] of [[287,132],[268,178]]){point(marks,x,y,'#218da0',6);point(marks,400-x,y,'#218da0',6)}
+  const joints=[[299,170],[318,345],[340,527],[342,593]];
+  for(const [x,y] of joints){point(marks,x,y,'#f6eacb',5);point(marks,400-x,y,'#f6eacb',5)}
+  for(const pts of [joints,reflect(joints)]){let el=document.createElementNS(NS,'path');el.setAttribute('d',curve(pts));el.setAttribute('fill','none');el.setAttribute('stroke','#55869a');el.setAttribute('stroke-width','2');el.setAttribute('stroke-dasharray','7 6');guides.append(el)}
+ }
+ // Volume strokes follow each arm's own center axis; left is mirrored exactly.
+ const axis=[[303,186],[312,285],[320,386],[337,511]];
+ const dAxis=curve(axis)+' '+curve(reflect(axis));
+ $('arms-highlight').setAttribute('d',armsOn?dAxis:'');
+ $('arms-shadow').setAttribute('d',armsOn?curve([[286,201],[296,290],[306,399],[323,513]])+' '+curve(reflect([[286,201],[296,290],[306,399],[323,513]])):'');
+ $('status').textContent=(layer==='construction'?'Construction · shared shoulders':layer==='volume'?'Simple volume · anatomy':'Silhouette · arms attached')+(armsOn?'':' (legs only)');
+ for(const b of document.querySelectorAll('[data-layer]'))b.setAttribute('aria-pressed',String(b.dataset.layer===layer));
+ for(const b of document.querySelectorAll('[data-camera]'))b.setAttribute('aria-pressed',String(b.dataset.camera===camera));
+ for(const b of document.querySelectorAll('[data-arms]'))b.setAttribute('aria-pressed',String((b.dataset.arms==='on')===armsOn));
+ $('grid-toggle').setAttribute('aria-pressed',String(grid));
+ for(const k of ['upper','forearm','thigh'])$(k+'-out').textContent=$(k).value+'%';
+}
+for(const b of document.querySelectorAll('[data-layer]'))b.addEventListener('click',()=>{layer=b.dataset.layer;render()});
+for(const b of document.querySelectorAll('[data-camera]'))b.addEventListener('click',()=>{camera=b.dataset.camera;render()});
+for(const b of document.querySelectorAll('[data-arms]'))b.addEventListener('click',()=>{armsOn=b.dataset.arms==='on';render()});
+for(const k of ['upper','forearm','thigh'])$(k).addEventListener('input',render);
+$('reset').addEventListener('click',()=>{for(const k of ['upper','forearm','thigh'])$(k).value=100;armsOn=true;grid=false;layer='silhouette';camera='full';render()});
+$('grid-toggle').addEventListener('click',()=>{grid=!grid;render()});
+render();
+})();
+</script></body></html>
