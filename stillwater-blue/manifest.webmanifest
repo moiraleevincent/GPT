@@ -1,0 +1,19 @@
+{
+  "name": "Stillwater Blue — Lighting Study",
+  "short_name": "Stillwater Blue",
+  "description": "A cobalt-blue study of a quiet living aquarium.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#081d39",
+  "theme_color": "#081d39",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
