@@ -21,6 +21,7 @@ on:
       - "body_study_02/figure.svg"
       - "torso_landmark_lab/index.html"
       - "body_leg_lab/index.html"
+      - "body_arm_lab/index.html"
       - "stillwater/**"
       - "moongarden/**"
       - "rose-below/**"
@@ -72,6 +73,8 @@ jobs:
           cp torso_landmark_lab/index.html site/torso_landmark_lab/index.html
           mkdir -p site/body_leg_lab
           cp body_leg_lab/index.html site/body_leg_lab/index.html
+          mkdir -p site/body_arm_lab
+          cp body_arm_lab/index.html site/body_arm_lab/index.html
           # Publish the original aquariums alongside the A4 blue-light experiment.
           for aquarium in stillwater moongarden rose-below stillwater-blue; do
             if [ -d "$aquarium" ]; then cp -R "$aquarium" "site/$aquarium"; fi
