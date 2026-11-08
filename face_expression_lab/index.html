@@ -4,12 +4,12 @@
 <style>
 :root{--dark:#181b22;--panel:#222731;--line:#47444b;--cream:#e8ddcf;--muted:#b7b0b0;--accent:#c69380;--paper:#c8b5a6}
 *{box-sizing:border-box} body{margin:0;background:var(--dark);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:var(--cream)}
-main{max-width:980px;margin:0 auto;padding:16px} header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+main{max-width:1240px;margin:0 auto;padding:16px} header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 h1{margin:0;font-size:clamp(22px,4vw,32px);font-weight:700;letter-spacing:-.03em} small{color:var(--muted)}
-.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
-.stage{background:var(--paper);border-radius:16px;overflow:hidden;min-height:320px;display:flex;justify-content:center;align-items:center}
-.stage svg{width:100%;max-width:900px;max-height:72svh;display:block;aspect-ratio:8/9}
-.panel{background:var(--panel);border:1px solid #3b3b43;padding:18px;border-radius:16px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
+.stage{position:sticky;top:8px;z-index:2;background:var(--paper);border-radius:16px;overflow:hidden;height:62svh;min-height:300px;max-height:610px;display:flex;justify-content:center;align-items:center;transition:height .25s ease,min-height .25s ease}
+.stage svg{width:100%;height:100%;display:block;flex:none}
+.panel{background:var(--panel);border:1px solid #3b3b43;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px));border-radius:16px}
 .eyebrow{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.16em;font-weight:700;margin:0 0 7px}
 .intro{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 16px}
 .buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 0}
@@ -19,22 +19,27 @@ button:disabled{opacity:.65;cursor:default}
 .section{border-top:1px solid #414149;margin-top:18px;padding-top:16px}
 .control{display:block;padding:12px 0;border-top:1px solid #414149} .control:first-of-type{border-top:0;padding-top:0}
 .label{display:flex;justify-content:space-between;font-size:13px} .label output{color:var(--accent)}
-input[type=range]{width:100%;margin-top:10px;accent-color:var(--accent)}
+input[type=range]{width:100%;height:30px;margin-top:8px;accent-color:var(--accent);touch-action:pan-y}
 .pose{margin-top:10px;background:#1d2129;border:1px solid #343941;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);white-space:pre-wrap}
 .note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:10px}
-
-@media (max-width: 640px){
-main{padding:10px}
-header{margin-bottom:10px}
-.buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
-.stage svg{max-height:none;width:100%}
-.panel{padding:14px}
+.stage.compact{height:32svh;min-height:190px;max-height:270px}
+@media (min-width:760px){
+  .layout{grid-template-columns:minmax(0,1.3fr) minmax(315px,.9fr);gap:18px}
+  .stage,.stage.compact{top:16px;height:76svh;min-height:460px;max-height:760px}
+}
+@media (max-width:759px){
+  main{padding:10px}
+  header{margin-bottom:10px}
+  .panel{padding:14px 14px calc(22px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){
+  .stage{transition:none}
 }
 </style></head><body>
 <main>
 <header><h1>Face Study 01 · Expression Lab</h1><small>GitHub Pages ready · neutral / suspicious / delighted</small></header>
 <div class="layout">
-  <div class="stage" id="stage"><svg xmlns="http://www.w3.org/2000/svg" width="800" height="900" viewBox="0 0 800 900">
+  <div class="stage" id="stage"><svg id="portrait-svg" xmlns="http://www.w3.org/2000/svg" width="800" height="900" viewBox="160 148 480 635" preserveAspectRatio="xMidYMid slice">
 <title>Face Study 01 — independent vector layers</title>
 <desc>An original hand-coded, low-poly-inspired portrait intended for facial-animation tests. Facial features remain separately editable.</desc>
 <defs>
@@ -216,6 +221,19 @@ header{margin-bottom:10px}
 <script>
 (()=>{'use strict';
  const $=id=>document.getElementById(id);
+ // Keep a close-up of the acting face on-screen while controls are being adjusted on phones.
+ // The original SVG artwork and facial rig coordinates are unchanged; only the camera framing changes.
+ const stage=$('stage'), portrait=$('portrait-svg');
+ const phoneLayout=window.matchMedia('(max-width:759px)');
+ function updateStage(){
+   const compact=phoneLayout.matches && window.scrollY>100;
+   stage.classList.toggle('compact',compact);
+   const view=compact?'210 400 380 240':'160 148 480 635';
+   if(portrait.getAttribute('viewBox')!==view) portrait.setAttribute('viewBox',view);
+ }
+ window.addEventListener('scroll',updateStage,{passive:true});
+ window.addEventListener('resize',updateStage,{passive:true});
+ updateStage();
  const inputs=['blink','gaze','browL','browR','talk','smile','skew','tilt'];
  const defaults={blink:0,gaze:0,browL:0,browR:0,talk:0,smile:0,skew:0,tilt:0};
  let pose={...defaults}; let token=0;
