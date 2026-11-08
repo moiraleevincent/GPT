@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#182029">
+<title>Body Study 03 — Torso B + Leg Construction</title>
+<style>
+:root{--bg:#18212b;--panel:#25303a;--line:#455460;--ink:#f5eee6;--muted:#bdc4ca;--accent:#e0ac9f}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0}
+main{max-width:1200px;margin:auto;padding:12px}h1{font-size:clamp(23px,5vw,34px);margin:0 0 6px;letter-spacing:-.04em}header{padding:6px 3px 14px}header p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+.stage{position:sticky;z-index:3;top:5px;height:min(66svh,740px);min-height:315px;display:grid;place-items:center;border:1px solid #acaba6;border-radius:17px;overflow:hidden;background:#f4ede6;box-shadow:0 8px 32px #03060c66}
+.stage svg{height:100%;width:100%;display:block;touch-action:pan-y}
+.stage .stage-title{position:absolute;top:10px;left:10px;color:#f8f6f0;background:#343b45e5;padding:6px 10px;border-radius:9px;font-size:12px;font-weight:720;pointer-events:none}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:18px 15px calc(24px + env(safe-area-inset-bottom,0px));box-shadow:0 5px 21px #080e1750}
+h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:6px 0 9px}
+.segment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:16px}
+button{background:#354451;border:1px solid #61707e;color:var(--ink);font:inherit;font-weight:660;font-size:12px;padding:12px 5px;border-radius:9px;touch-action:manipulation;cursor:pointer}
+button[aria-pressed="true"]{background:var(--accent);color:#252b35;border-color:var(--accent)}button:focus-visible,input:focus-visible{outline:3px solid #eacdbd;outline-offset:2px}
+.control{margin:0 0 15px}.label-row{display:flex;justify-content:space-between;gap:8px;align-items:center}.control label{font-size:13px;font-weight:680}.readout{font-size:12px;font-weight:750;color:#f0c6b6;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#ebb9a9;height:22px;margin:7px 0 0}.scale{display:flex;justify-content:space-between;color:#afbac0;font-size:10px}
+.notes{color:var(--muted);font-size:13px;line-height:1.55;margin:12px 0}.notes strong{color:#f6f0e9}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}.pill{border:1px solid #53616b;background:#19232b;border-radius:999px;font-size:11px;padding:5px 9px;color:#d6d9db}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:15px 0}.metric{padding:10px 6px;background:#1c2730;border:1px solid #52616c;border-radius:9px;text-align:center}.metric b{display:block;font-size:18px;color:#f5d0c0}.metric span{font-size:10px;color:#c4c6c9}
+.buttons-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}button.soft{background:#2c3843;color:#e5c9be}
+a{color:#f5cbbb;text-underline-offset:3px}.source{font-size:12px;padding:13px 0 0}
+@media(min-width:760px){main{padding:18px}.layout{grid-template-columns:minmax(0,1.35fr) minmax(305px,.72fr);gap:16px}.stage{top:12px;height:min(85svh,920px)}.panel{padding:20px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style></head>
+<body>
+<main>
+<header><h1>Body Study 03 · Give B legs</h1><p>One shared anatomical grid. Torso B measuring landmarks preserved; thigh, knee, calf and ankle defined relative to the same grid. Original SVG geometry — no generated pictures.</p></header>
+<div class="layout">
+<section class="stage" aria-label="Interactive vector torso and legs"><div class="stage-title" id="stage-label">Connected silhouette · torso + legs</div><svg xmlns="http://www.w3.org/2000/svg" viewBox="40 -65 320 1330" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Frontal vector study of a torso connected to two legs, with adjustable anatomical proportions" id="figure">
+<defs>
+ <linearGradient id="skin" x1=".08" x2=".85" y1=".1" y2=".7"><stop offset="0" stop-color="#f5ccb0"/><stop offset=".47" stop-color="#ddb096"/><stop offset="1" stop-color="#b77f72"/></linearGradient>
+ <linearGradient id="depth" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fbe4c7" stop-opacity=".35"/><stop offset=".48" stop-color="#deb29d" stop-opacity="0"/><stop offset="1" stop-color="#8c6466" stop-opacity=".25"/></linearGradient>
+ <clipPath id="inside"><path id="clip-body" d=""/></clipPath>
+</defs>
+<rect x="0" y="0" width="400" height="1230" fill="#f6efe7"/>
+<g id="grid"></g>
+<g id="art"><path id="silhouette" d="" stroke="#3d434b" stroke-width="2.2" stroke-linejoin="round" fill="#3d434b"/>
+<g clip-path="url(#inside)" id="volume" style="display:none">
+<path id="shading-wash" fill="url(#depth)" d="M95 75 H310 V1150 H95 Z"/>
+<path d="M143 188 Q200 172 257 188 Q270 248 240 284 Q201 297 160 284 Q129 246 143 188Z" fill="#8f6a61" opacity=".09"/>
+<path d="M167 298 Q198 313 234 298 M161 398 Q200 417 238 398" fill="none" stroke="#91665c" stroke-width="3" opacity=".15"/>
+<path d="M194 230 Q192 286 195 324 M206 230 Q208 286 205 324" fill="none" stroke="#936b64" stroke-width="3" opacity=".17"/>
+<path d="M197 368 Q201 361 204 369" fill="none" stroke="#956b61" stroke-width="3" opacity=".55"/>
+<path id="r-quad" d="" fill="#facdaf" opacity=".21"/>
+<path id="l-quad" d="" fill="#facdaf" opacity=".21"/>
+<path id="r-calf" d="" fill="#92695f" opacity=".15"/>
+<path id="l-calf" d="" fill="#92695f" opacity=".15"/>
+<path id="knees" d="" fill="none" stroke="#a97c69" stroke-width="3" opacity=".44"/>
+<path id="ankles" d="" fill="none" stroke="#b08170" stroke-width="2" opacity=".35"/>
+</g></g>
+<g id="construction" style="display:none"><path id="ribcage" d="M147 190 Q200 153 253 190 Q271 250 200 320 Q129 250 147 190Z" fill="#65a2a6" fill-opacity=".10" stroke="#4b818b" stroke-width="2.5" stroke-dasharray="8 6"/>
+<path id="pelvis" d="M117 380 Q200 342 283 380 Q302 447 200 513 Q98 447 117 380Z" fill="#d695a0" fill-opacity=".13" stroke="#c16c84" stroke-width="2.5" stroke-dasharray="8 6"/>
+<g id="markers"></g><path id="leg-centers" d="" fill="none" stroke="#597e9b" stroke-dasharray="6 8" stroke-width="1.6"/><path d="M200 80 V1100" stroke="#6d9a9e" stroke-dasharray="4 7" opacity=".54"/></g>
+<g id="lettering" font-family="system-ui,-apple-system,sans-serif" fill="#8b7a72" font-size="12"><text x="200" y="1167" text-anchor="middle" letter-spacing="1.6">TORSO B · MEASURED LEGS · SHARED ANCHORS</text></g>
+</svg></section>
+<aside class="panel">
+<h2>Drawing layer</h2>
+<div class="segment" id="layers" role="group" aria-label="Drawing visualization"><button data-layer="silhouette" aria-pressed="true">Silhouette</button><button data-layer="construction" aria-pressed="false">Grid + dots</button><button data-layer="volume" aria-pressed="false">Volume</button></div>
+<h2>Where to look</h2>
+<div class="segment" id="camera" role="group" aria-label="Drawing zoom"><button data-camera="full" aria-pressed="true">Full</button><button data-camera="hips" aria-pressed="false">Hip → knee</button><button data-camera="lower" aria-pressed="false">Knee → foot</button></div>
+<h2>Change the measurements</h2>
+<div class="control"><div class="label-row"><label for="thigh">Upper thigh width</label><span class="readout" id="thigh-readout">100%</span></div><input id="thigh" type="range" min="75" max="135" step="1" value="100"><div class="scale"><span>narrower</span><span>baseline</span><span>fuller</span></div></div>
+<div class="control"><div class="label-row"><label for="knee">Knee width</label><span class="readout" id="knee-readout">100%</span></div><input id="knee" type="range" min="80" max="125" step="1" value="100"><div class="scale"><span>narrower</span><span>baseline</span><span>wider</span></div></div>
+<div class="control"><div class="label-row"><label for="calf">Calf width</label><span class="readout" id="calf-readout">100%</span></div><input id="calf" type="range" min="75" max="140" step="1" value="100"><div class="scale"><span>narrower</span><span>baseline</span><span>fuller</span></div></div>
+<div class="buttons-row"><button class="soft" id="reset">Restore baseline</button><button class="soft" id="toggle-grid" aria-pressed="false">Show guide lines</button></div>
+<div class="metrics"><div class="metric"><b>184</b><span>Hip width</span></div><div class="metric"><b id="thigh-metric">90</b><span>Upper thigh width</span></div><div class="metric"><b id="calf-metric">57</b><span>Calf width</span></div></div>
+<p class="notes" id="insight"><strong>What changed:</strong> The lower pelvis now flows into independently shaped thighs; their inner edges meet at B’s short groin bridge. Knee, calf, and ankle positions share this coordinate system.</p>
+<p class="notes">Torso B’s measurement stations and central leg separation come from our approved experiment. These are <strong>illustration measurements</strong>, not standardized anatomical averages. Look for thigh volume, the knee transition, and the characteristic uneven calf bulge. The groin-to-knee interval is approximately 290 drawing units, versus 242 from knee to ankle: a roughly 1.20:1 visible-length ratio.</p>
+<div class="pills"><span class="pill">Mirrored geometry</span><span class="pill">One continuous outline</span><span class="pill">Adjustable ratios</span></div>
+<div class="source"><a href="https://github.com/moiraleevincent/GPT/blob/main/body_leg_lab/index.html">Editable SVG / JavaScript source</a> · <a href="../torso_landmark_lab/">Torso experiment B</a></div>
+</aside></div></main>
+<script>
+(()=>{
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id),CX=200,HIP_WIDTH=184;
+// These nine B [y,halfWidth] anchors are copied exactly from the approved torso.
+const torsoB=[[132,87],[178,68],[229,75],[284,60],[329,50],[378,70],[427,92],[466,88],[502,76]];
+// Right-leg center X and halfWidth relative to the SAME 184-unit hip station.
+// The thigh has more volume than knee/calf; ankle is narrow, knee is not a circle.
+// Boundary landmarks at y502 and y511 join into B's original hip and groin bridge.
+const stations=[
+ // [y, centerX, halfWidth, zone]
+ [544,250,45,'thigh'], [582,250,44,'thigh'], [638,249,41,'thigh'],
+ [701,248.5,33,'thigh'],[748,247,27,'thigh'],
+ [783,246.5,22.5,'knee'],[801,247,22,'knee'],[825,249,22,'knee'],
+ [850,250.5,26,'calf'],[880,249.5,30.5,'calf'],[909,249,28,'calf'],
+ [946,248,22,'calf'],[989,246.5,16.5,'ankle'],[1020,245.5,15.5,'ankle']
+];
+const R=(n)=>Math.round(n*100)/100;
+function curve(points){
+ if(!points.length)return '';
+ let out='M '+R(points[0][0])+' '+R(points[0][1]);
+ for(let i=0;i<points.length-1;i++){
+ const p0=points[Math.max(i-1,0)],p1=points[i],p2=points[i+1],p3=points[Math.min(i+2,points.length-1)];
+ const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
+ const c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+ out+=` C ${R(c1[0])} ${R(c1[1])} ${R(c2[0])} ${R(c2[1])} ${R(p2[0])} ${R(p2[1])}`;
+ }
+ return out;
+}
+const continueCurve=pts=>curve(pts).replace(/^M\s+[-\d.]+\s+[-\d.]+/,'');
+const reflect=pts=>pts.map(([x,y])=>[2*CX-x,y]);
+function element(tag,attrs,parent){const n=document.createElementNS(NS,tag);for(const [key,val] of Object.entries(attrs))n.setAttribute(key,val);parent.appendChild(n);return n;}
+function read(){return {thigh:Number($('thigh').value)/100,knee:Number($('knee').value)/100,calf:Number($('calf').value)/100}}
+function profile(p){
+ const map=stations.map(([y,center,half,zone])=>{
+  const factor=zone==='thigh'?p.thigh:zone==='knee'?p.knee:zone==='calf'?p.calf:1;
+  return {y,cx:center,h:half*factor};
+ });
+ // Fixed upper attachment points keep the connection with torso B exact.
+ const outer=[[276,502],[283,526],...map.map(v=>[v.cx+v.h,v.y]),[261,1043]];
+ const inner=[[208,511],[214,526],...map.map(v=>[v.zone==='thigh'?Math.max(203,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
+ return {outer,inner,mark:map};
+}
+function makeBody(p){
+ const legs=profile(p),right=torsoB.map(([y,w])=>[200+w,y]);
+ const rightConnected=[...right,...legs.outer.slice(1)];
+ const leftConnected=[...rightConnected].reverse().map(([x,y])=>[400-x,y]);
+ // Single external contour travels along right torso → right leg/foot →
+ // right inner thigh → small B bridge → left inner thigh/foot → left torso.
+ let d='M 174 80 L 226 80 C 231 99 252 111 287 132';
+ d+=continueCurve(rightConnected);
+ d+=' C 268 1060 275 1082 286 1098 Q 293 1107 293 1116 Q 290 1126 280 1127 L 222 1127 Q 213 1124 214 1116 Q 214 1093 224 1075 Q 229 1058 230 1043';
+ d+=continueCurve([...legs.inner].reverse());
+ d+=' L 192 511';
+ const leftInner=reflect(legs.inner);
+ d+=continueCurve(leftInner);
+ d+=' Q 171 1058 176 1075 Q 186 1093 186 1116 Q 187 1124 178 1127 L 120 1127 Q 110 1126 107 1116 Q 107 1107 114 1098 C 125 1082 132 1060 139 1043';
+ d+=continueCurve(leftConnected);
+ d+=' C 148 111 169 99 174 80 Z';
+ return {d,legs};
+}
+const cameraBoxes={full:'40 -65 320 1330',hips:'75 338 250 500',lower:'93 721 215 425'};
+let layer='silhouette',camera='full',grid=false;
+function render(){
+ const p=read(),{d,legs}=makeBody(p);
+ $('silhouette').setAttribute('d',d);$('clip-body').setAttribute('d',d);
+ const construction=layer==='construction';const shaded=layer==='volume';
+ $('silhouette').setAttribute('fill',shaded?'url(#skin)':'#3d434b');
+ $('silhouette').setAttribute('stroke',shaded?'#a37466':'#3d434b');
+ $('volume').style.display=shaded?'':'none';$('construction').style.display=construction?'':'none';
+ $('grid').replaceChildren();
+ if(construction||grid){
+  for(let y=80;y<1140;y+=40)element('line',{x1:61,y1:y,x2:337,y2:y,stroke:'#b6a9a4','stroke-width':'.75',opacity:'.43'},$('grid'));
+  for(let x=80;x<=320;x+=40)element('line',{x1:x,y1:55,x2:x,y2:1145,stroke:'#b6a9a4','stroke-width':'.75',opacity:'.43'},$('grid'));
+ }
+ const marks=$('markers');marks.replaceChildren();
+ if(construction){
+  const points=[...torsoB.map(([y,w])=>[200+w,y]),...legs.outer,...legs.inner];
+  for(const [x,y] of points){for(const px of [x,400-x])element('circle',{cx:R(px),cy:R(y),r:3.7,fill:'#c27080',stroke:'#fff7ee','stroke-width':'1.1'},marks)}
+  const indexes=[2,5,7,9,11,13];
+  for(const i of indexes){const r=legs.mark[i];if(!r)continue;const center=r.cx;
+    element('line',{x1:R(center-r.h),x2:R(center+r.h),y1:r.y,y2:r.y,stroke:'#597d94','stroke-width':'2.4'},marks);
+    element('line',{x1:R(400-center-r.h),x2:R(400-center+r.h),y1:r.y,y2:r.y,stroke:'#597d94','stroke-width':'2.4'},marks);
+  }
+ }
+ const centerRight=legs.mark.map(v=>[v.cx,v.y]);$('leg-centers').setAttribute('d',curve(centerRight)+curve(reflect(centerRight)));
+ const mid=legs.mark;
+ const quad='M '+R(mid[0].cx-17)+' 547 Q '+R(mid[1].cx-17)+' 624 '+R(mid[3].cx-13)+' 716 Q '+R(mid[5].cx-10)+' 786 '+R(mid[5].cx+5)+' 790 Q '+R(mid[4].cx+20)+' 705 '+R(mid[1].cx+20)+' 564 Z';
+ $('r-quad').setAttribute('d',quad);$('l-quad').setAttribute('d',quad);
+ // Mirrored internal volume: CSS transform about figure center avoids separate dimensions.
+ $('l-quad').setAttribute('d',quad);$('l-quad').setAttribute('transform','translate(400 0) scale(-1 1)');
+ const calf=`M ${R(mid[8].cx+4)} 851 Q ${R(mid[9].cx+24)} 872 ${R(mid[10].cx+18)} 916 Q ${R(mid[11].cx+7)} 961 ${R(mid[12].cx+4)} 992 Q ${R(mid[10].cx-8)} 959 ${R(mid[9].cx-13)} 884 Z`;
+ $('r-calf').setAttribute('d',calf);$('l-calf').setAttribute('d',calf);$('l-calf').setAttribute('transform','translate(400 0) scale(-1 1)');
+ const ky=800;
+ $('knees').setAttribute('d',`M ${R(mid[6].cx-12)} ${ky-7} Q ${R(mid[6].cx)} ${ky-17} ${R(mid[6].cx+13)} ${ky-7} M ${R(400-mid[6].cx-13)} ${ky-7} Q ${R(400-mid[6].cx)} ${ky-17} ${R(400-mid[6].cx+12)} ${ky-7}`);
+ $('ankles').setAttribute('d','M 232 1031 Q 245 1037 258 1031 M 142 1031 Q 155 1037 168 1031');
+ $('figure').setAttribute('viewBox',cameraBoxes[camera]);
+ $('stage-label').textContent=(layer==='construction'?'Construction · anchors':layer==='volume'?'Basic volume · anatomy':'Continuous silhouette')+' · torso B + legs';
+ for(const b of document.querySelectorAll('[data-layer]'))b.setAttribute('aria-pressed',String(b.dataset.layer===layer));
+ for(const b of document.querySelectorAll('[data-camera]'))b.setAttribute('aria-pressed',String(b.dataset.camera===camera));
+ $('toggle-grid').setAttribute('aria-pressed',String(grid));
+ for(const zone of ['thigh','knee','calf'])$(zone+'-readout').textContent=$(zone).value+'%';
+ $('thigh-metric').textContent=R(mid[0].h*2);$('calf-metric').textContent=R(mid[9].h*2);
+}
+for(const b of document.querySelectorAll('[data-layer]'))b.addEventListener('click',()=>{layer=b.dataset.layer;render()});
+for(const b of document.querySelectorAll('[data-camera]'))b.addEventListener('click',()=>{camera=b.dataset.camera;render()});
+for(const zone of ['thigh','knee','calf'])$(zone).addEventListener('input',render);
+$('toggle-grid').addEventListener('click',()=>{grid=!grid;render()});
+$('reset').addEventListener('click',()=>{for(const zone of ['thigh','knee','calf'])$(zone).value=100;layer='silhouette';camera='full';grid=false;render()});
+render();
+})();
+</script>
+</body></html>
