@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#182029">
-<title>Body Study 03 — Torso B + Leg Construction</title>
+<title>Body Study 03 — Higher thigh roots + hip join test</title>
 <style>
 :root{--bg:#18212b;--panel:#25303a;--line:#455460;--ink:#f5eee6;--muted:#bdc4ca;--accent:#e0ac9f}
 *{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0}
@@ -14,7 +14,7 @@ main{max-width:1200px;margin:auto;padding:12px}h1{font-size:clamp(23px,5vw,34px)
 .stage .stage-title{position:absolute;top:10px;left:10px;color:#f8f6f0;background:#343b45e5;padding:6px 10px;border-radius:9px;font-size:12px;font-weight:720;pointer-events:none}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:18px 15px calc(24px + env(safe-area-inset-bottom,0px));box-shadow:0 5px 21px #080e1750}
 h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:6px 0 9px}
-.segment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:16px}
+.segment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:16px}.segment.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 button{background:#354451;border:1px solid #61707e;color:var(--ink);font:inherit;font-weight:660;font-size:12px;padding:12px 5px;border-radius:9px;touch-action:manipulation;cursor:pointer}
 button[aria-pressed="true"]{background:var(--accent);color:#252b35;border-color:var(--accent)}button:focus-visible,input:focus-visible{outline:3px solid #eacdbd;outline-offset:2px}
 .control{margin:0 0 15px}.label-row{display:flex;justify-content:space-between;gap:8px;align-items:center}.control label{font-size:13px;font-weight:680}.readout{font-size:12px;font-weight:750;color:#f0c6b6;font-variant-numeric:tabular-nums}
@@ -63,6 +63,10 @@ a{color:#f5cbbb;text-underline-offset:3px}.source{font-size:12px;padding:13px 0 
 <div class="segment" id="layers" role="group" aria-label="Drawing visualization"><button data-layer="silhouette" aria-pressed="true">Silhouette</button><button data-layer="construction" aria-pressed="false">Grid + dots</button><button data-layer="volume" aria-pressed="false">Volume</button></div>
 <h2>Where to look</h2>
 <div class="segment" id="camera" role="group" aria-label="Drawing zoom"><button data-camera="full" aria-pressed="true">Full</button><button data-camera="hips" aria-pressed="false">Hip → knee</button><button data-camera="lower" aria-pressed="false">Knee → foot</button></div>
+<h2>Hip–thigh test</h2>
+<div class="segment two" role="group" aria-label="Compare upper thigh root position"><button data-root="original" aria-pressed="false">Earlier thigh</button><button data-root="raised" aria-pressed="true">Higher thigh</button></div>
+<div class="segment two" role="group" aria-label="Compare torso to thigh edge"><button data-join="soft" aria-pressed="true">Soft connection</button><button data-join="defined" aria-pressed="false">Defined corner</button></div>
+<p class="notes" id="join-explainer">The hip–thigh width transition now starts higher, without changing torso B's reference widths. Compare the outer line with soft and slightly defined curve joins.</p>
 <h2>Change the measurements</h2>
 <div class="control"><div class="label-row"><label for="thigh">Upper thigh width</label><span class="readout" id="thigh-readout">100%</span></div><input id="thigh" type="range" min="75" max="135" step="1" value="100"><div class="scale"><span>narrower</span><span>baseline</span><span>fuller</span></div></div>
 <div class="control"><div class="label-row"><label for="knee">Knee width</label><span class="readout" id="knee-readout">100%</span></div><input id="knee" type="range" min="80" max="125" step="1" value="100"><div class="scale"><span>narrower</span><span>baseline</span><span>wider</span></div></div>
@@ -85,8 +89,8 @@ const $=id=>document.getElementById(id),CX=200,HIP_WIDTH=184;
 const torsoB=[[132,87],[178,68],[229,75],[284,60],[329,50],[378,70],[427,92]];
 // Right-leg center X and halfWidth relative to the SAME 184-unit hip station.
 // The thigh has more volume than knee/calf; ankle is narrow, knee is not a circle.
-// Boundary landmarks at y502 and y511 join into B's original hip and groin bridge.
-const stations=[
+// The y427 hip point and y511 groin bridge remain fixed in both variants.
+const stationsOriginal=[
  // [y, centerX, halfWidth, zone]
  // First stations begin immediately below the pelvis so the legs, not the torso,
  // are responsible for the upper-thigh contour.
@@ -97,6 +101,11 @@ const stations=[
  [909,249,28,'calf'], [946,248,22,'calf'], [989,246.5,16.5,'ankle'],
  [1020,245.5,15.5,'ankle']
 ];
+// Only the two highest thigh stations move upward. The knee, calf and foot
+// remain at their original positions. The same torso B and groin bridge are used.
+const stationsRaised=stationsOriginal.map(([y,cx,h,zone],i)=>
+ i===0 ? [438,250,43,zone] : i===1 ? [467,250,46,zone] : i===2 ? [520,250,46,zone] : [y,cx,h,zone]
+);
 const R=(n)=>Math.round(n*100)/100;
 function curve(points){
  if(!points.length)return '';
@@ -112,16 +121,17 @@ function curve(points){
 const continueCurve=pts=>curve(pts).replace(/^M\s+[-\d.]+\s+[-\d.]+/,'');
 const reflect=pts=>pts.map(([x,y])=>[2*CX-x,y]);
 function element(tag,attrs,parent){const n=document.createElementNS(NS,tag);for(const [key,val] of Object.entries(attrs))n.setAttribute(key,val);parent.appendChild(n);return n;}
-function read(){return {thigh:Number($('thigh').value)/100,knee:Number($('knee').value)/100,calf:Number($('calf').value)/100}}
+function read(){return {thigh:Number($('thigh').value)/100,knee:Number($('knee').value)/100,calf:Number($('calf').value)/100,root,join}}
 function profile(p){
  // The torso's last station supplies the outer leg's FIRST point. This is
  // one anatomical anchor, not two separately estimated nearby coordinates.
  const hipY=torsoB[torsoB.length-1][0];
  const hipX=CX+torsoB[torsoB.length-1][1];
- const map=stations.map(([y,center,half,zone],i)=>{
+ const currentStations=p.root==='raised'?stationsRaised:stationsOriginal;
+ const map=currentStations.map(([y,center,half,zone],i)=>{
   // Fade changes in upper-thigh fullness in gradually, starting at the fixed hip.
   // Without the fade, the width slider can create a new step at the connection.
-  const thighWeight=i===0 ? .15 : i===1 ? .5 : 1;
+  const thighWeight=p.root==='raised' ? (i===0 ? .08 : i===1 ? .45 : 1) : (i===0 ? .15 : i===1 ? .5 : 1);
   const factor=zone==='thigh'?1+(p.thigh-1)*thighWeight:zone==='knee'?p.knee:zone==='calf'?p.calf:1;
   const h=half*factor;
   // Keep the inside of either thigh on its own side of the midline when wide.
@@ -134,7 +144,7 @@ function profile(p){
  // Groin bridge is anchored at B's original 208,511 / 192,511 endpoints.
  // Start at that bridge, then travel ONLY downward. Skip the early outer-thigh
  // stations (y458,495) which caused the old inner contour to double back.
- const inner=[[208,511],[208,526],...map.slice(2).map(v=>[v.zone==='thigh'?Math.max(206,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
+ const inner=[[208,511],...(p.root==='raised'?[]:[[208,526]]),...map.slice(2).map((v,i)=>[v.zone==='thigh'?Math.max(p.root==='raised'&&i===0?210:206,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
  return {outer,inner,mark:map};
 }
 function makeBody(p){
@@ -146,22 +156,24 @@ function makeBody(p){
  if(legs.inner.some((pt,i,a)=>i>0 && pt[1]<=a[i-1][1]))throw Error('Inner thigh doubles back');
  const rightConnected=[...right,...legs.outer.slice(1)];
  const leftConnected=[...rightConnected].reverse().map(([x,y])=>[400-x,y]);
+ const outerRight=p.join==='defined' ? continueCurve(right)+continueCurve(legs.outer) : continueCurve(rightConnected);
+ const outerLeft=p.join==='defined' ? continueCurve(reflect([...legs.outer].reverse()))+continueCurve(reflect([...right].reverse())) : continueCurve(leftConnected);
  // Single external contour travels along right torso → right leg/foot →
  // right inner thigh → small B bridge → left inner thigh/foot → left torso.
  let d='M 174 80 L 226 80 C 231 99 252 111 287 132';
- d+=continueCurve(rightConnected);
+ d+=outerRight;
  d+=' C 268 1060 275 1082 286 1098 Q 293 1107 293 1116 Q 290 1126 280 1127 L 222 1127 Q 213 1124 214 1116 Q 214 1093 224 1075 Q 229 1058 230 1043';
  d+=continueCurve([...legs.inner].reverse());
  d+=' L 192 511';
  const leftInner=reflect(legs.inner);
  d+=continueCurve(leftInner);
  d+=' Q 171 1058 176 1075 Q 186 1093 186 1116 Q 187 1124 178 1127 L 120 1127 Q 110 1126 107 1116 Q 107 1107 114 1098 C 125 1082 132 1060 139 1043';
- d+=continueCurve(leftConnected);
+ d+=outerLeft;
  d+=' C 148 111 169 99 174 80 Z';
  return {d,legs};
 }
 const cameraBoxes={full:'40 -65 320 1330',hips:'75 338 250 500',lower:'93 721 215 425'};
-let layer='silhouette',camera='full',grid=false;
+let layer='silhouette',camera='full',grid=false,root='raised',join='soft';
 function render(){
  const p=read(),{d,legs}=makeBody(p);
  $('silhouette').setAttribute('d',d);$('clip-body').setAttribute('d',d);
@@ -191,7 +203,7 @@ function render(){
  }
  const centerRight=legs.mark.map(v=>[v.cx,v.y]);$('leg-centers').setAttribute('d',curve(centerRight)+curve(reflect(centerRight)));
  const mid=legs.mark;
- const quad='M '+R(mid[1].cx-18)+' 500 Q '+R(mid[2].cx-18)+' 600 '+R(mid[4].cx-13)+' 715 Q '+R(mid[7].cx-8)+' 787 '+R(mid[7].cx+5)+' 792 Q '+R(mid[5].cx+20)+' 710 '+R(mid[2].cx+20)+' 545 Z';
+ const quad='M '+R(mid[1].cx-18)+(p.root==='raised'?' 445 Q ':' 500 Q ')+R(mid[2].cx-18)+' 600 '+R(mid[4].cx-13)+' 715 Q '+R(mid[7].cx-8)+' 787 '+R(mid[7].cx+5)+' 792 Q '+R(mid[5].cx+20)+' 710 '+R(mid[2].cx+20)+(p.root==='raised'?' 475 Z':' 545 Z');
  $('r-quad').setAttribute('d',quad);$('l-quad').setAttribute('d',quad);
  // Mirrored internal volume: CSS transform about figure center avoids separate dimensions.
  $('l-quad').setAttribute('d',quad);$('l-quad').setAttribute('transform','translate(400 0) scale(-1 1)');
@@ -201,18 +213,23 @@ function render(){
  $('knees').setAttribute('d',`M ${R(mid[8].cx-12)} ${ky-7} Q ${R(mid[8].cx)} ${ky-17} ${R(mid[8].cx+13)} ${ky-7} M ${R(400-mid[8].cx-13)} ${ky-7} Q ${R(400-mid[8].cx)} ${ky-17} ${R(400-mid[8].cx+12)} ${ky-7}`);
  $('ankles').setAttribute('d','M 232 1031 Q 245 1037 258 1031 M 142 1031 Q 155 1037 168 1031');
  $('figure').setAttribute('viewBox',cameraBoxes[camera]);
- $('stage-label').textContent=(layer==='construction'?'Construction · shared joins':layer==='volume'?'Basic volume · anatomy':'Continuous silhouette')+' · corrected hip + groin';
+ $('stage-label').textContent=(layer==='construction'?'Construction · shared joins':layer==='volume'?'Basic volume · anatomy':'Continuous silhouette')+' · '+(root==='raised'?'higher thigh':'earlier thigh')+' / '+(join==='defined'?'defined join':'soft join');
  for(const b of document.querySelectorAll('[data-layer]'))b.setAttribute('aria-pressed',String(b.dataset.layer===layer));
  for(const b of document.querySelectorAll('[data-camera]'))b.setAttribute('aria-pressed',String(b.dataset.camera===camera));
  $('toggle-grid').setAttribute('aria-pressed',String(grid));
+ for(const b of document.querySelectorAll('[data-root]'))b.setAttribute('aria-pressed',String(b.dataset.root===root));
+ for(const b of document.querySelectorAll('[data-join]'))b.setAttribute('aria-pressed',String(b.dataset.join===join));
+ $('join-explainer').textContent=(root==='raised'?'Thigh fullness starts close below the hip,':'Original thigh fullness starts farther down,')+(join==='defined'?' with a slight deliberate change of contour angle at the shared hip point.':' with a continuous smooth tangent through the hip point.');
  for(const zone of ['thigh','knee','calf'])$(zone+'-readout').textContent=$(zone).value+'%';
  $('thigh-metric').textContent=R(mid[2].h*2);$('calf-metric').textContent=R(mid[11].h*2);
 }
 for(const b of document.querySelectorAll('[data-layer]'))b.addEventListener('click',()=>{layer=b.dataset.layer;render()});
 for(const b of document.querySelectorAll('[data-camera]'))b.addEventListener('click',()=>{camera=b.dataset.camera;render()});
 for(const zone of ['thigh','knee','calf'])$(zone).addEventListener('input',render);
+for(const b of document.querySelectorAll('[data-root]'))b.addEventListener('click',()=>{root=b.dataset.root;render()});
+for(const b of document.querySelectorAll('[data-join]'))b.addEventListener('click',()=>{join=b.dataset.join;render()});
 $('toggle-grid').addEventListener('click',()=>{grid=!grid;render()});
-$('reset').addEventListener('click',()=>{for(const zone of ['thigh','knee','calf'])$(zone).value=100;layer='silhouette';camera='full';grid=false;render()});
+$('reset').addEventListener('click',()=>{for(const zone of ['thigh','knee','calf'])$(zone).value=100;layer='silhouette';camera='full';grid=false;root='raised';join='soft';render()});
 render();
 })();
 </script>
