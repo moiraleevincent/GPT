@@ -29,9 +29,9 @@ a{color:#f5cbbb;text-underline-offset:3px}.source{font-size:12px;padding:13px 0 
 </style></head>
 <body>
 <main>
-<header><h1>Body Study 03 · Give B legs</h1><p>One shared anatomical grid. Torso B measuring landmarks preserved; thigh, knee, calf and ankle defined relative to the same grid. Original SVG geometry — no generated pictures.</p></header>
+<header><h1>Body Study 03 · Shared hip connection</h1><p>One shared anatomical grid. Torso B measuring landmarks preserved; the outer hip and leg now share one anchor and smooth tangent, while the inner thigh starts at the groin bridge. Original SVG geometry — no generated pictures. <strong>Updated join:</strong> no duplicated hip edge or reversing inner thigh.</p></header>
 <div class="layout">
-<section class="stage" aria-label="Interactive vector torso and legs"><div class="stage-title" id="stage-label">Connected silhouette · torso + legs</div><svg xmlns="http://www.w3.org/2000/svg" viewBox="40 -65 320 1330" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Frontal vector study of a torso connected to two legs, with adjustable anatomical proportions" id="figure">
+<section class="stage" aria-label="Interactive vector torso and legs"><div class="stage-title" id="stage-label">Connected silhouette · revised hip join</div><svg xmlns="http://www.w3.org/2000/svg" viewBox="40 -65 320 1330" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Frontal vector study of a torso connected to two legs, with adjustable anatomical proportions" id="figure">
 <defs>
  <linearGradient id="skin" x1=".08" x2=".85" y1=".1" y2=".7"><stop offset="0" stop-color="#f5ccb0"/><stop offset=".47" stop-color="#ddb096"/><stop offset="1" stop-color="#b77f72"/></linearGradient>
  <linearGradient id="depth" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fbe4c7" stop-opacity=".35"/><stop offset=".48" stop-color="#deb29d" stop-opacity="0"/><stop offset="1" stop-color="#8c6466" stop-opacity=".25"/></linearGradient>
@@ -55,8 +55,8 @@ a{color:#f5cbbb;text-underline-offset:3px}.source{font-size:12px;padding:13px 0 
 </g></g>
 <g id="construction" style="display:none"><path id="ribcage" d="M147 190 Q200 153 253 190 Q271 250 200 320 Q129 250 147 190Z" fill="#65a2a6" fill-opacity=".10" stroke="#4b818b" stroke-width="2.5" stroke-dasharray="8 6"/>
 <path id="pelvis" d="M117 380 Q200 342 283 380 Q302 447 200 513 Q98 447 117 380Z" fill="#d695a0" fill-opacity=".13" stroke="#c16c84" stroke-width="2.5" stroke-dasharray="8 6"/>
-<g id="markers"></g><path id="leg-centers" d="" fill="none" stroke="#597e9b" stroke-dasharray="6 8" stroke-width="1.6"/><path d="M200 80 V1100" stroke="#6d9a9e" stroke-dasharray="4 7" opacity=".54"/></g>
-<g id="lettering" font-family="system-ui,-apple-system,sans-serif" fill="#8b7a72" font-size="12"><text x="200" y="1167" text-anchor="middle" letter-spacing="1.6">TORSO B · MEASURED LEGS · SHARED ANCHORS</text></g>
+<g id="markers"></g><g id="attachment-points"></g><path id="leg-centers" d="" fill="none" stroke="#597e9b" stroke-dasharray="6 8" stroke-width="1.6"/><path d="M200 80 V1100" stroke="#6d9a9e" stroke-dasharray="4 7" opacity=".54"/></g>
+<g id="lettering" font-family="system-ui,-apple-system,sans-serif" fill="#8b7a72" font-size="12"><text x="200" y="1167" text-anchor="middle" letter-spacing="1.6">TORSO B · FIXED JOINS · SHARED TANGENTS</text></g>
 </svg></section>
 <aside class="panel">
 <h2>Drawing layer</h2>
@@ -68,9 +68,10 @@ a{color:#f5cbbb;text-underline-offset:3px}.source{font-size:12px;padding:13px 0 
 <div class="control"><div class="label-row"><label for="knee">Knee width</label><span class="readout" id="knee-readout">100%</span></div><input id="knee" type="range" min="80" max="125" step="1" value="100"><div class="scale"><span>narrower</span><span>baseline</span><span>wider</span></div></div>
 <div class="control"><div class="label-row"><label for="calf">Calf width</label><span class="readout" id="calf-readout">100%</span></div><input id="calf" type="range" min="75" max="140" step="1" value="100"><div class="scale"><span>narrower</span><span>baseline</span><span>fuller</span></div></div>
 <div class="buttons-row"><button class="soft" id="reset">Restore baseline</button><button class="soft" id="toggle-grid" aria-pressed="false">Show guide lines</button></div>
-<div class="metrics"><div class="metric"><b>184</b><span>Hip width</span></div><div class="metric"><b id="thigh-metric">90</b><span>Upper thigh width</span></div><div class="metric"><b id="calf-metric">57</b><span>Calf width</span></div></div>
-<p class="notes" id="insight"><strong>What changed:</strong> The lower pelvis now flows into independently shaped thighs; their inner edges meet at B’s short groin bridge. Knee, calf, and ankle positions share this coordinate system.</p>
-<p class="notes">Torso B’s measurement stations and central leg separation come from our approved experiment. These are <strong>illustration measurements</strong>, not standardized anatomical averages. Look for thigh volume, the knee transition, and the characteristic uneven calf bulge. The groin-to-knee interval is approximately 290 drawing units, versus 242 from knee to ankle: a roughly 1.20:1 visible-length ratio.</p>
+<div class="metrics"><div class="metric"><b>184</b><span>Hip width</span></div><div class="metric"><b id="thigh-metric">92</b><span>Upper thigh width</span></div><div class="metric"><b id="calf-metric">57</b><span>Calf width</span></div></div>
+<p class="notes" id="insight"><strong>What changed:</strong> The torso now stops at the pelvis/hip mass. The thigh now begins at the torso’s exact outer hip anchor, with a matched curve direction. At the groin bridge, the inner-thigh contour progresses downwards without reversing.</p>
+<p class="notes"><strong>In Grid + dots:</strong> teal circles mark the exact hip-to-leg joins; rose circles mark the two ends of the groin bridge.</p>
+<p class="notes">Torso B’s measurement stations and central leg separation come from our approved experiment. These are <strong>illustration measurements</strong>, not standardized anatomical averages. Look for thigh volume, the knee transition, and the characteristic uneven calf bulge. The outer leg shares the pelvis endpoint, while the inner leg starts at the fixed groin bridge. The groin-to-knee interval is longer than the knee-to-ankle interval, and the thighs carry more width than the calves.</p>
 <div class="pills"><span class="pill">Mirrored geometry</span><span class="pill">One continuous outline</span><span class="pill">Adjustable ratios</span></div>
 <div class="source"><a href="https://github.com/moiraleevincent/GPT/blob/main/body_leg_lab/index.html">Editable SVG / JavaScript source</a> · <a href="../torso_landmark_lab/">Torso experiment B</a></div>
 </aside></div></main>
@@ -80,17 +81,21 @@ a{color:#f5cbbb;text-underline-offset:3px}.source{font-size:12px;padding:13px 0 
 const NS='http://www.w3.org/2000/svg';
 const $=id=>document.getElementById(id),CX=200,HIP_WIDTH=184;
 // These nine B [y,halfWidth] anchors are copied exactly from the approved torso.
-const torsoB=[[132,87],[178,68],[229,75],[284,60],[329,50],[378,70],[427,92],[466,88],[502,76]];
+// Torso B trimmed so it ends at the pelvis/upper-hip mass rather than carrying baked-in thigh contour.
+const torsoB=[[132,87],[178,68],[229,75],[284,60],[329,50],[378,70],[427,92]];
 // Right-leg center X and halfWidth relative to the SAME 184-unit hip station.
 // The thigh has more volume than knee/calf; ankle is narrow, knee is not a circle.
 // Boundary landmarks at y502 and y511 join into B's original hip and groin bridge.
 const stations=[
  // [y, centerX, halfWidth, zone]
- [544,250,45,'thigh'], [582,250,44,'thigh'], [638,249,41,'thigh'],
- [701,248.5,33,'thigh'],[748,247,27,'thigh'],
- [783,246.5,22.5,'knee'],[801,247,22,'knee'],[825,249,22,'knee'],
- [850,250.5,26,'calf'],[880,249.5,30.5,'calf'],[909,249,28,'calf'],
- [946,248,22,'calf'],[989,246.5,16.5,'ankle'],[1020,245.5,15.5,'ankle']
+ // First stations begin immediately below the pelvis so the legs, not the torso,
+ // are responsible for the upper-thigh contour.
+ [458,250,44,'thigh'], [495,250,46,'thigh'], [544,250,46,'thigh'],
+ [592,249.5,45,'thigh'], [646,249,41.5,'thigh'], [704,248.5,34,'thigh'],
+ [748,247.5,28,'thigh'], [783,246.5,22.5,'knee'], [801,247,22,'knee'],
+ [825,249,22.2,'knee'], [850,250.5,26,'calf'], [880,249.5,30.5,'calf'],
+ [909,249,28,'calf'], [946,248,22,'calf'], [989,246.5,16.5,'ankle'],
+ [1020,245.5,15.5,'ankle']
 ];
 const R=(n)=>Math.round(n*100)/100;
 function curve(points){
@@ -109,17 +114,36 @@ const reflect=pts=>pts.map(([x,y])=>[2*CX-x,y]);
 function element(tag,attrs,parent){const n=document.createElementNS(NS,tag);for(const [key,val] of Object.entries(attrs))n.setAttribute(key,val);parent.appendChild(n);return n;}
 function read(){return {thigh:Number($('thigh').value)/100,knee:Number($('knee').value)/100,calf:Number($('calf').value)/100}}
 function profile(p){
- const map=stations.map(([y,center,half,zone])=>{
-  const factor=zone==='thigh'?p.thigh:zone==='knee'?p.knee:zone==='calf'?p.calf:1;
-  return {y,cx:center,h:half*factor};
+ // The torso's last station supplies the outer leg's FIRST point. This is
+ // one anatomical anchor, not two separately estimated nearby coordinates.
+ const hipY=torsoB[torsoB.length-1][0];
+ const hipX=CX+torsoB[torsoB.length-1][1];
+ const map=stations.map(([y,center,half,zone],i)=>{
+  // Fade changes in upper-thigh fullness in gradually, starting at the fixed hip.
+  // Without the fade, the width slider can create a new step at the connection.
+  const thighWeight=i===0 ? .15 : i===1 ? .5 : 1;
+  const factor=zone==='thigh'?1+(p.thigh-1)*thighWeight:zone==='knee'?p.knee:zone==='calf'?p.calf:1;
+  const h=half*factor;
+  // Keep the inside of either thigh on its own side of the midline when wide.
+  const cx=zone==='thigh'?Math.max(center,206+h):center;
+  return {y,cx,h,zone};
  });
- // Fixed upper attachment points keep the connection with torso B exact.
- const outer=[[276,502],[283,526],...map.map(v=>[v.cx+v.h,v.y]),[261,1043]];
- const inner=[[208,511],[214,526],...map.map(v=>[v.zone==='thigh'?Math.max(203,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
+ // The outer thigh CONTINUES the torso's curve at hipX,hipY. Catmull–Rom
+ // interpolation through this ordered sequence gives the shared hip tangent.
+ const outer=[[hipX,hipY],...map.map(v=>[v.cx+v.h,v.y]),[261,1043]];
+ // Groin bridge is anchored at B's original 208,511 / 192,511 endpoints.
+ // Start at that bridge, then travel ONLY downward. Skip the early outer-thigh
+ // stations (y458,495) which caused the old inner contour to double back.
+ const inner=[[208,511],[208,526],...map.slice(2).map(v=>[v.zone==='thigh'?Math.max(206,v.cx-v.h):v.cx-v.h,v.y]),[230,1043]];
  return {outer,inner,mark:map};
 }
 function makeBody(p){
  const legs=profile(p),right=torsoB.map(([y,w])=>[200+w,y]);
+ // The construction contract: the end of the outer torso is exactly the
+ // start of the outer leg. Both use one anchor in the same cubic spline.
+ const outerHip=right[right.length-1];
+ if(outerHip[0]!==legs.outer[0][0] || outerHip[1]!==legs.outer[0][1])throw Error('Hip anchor mismatch');
+ if(legs.inner.some((pt,i,a)=>i>0 && pt[1]<=a[i-1][1]))throw Error('Inner thigh doubles back');
  const rightConnected=[...right,...legs.outer.slice(1)];
  const leftConnected=[...rightConnected].reverse().map(([x,y])=>[400-x,y]);
  // Single external contour travels along right torso → right leg/foot →
@@ -151,10 +175,15 @@ function render(){
   for(let x=80;x<=320;x+=40)element('line',{x1:x,y1:55,x2:x,y2:1145,stroke:'#b6a9a4','stroke-width':'.75',opacity:'.43'},$('grid'));
  }
  const marks=$('markers');marks.replaceChildren();
+ const anchors=$('attachment-points');anchors.replaceChildren();
  if(construction){
   const points=[...torsoB.map(([y,w])=>[200+w,y]),...legs.outer,...legs.inner];
   for(const [x,y] of points){for(const px of [x,400-x])element('circle',{cx:R(px),cy:R(y),r:3.7,fill:'#c27080',stroke:'#fff7ee','stroke-width':'1.1'},marks)}
-  const indexes=[2,5,7,9,11,13];
+  // Extra markers show the exact shared join, rather than implying two
+  // independently placed pieces that merely overlap.
+  for(const x of [292,108])element('circle',{cx:x,cy:427,r:6.5,fill:'#168393',stroke:'#fff8ee','stroke-width':2.3},anchors);
+  for(const x of [208,192])element('circle',{cx:x,cy:511,r:5.5,fill:'#c35073',stroke:'#fff8ee','stroke-width':2},anchors);
+  const indexes=[2,6,8,10,12,14];
   for(const i of indexes){const r=legs.mark[i];if(!r)continue;const center=r.cx;
     element('line',{x1:R(center-r.h),x2:R(center+r.h),y1:r.y,y2:r.y,stroke:'#597d94','stroke-width':'2.4'},marks);
     element('line',{x1:R(400-center-r.h),x2:R(400-center+r.h),y1:r.y,y2:r.y,stroke:'#597d94','stroke-width':'2.4'},marks);
@@ -162,22 +191,22 @@ function render(){
  }
  const centerRight=legs.mark.map(v=>[v.cx,v.y]);$('leg-centers').setAttribute('d',curve(centerRight)+curve(reflect(centerRight)));
  const mid=legs.mark;
- const quad='M '+R(mid[0].cx-17)+' 547 Q '+R(mid[1].cx-17)+' 624 '+R(mid[3].cx-13)+' 716 Q '+R(mid[5].cx-10)+' 786 '+R(mid[5].cx+5)+' 790 Q '+R(mid[4].cx+20)+' 705 '+R(mid[1].cx+20)+' 564 Z';
+ const quad='M '+R(mid[1].cx-18)+' 500 Q '+R(mid[2].cx-18)+' 600 '+R(mid[4].cx-13)+' 715 Q '+R(mid[7].cx-8)+' 787 '+R(mid[7].cx+5)+' 792 Q '+R(mid[5].cx+20)+' 710 '+R(mid[2].cx+20)+' 545 Z';
  $('r-quad').setAttribute('d',quad);$('l-quad').setAttribute('d',quad);
  // Mirrored internal volume: CSS transform about figure center avoids separate dimensions.
  $('l-quad').setAttribute('d',quad);$('l-quad').setAttribute('transform','translate(400 0) scale(-1 1)');
- const calf=`M ${R(mid[8].cx+4)} 851 Q ${R(mid[9].cx+24)} 872 ${R(mid[10].cx+18)} 916 Q ${R(mid[11].cx+7)} 961 ${R(mid[12].cx+4)} 992 Q ${R(mid[10].cx-8)} 959 ${R(mid[9].cx-13)} 884 Z`;
+ const calf=`M ${R(mid[10].cx+4)} 851 Q ${R(mid[11].cx+24)} 872 ${R(mid[12].cx+18)} 916 Q ${R(mid[13].cx+7)} 961 ${R(mid[14].cx+4)} 992 Q ${R(mid[12].cx-8)} 959 ${R(mid[11].cx-13)} 884 Z`;
  $('r-calf').setAttribute('d',calf);$('l-calf').setAttribute('d',calf);$('l-calf').setAttribute('transform','translate(400 0) scale(-1 1)');
  const ky=800;
- $('knees').setAttribute('d',`M ${R(mid[6].cx-12)} ${ky-7} Q ${R(mid[6].cx)} ${ky-17} ${R(mid[6].cx+13)} ${ky-7} M ${R(400-mid[6].cx-13)} ${ky-7} Q ${R(400-mid[6].cx)} ${ky-17} ${R(400-mid[6].cx+12)} ${ky-7}`);
+ $('knees').setAttribute('d',`M ${R(mid[8].cx-12)} ${ky-7} Q ${R(mid[8].cx)} ${ky-17} ${R(mid[8].cx+13)} ${ky-7} M ${R(400-mid[8].cx-13)} ${ky-7} Q ${R(400-mid[8].cx)} ${ky-17} ${R(400-mid[8].cx+12)} ${ky-7}`);
  $('ankles').setAttribute('d','M 232 1031 Q 245 1037 258 1031 M 142 1031 Q 155 1037 168 1031');
  $('figure').setAttribute('viewBox',cameraBoxes[camera]);
- $('stage-label').textContent=(layer==='construction'?'Construction · anchors':layer==='volume'?'Basic volume · anatomy':'Continuous silhouette')+' · torso B + legs';
+ $('stage-label').textContent=(layer==='construction'?'Construction · shared joins':layer==='volume'?'Basic volume · anatomy':'Continuous silhouette')+' · corrected hip + groin';
  for(const b of document.querySelectorAll('[data-layer]'))b.setAttribute('aria-pressed',String(b.dataset.layer===layer));
  for(const b of document.querySelectorAll('[data-camera]'))b.setAttribute('aria-pressed',String(b.dataset.camera===camera));
  $('toggle-grid').setAttribute('aria-pressed',String(grid));
  for(const zone of ['thigh','knee','calf'])$(zone+'-readout').textContent=$(zone).value+'%';
- $('thigh-metric').textContent=R(mid[0].h*2);$('calf-metric').textContent=R(mid[9].h*2);
+ $('thigh-metric').textContent=R(mid[2].h*2);$('calf-metric').textContent=R(mid[11].h*2);
 }
 for(const b of document.querySelectorAll('[data-layer]'))b.addEventListener('click',()=>{layer=b.dataset.layer;render()});
 for(const b of document.querySelectorAll('[data-camera]'))b.addEventListener('click',()=>{camera=b.dataset.camera;render()});
