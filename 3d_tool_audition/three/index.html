@@ -14,9 +14,10 @@
 <p class="foot">All geometry, procedural painted texture, lighting and animation are editable JavaScript. Unlike Test 01, this is a real-time 3D scene, not a prerendered video.</p>
 <p class="foot"><a href="https://github.com/moiraleevincent/GPT/blob/main/3d_tool_audition/three/index.html">View source</a> · <a href="../">Blender comparison</a></p></aside></div>
 </main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 try{
 const holder=document.getElementById('stage');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x101c2b);scene.fog=new THREE.Fog(0x101c2b,8,18);
