@@ -23,12 +23,14 @@ pink=mat("rosy blush",(.9,.31,.37),.6)
 gold=mat("brushed brass",(.86,.58,.24),.32,.65)
 dark=mat("ink",(.015,.03,.07))
 floor=mat("stage",(.06,.09,.14))
-def ell(name,loc,scale,material,segments=20):
- bpy.ops.mesh.primitive_uv_sphere_add(segments=segments,ring_count=12,location=loc)
+def ell(name,loc,scale,material,segments=40):
+ bpy.ops.mesh.primitive_uv_sphere_add(segments=segments,ring_count=24,location=loc)
  o=bpy.context.object;o.name=name;o.scale=scale;o.data.materials.append(material)
+ for polygon in o.data.polygons: polygon.use_smooth=True
  return o
 def parent(o,p):
- o.parent=p; o.matrix_parent_inverse=p.matrix_world.inverted()
+ o.parent=p
+ # All mesh positions are local to the parent pivot; no inverse parenting.
 def empty(name,location,parent_obj=None):
  o=bpy.data.objects.new(name,None);bpy.context.collection.objects.link(o);o.location=location
  if parent_obj: parent(o,parent_obj)
@@ -37,11 +39,11 @@ root=empty("ROOT controls the creature",(0,0,0))
 body=ell("pear-shaped body",(0,0,1.42),(.54,.40,.69),porcelain);parent(body,root)
 belly=ell("painted chest oval",(0,-.382,1.38),(.29,.045,.4),blue);parent(belly,root)
 head=empty("head pivot",(0,0,1.97),root)
-skull=ell("rounded head",(0,-.01,2.37),(.47,.39,.45),porcelain);parent(skull,head)
+skull=ell("rounded head",(0,-.01,.40),(.47,.39,.45),porcelain);parent(skull,head)
 for s in [-1,1]:
- eye=ell("eye white",(.18*s,-.36,2.39),(.11,.042,.11),gold);parent(eye,head)
- iris=ell("eye ink",(.18*s,-.399,2.39),(.052,.029,.065),dark);parent(iris,head)
- cheek=ell("painted cheek",(.29*s,-.338,2.20),(.11,.026,.055),pink);parent(cheek,head)
+ eye=ell("eye white",(.18*s,-.36,.42),(.11,.042,.11),gold);parent(eye,head)
+ iris=ell("eye ink",(.18*s,-.399,.42),(.052,.029,.065),dark);parent(iris,head)
+ cheek=ell("painted cheek",(.29*s,-.338,.23),(.11,.026,.055),pink);parent(cheek,head)
  shoulder=empty("shoulder pivot "+str(s),(.49*s,0,1.77),root)
  arm=ell("upper arm "+str(s),(.20*s,-.01,-.23),(.22,.21,.37),blue);parent(arm,shoulder)
  elbow=empty("elbow pivot "+str(s),(.37*s,0,-.48),shoulder)
@@ -53,7 +55,7 @@ for s in [-1,1]:
   for frame,a,b in [(1,0,0),(13,-.85,-.4),(26,-1.35,-.72),(38,-.8,-.2),(48,0,0)]:
    shoulder.rotation_euler[1]=a;shoulder.keyframe_insert(data_path="rotation_euler",frame=frame)
    elbow.rotation_euler[1]=b;elbow.keyframe_insert(data_path="rotation_euler",frame=frame)
-nose=ell("nose",(0,-.408,2.24),(.07,.06,.065),pink);parent(nose,head)
+nose=ell("nose",(0,-.408,.27),(.07,.06,.065),pink);parent(nose,head)
 for frame,a in [(1,-.09),(20,.11),(34,-.16),(48,-.09)]:
  head.rotation_euler[2]=a;head.keyframe_insert(data_path="rotation_euler",frame=frame)
 bpy.ops.mesh.primitive_plane_add(size=200,location=(0,0,-.02));bpy.context.object.data.materials.append(floor)
@@ -70,5 +72,15 @@ sc.world.color=(.10,.10,.10)
 # Export the Blender-built mesh hierarchy as a reusable GLB (not rendered frames).
 sc.frame_start=1;sc.frame_end=48;sc.render.fps=12
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/"hybrid_creature.blend"))
-bpy.ops.export_scene.gltf(filepath=str(OUT/"hybrid_creature.glb"),export_format='GLB',export_animations=True,export_lights=False,export_cameras=False)
+bpy.ops.object.select_all(action="DESELECT")
+root.select_set(True)
+for ob in bpy.data.objects:
+ parent_obj=ob.parent
+ while parent_obj:
+  if parent_obj==root:
+   ob.select_set(True)
+   break
+  parent_obj=parent_obj.parent
+bpy.context.view_layer.objects.active=root
+bpy.ops.export_scene.gltf(filepath=str(OUT/"hybrid_creature.glb"),export_format='GLB',use_selection=True,export_animations=True,export_lights=False,export_cameras=False)
 print("HYBRID_GLB_SUCCESS")
