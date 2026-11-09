@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111621"><title>ATELIER 01 — A Human Figure</title>
+<style>
+:root{color-scheme:dark;--line:#6e7c8355;--muted:#a5b3b5;--gold:#e8c9a2;--paper:#efebe6}
+*{box-sizing:border-box}body{margin:0;background:#101720;color:var(--paper);font:14px/1.5 system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+main{width:min(1130px,100%);margin:auto;padding:19px 15px 65px}
+.eyebrow{font-size:10px;letter-spacing:.23em;color:var(--gold);font-weight:700}
+h1{font:normal clamp(42px,9vw,84px)/1.02 Georgia,serif;letter-spacing:-.056em;margin:10px 0 12px}
+h1 em{font-weight:normal;color:#d4b695}
+.intro{color:#bfc9cb;line-height:1.7;max-width:650px;font-size:14px;margin-bottom:19px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+#stage{height:min(67svh,710px);min-height:380px;position:relative;overflow:hidden;border-radius:18px;border:1px solid #53606b77;background:radial-gradient(circle at 47% 36%,#394653,#182430 60%,#101a26);touch-action:none}
+#stage canvas{display:block;touch-action:none}
+.stage-label{position:absolute;top:15px;left:15px;background:#111d29bf;border:1px solid #9cafbd38;border-radius:11px;padding:8px 11px;pointer-events:none;font-size:11px;color:#e6dcd4}
+.stage-label strong{display:block;color:#e8c9a2;font-size:10px;letter-spacing:.16em}
+#status{position:absolute;bottom:15px;left:15px;right:15px;max-width:370px;background:#111d29d9;color:#d3e1e6;border-radius:11px;padding:9px 12px;font-size:11px;pointer-events:none}
+.controls{border:1px solid #48535e88;border-radius:18px;background:#19242ecc;padding:16px;align-self:start}
+.section{font-weight:700;font-size:10px;letter-spacing:.17em;color:#dbc1a0;margin:14px 0 10px}
+.section:first-child{margin-top:0}
+.buttons{display:flex;gap:7px;flex-wrap:wrap}
+button{cursor:pointer;border:1px solid #77889588;color:#ebf1f0;background:#2a3945;border-radius:999px;padding:10px 12px;font-size:12px;min-height:39px}
+button.selected{border-color:#edcf9e;background:#cfad81;color:#18212b}
+button:focus-visible,input:focus-visible{outline:2px solid #eed0a1;outline-offset:3px}
+.range{padding:8px 0;border-bottom:1px solid #6a77802b}
+.range label{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#c3d1d5}
+.range output{color:#e4c79f;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin:9px 0 0;accent-color:#d6ac7f}
+.subtle{color:#a3b1b6;font-size:11px;line-height:1.6;margin:11px 0 0}
+.compare{margin:22px 0 0;border-top:1px solid #53616a66;padding:17px 2px;color:#a9b7bd;font-size:12px}
+.compare b{color:#e6d2ba}.compare a{color:#ebceaa;text-underline-offset:4px}
+#fatal{display:none;position:absolute;inset:0;overflow:auto;background:#1c2833;color:#f2cfbd;padding:28px;z-index:3}
+@media(min-width:825px){.layout{grid-template-columns:minmax(0,1fr) 296px}#stage{height:min(76vh,750px)}.controls{max-height:75vh;overflow-y:auto}}
+</style></head><body><main>
+<div class="eyebrow">A MOVEMENT EXPERIMENT · STUDY 05 · THREE.JS</div>
+<h1>A human <em>figure.</em></h1>
+<p class="intro">A small cinematic character study, built as editable geometry. One sculpted torso, articulated shoulders and elbows, a face, hands, and a camera you can take anywhere around her.</p>
+<div class="layout">
+<section id="stage" aria-label="Interactive 3D human figure">
+<div class="stage-label"><strong>ATELIER 01</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
+<div id="status">Constructing the figure…</div><div id="fatal"></div>
+</section>
+<aside class="controls">
+<div class="section">MOVEMENT</div><div class="buttons" id="poses">
+<button data-pose="breathe" class="selected">Breathe</button><button data-pose="wave">Wave</button>
+<button data-pose="reach">Reach</button><button data-pose="open">Arms wide</button>
+<button data-pose="still">Rest</button></div>
+<div class="section">CAMERA</div><div class="buttons" id="views">
+<button data-view="front">Front</button><button data-view="three" class="selected">Three-quarter</button>
+<button data-view="side">Side</button><button data-view="back">Back</button></div>
+<div class="section">ARTICULATION</div>
+<div class="range"><label for="shoulder">Right shoulder <output id="shoulderVal">0°</output></label><input id="shoulder" type="range" min="-45" max="160" value="0"></div>
+<div class="range"><label for="elbow">Right elbow <output id="elbowVal">0°</output></label><input id="elbow" type="range" min="-130" max="110" value="0"></div>
+<div class="range"><label for="head">Head turn <output id="headVal">0°</output></label><input id="head" type="range" min="-65" max="65" value="0"></div>
+<div class="section">SURFACE / DETAIL</div>
+<div class="buttons" id="finishes"><button data-finish="clay">Sculpted clay</button><button data-finish="paint" class="selected">Painted</button><button data-finish="porcelain">Porcelain</button></div>
+<div class="range"><label for="detail">Screen sharpness <output id="detailVal">100%</output></label><input id="detail" type="range" min="60" max="160" step="10" value="100"></div>
+<div class="buttons"><button id="joints">Show joint centres</button><button id="reset">Reset scene</button><button id="motion">Pause motion</button></div>
+<p class="subtle">Shoulders and arms are joined through a shared pivot hierarchy. Geometry overlaps at the attachment, so the arm can rotate without floating away. This is a sculptural joint study, not yet a continuous skin-deforming human mesh.</p>
+</aside></div>
+<div class="compare"><b>Explore the earlier studies:</b> <a href="../3d_tool_audition/three/">Three.js creature</a> · <a href="../3d_tool_audition/babylon/">Babylon.js creature</a> · <a href="../3d_tool_audition/hybrid/">Blender hybrid</a><br>Pure code · no image-generation assets · touch controls · <a href="https://github.com/moiraleevincent/GPT/blob/main/human_study_01/index.html">editable source</a></div>
+</main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const $=id=>document.getElementById(id), stage=$('stage'), status=$('status');
+try {
+  const scene=new THREE.Scene();scene.background=new THREE.Color('#15222e');
+  scene.fog=new THREE.Fog('#15222e',12,24);
+  const camera=new THREE.PerspectiveCamera(39,1,0.05,100);
+  const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.32;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  stage.appendChild(renderer.domElement);
+  const orbit=new OrbitControls(camera,renderer.domElement);
+  orbit.target.set(0,1.85,0);camera.position.set(4.5,3.05,6.5);
+  orbit.enableDamping=true;orbit.dampingFactor=.08;
+  orbit.minDistance=1.35;orbit.maxDistance=13;
+  orbit.minPolarAngle=.13;orbit.maxPolarAngle=Math.PI-.16;
+  orbit.enablePan=true;orbit.update();
+  scene.add(new THREE.HemisphereLight(0xc2d6e3,0x3f3238,2.1));
+  const key=new THREE.DirectionalLight(0xffd9b5,3.5);
+  key.position.set(-3.3,5.7,4.8);key.castShadow=true;
+  key.shadow.mapSize.set(1024,1024);key.shadow.bias=-.00015;
+  key.shadow.camera.left=-5;key.shadow.camera.right=5;key.shadow.camera.top=6;key.shadow.camera.bottom=-5;scene.add(key);
+  const fill=new THREE.DirectionalLight(0xa6c3ef,1.65);fill.position.set(4.5,2.9,2.7);scene.add(fill);
+  const rim=new THREE.PointLight(0x98e1d7,95,9);rim.position.set(1.5,3.3,-2.7);scene.add(rim);
+
+  function material(hex,rough=.7,metal=.0){return new THREE.MeshStandardMaterial({color:hex,roughness:rough,metalness:metal})}
+  const skin=material(0xb78e7c,.76), cloth=material(0x243e52,.78), hairmat=material(0x261e2c,.74);
+  const lips=material(0x8c5861,.76), iris=material(0x4e5263,.37), white=material(0xe5d8c5,.5), gold=material(0xe2ba85,.36,.53);
+  const shadowmat=material(0x1d2b38,.93), cheekmat=material(0xd68d88,.9);
+  const allMeshes=[];
+  function mesh(parent,name,geo,mat,p=[0,0,0],s=[1,1,1]){
+    const m=new THREE.Mesh(geo,mat);m.name=name;m.position.set(...p);m.scale.set(...s);
+    m.castShadow=true;m.receiveShadow=true;parent.add(m);allMeshes.push(m);return m;
+  }
+  const ball=new THREE.SphereGeometry(1,28,20);
+  function ell(parent,name,mat,pos,s){return mesh(parent,name,ball,mat,pos,s)}
+  function node(parent,name,position=[0,0,0]){const n=new THREE.Group();n.name=name;n.position.set(...position);parent.add(n);return n}
+  // Smooth loft: torso contours share the same radial topology at waist, ribcage,
+  // shoulder girdle and neck. All the contour stations form ONE surface.
+  function catmull(a,b,c,d,t){
+    return .5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t);
+  }
+  function loft(stations,ringsPerInterval=5,radial=40){
+    const vertices=[],normuv=[],indices=[];
+    const props=['y','rx','rz','cx','cz'];
+    let steps=(stations.length-1)*ringsPerInterval;
+    for(let j=0;j<=steps;j++){
+      const i=Math.min(stations.length-2,Math.floor(j/ringsPerInterval));
+      const t=j===steps?1:(j-i*ringsPerInterval)/ringsPerInterval;
+      const p0=stations[Math.max(0,i-1)],p1=stations[i],p2=stations[i+1],p3=stations[Math.min(stations.length-1,i+2)];
+      const v={};for(const k of props)v[k]=catmull(p0[k]??0,p1[k]??0,p2[k]??0,p3[k]??0,t);
+      for(let k=0;k<=radial;k++){
+        const theta=2*Math.PI*k/radial;
+        vertices.push(v.cx+v.rx*Math.cos(theta),v.y,v.cz+v.rz*Math.sin(theta));
+        normuv.push(k/radial,j/steps);
+      }
+    }
+    for(let j=0;j<steps;j++)for(let k=0;k<radial;k++){
+      const a=j*(radial+1)+k,b=a+1,c=a+radial+1,d=c+1;
+      indices.push(a,c,b,b,c,d);
+    }
+    const geometry=new THREE.BufferGeometry();
+    geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+    geometry.setAttribute('uv',new THREE.Float32BufferAttribute(normuv,2));
+    geometry.setIndex(indices);geometry.computeVertexNormals();
+    return geometry;
+  }
+  const figure=node(scene,'FIGURE');
+  // Central anatomy is ONE continuous torso-pelvis-neck mesh.
+  const torso=loft([
+    {y:1.43,rx:.19,rz:.155},{y:1.50,rx:.32,rz:.22},
+    {y:1.62,rx:.395,rz:.27},{y:1.76,rx:.405,rz:.255},
+    {y:1.90,rx:.325,rz:.208},{y:2.04,rx:.30,rz:.193},
+    {y:2.19,rx:.354,rz:.215},{y:2.35,rx:.405,rz:.244},
+    {y:2.51,rx:.47,rz:.255},{y:2.65,rx:.49,rz:.23},
+    {y:2.75,rx:.345,rz:.192},{y:2.81,rx:.155,rz:.13},
+    {y:2.92,rx:.105,rz:.099},{y:2.99,rx:.112,rz:.105}
+  ],6,48);
+  mesh(figure,'continuous torso / pelvis / neck',torso,skin);
+  // A separate fitted front garment is a very thin surface following the torso,
+  // deliberately kept away from arm sockets, not a stack of intersecting spheres.
+  const bodice=loft([
+    {y:1.47,rx:.21,rz:.164},{y:1.58,rx:.344,rz:.225},
+    {y:1.71,rx:.395,rz:.261},{y:1.84,rx:.35,rz:.23},
+    {y:1.96,rx:.315,rz:.218},{y:2.10,rx:.313,rz:.211},
+    {y:2.28,rx:.381,rz:.236},{y:2.43,rx:.43,rz:.259},
+    {y:2.57,rx:.455,rz:.263},{y:2.66,rx:.39,rz:.22}
+  ],6,48);
+  const bodiceMat=cloth.clone();bodiceMat.side=THREE.FrontSide;
+  // Show front half only; leave shoulders and upper back exposed.
+  const garmentGeometry=bodice.toNonIndexed();
+  const arr=garmentGeometry.attributes.position, uv=garmentGeometry.attributes.uv;
+  const keep=[]; for(let i=0;i<arr.count;i+=3){
+    const z=(arr.getZ(i)+arr.getZ(i+1)+arr.getZ(i+2))/3;
+    const y=(arr.getY(i)+arr.getY(i+1)+arr.getY(i+2))/3;
+    const x=Math.abs((arr.getX(i)+arr.getX(i+1)+arr.getX(i+2))/3);
+    if(z>0 && !(y>2.52 && x>.34))for(let k=0;k<3;k++)keep.push(i+k);
+  }
+  const clean=new THREE.BufferGeometry();
+  const pos=[],tex=[];for(const i of keep){pos.push(arr.getX(i),arr.getY(i),arr.getZ(i));tex.push(uv.getX(i),uv.getY(i))}
+  clean.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));clean.setAttribute('uv',new THREE.Float32BufferAttribute(tex,2));clean.computeVertexNormals();
+  mesh(figure,'fitted painted bodice',clean,bodiceMat);
+
+  // Face is constructed as an asymmetric oval, not a sphere of skin plus a face sticker.
+  const headPivot=node(figure,'neck/head pivot',[0,2.93,0]);
+  const face=loft([
+    {y:.035,rx:.10,rz:.10,cz:.005},{y:.075,rx:.155,rz:.16,cz:.005},
+    {y:.13,rx:.20,rz:.206},{y:.22,rx:.234,rz:.234},
+    {y:.35,rx:.263,rz:.239},{y:.47,rx:.258,rz:.241},
+    {y:.57,rx:.227,rz:.235},{y:.655,rx:.16,rz:.18},{y:.69,rx:.07,rz:.08}
+  ],7,48);
+  mesh(headPivot,'head sculpted cheek and jaw planes',face,skin);
+  const crown=ell(headPivot,'hair crown',hairmat,[0,.54,-.072],[.275,.233,.233]);
+  ell(headPivot,'hair back',hairmat,[0,.32,-.19],[.275,.36,.19]);
+  for(const sign of [-1,1]){
+    ell(headPivot,'temple hair',hairmat,[sign*.239,.485,-.032],[.063,.19,.16]);
+    ell(headPivot,'ear',skin,[sign*.259,.327,-.01],[.057,.102,.05]);
+    ell(headPivot,'eyeball',white,[sign*.112,.405,.214],[.085,.057,.043]);
+    ell(headPivot,'iris',iris,[sign*.116,.407,.255],[.034,.040,.016]);
+    ell(headPivot,'pupil',hairmat,[sign*.116,.407,.268],[.018,.026,.01]);
+    ell(headPivot,'eye glint',white,[sign*.125,.425,.276],[.008,.009,.006]);
+    ell(headPivot,'cheek bloom',cheekmat,[sign*.158,.282,.198],[.065,.026,.018]);
+    // Swept, individually curved eyebrows.
+    const bcurve=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(sign*.06,.497,.234),new THREE.Vector3(sign*.115,.510,.238),
+      new THREE.Vector3(sign*.180,.492,.203)
+    ]);
+    mesh(headPivot,'eyebrow',new THREE.TubeGeometry(bcurve,14,.009,6,false),hairmat);
+  }
+  ell(headPivot,'nose bridge',skin,[0,.323,.248],[.045,.085,.06]);
+  ell(headPivot,'nose tip',skin,[0,.277,.289],[.055,.035,.036]);
+  ell(headPivot,'upper lip',lips,[0,.189,.214],[.076,.017,.023]);
+  ell(headPivot,'lower lip',lips,[0,.170,.215],[.060,.017,.023]);
+  // Individual swept strands, attached to the moving head.
+  for(let i=0;i<7;i++){
+    const x=-.21+i*.07, y=.666-.032*Math.cos((i-3)*.51);
+    const strand=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(x*.76,.712,-.024),
+      new THREE.Vector3(x,.664,.097),
+      new THREE.Vector3(x+.025,.565,.184)
+    ]);
+    mesh(headPivot,'hair strand '+i,new THREE.TubeGeometry(strand,13,.024,6,false),hairmat);
+  }
+  // Long sculpted hair behind the shoulder line.
+  for(const sign of [-1,1]){
+    const curl=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(sign*.215,.54,-.15),
+      new THREE.Vector3(sign*.28,.25,-.16),
+      new THREE.Vector3(sign*.25,-.03,-.20),
+      new THREE.Vector3(sign*.27,-.34,-.18)
+    ]);
+    mesh(headPivot,'falling hair lock',new THREE.TubeGeometry(curl,22,.075,10,false),hairmat);
+  }
+  // Each limb is a smooth loft mesh, following the shoulder and elbow hierarchy.
+  // The shoulder pivot sits inside the torso, so its rounded proximal cap always
+  // overlaps the ribcage during abduction rather than beginning outside it.
+  const arms={};
+  function arm(sign){
+    const sh=node(figure,sign===1?'right shoulder joint':'left shoulder joint',[sign*.402,2.64,0]);
+    const upper=loft([
+      {y:-.75,rx:.110,rz:.113,cx:sign*.12},
+      {y:-.68,rx:.142,rz:.151,cx:sign*.12},
+      {y:-.51,rx:.157,rz:.161,cx:sign*.12},
+      {y:-.30,rx:.185,rz:.185,cx:sign*.115},
+      {y:-.13,rx:.220,rz:.214,cx:sign*.103},
+      {y:0,rx:.243,rz:.226,cx:sign*.065},
+      {y:.095,rx:.20,rz:.185,cx:sign*.018},
+      {y:.16,rx:.075,rz:.085,cx:sign*.005},
+      {y:.18,rx:.012,rz:.018,cx:sign*.005}
+    ],6,32);
+    mesh(sh,'continuous upper arm '+sign,upper,skin);
+    const elbow=node(sh,'elbow joint '+sign,[sign*.12,-.695,0]);
+    const lower=loft([
+      {y:-.64,rx:.070,rz:.075,cx:sign*.014},
+      {y:-.57,rx:.087,rz:.093,cx:sign*.012},
+      {y:-.39,rx:.110,rz:.112,cx:sign*.006},
+      {y:-.20,rx:.132,rz:.126,cx:0},
+      {y:-.015,rx:.145,rz:.136,cx:0},
+      {y:.085,rx:.126,rz:.13,cx:0},
+      {y:.14,rx:.060,rz:.065,cx:0}
+    ],6,28);
+    mesh(elbow,'continuous forearm '+sign,lower,skin);
+    // Wrist, tapered palm and separately modeled fingers.
+    const hand=node(elbow,'wrist/palm '+sign,[sign*.015,-.615,0]);
+    ell(hand,'hand palm',skin,[0,-.075,0],[.113,.167,.075]);
+    for(let i=0;i<4;i++){
+      const x=(i-1.5)*.051;
+      const length=[.125,.174,.168,.12][i];
+      const curve=new THREE.CatmullRomCurve3([
+        new THREE.Vector3(x,-.172,.005),
+        new THREE.Vector3(x*1.08,-.185-length*.45,.004),
+        new THREE.Vector3(x*1.05,-.185-length,.012)
+      ]);
+      mesh(hand,'finger '+i,new THREE.TubeGeometry(curve,8,.022,7,false),skin);
+    }
+    const thumbcurve=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(sign*.093,-.08,.007),
+      new THREE.Vector3(sign*.158,-.139,.023),
+      new THREE.Vector3(sign*.167,-.198,.038)
+    ]);
+    mesh(hand,'thumb',new THREE.TubeGeometry(thumbcurve,10,.031,7,false),skin);
+    arms[sign]={sh,elbow,hand};
+  }
+  arm(-1);arm(1);
+  // Pelvis and leg lofts with their own tapered anatomical stations.
+  const legs={};
+  function leg(sign){
+    const hip=node(figure,'hip '+sign,[sign*.195,1.60,0]);
+    const thigh=loft([
+      {y:-.78,rx:.165,rz:.168,cx:sign*.038},
+      {y:-.68,rx:.187,rz:.177,cx:sign*.035},
+      {y:-.46,rx:.207,rz:.207,cx:sign*.035},
+      {y:-.23,rx:.231,rz:.231,cx:sign*.024},
+      {y:-.035,rx:.246,rz:.236,cx:0},
+      {y:.12,rx:.165,rz:.16,cx:-sign*.011}
+    ],6,32);
+    mesh(hip,'thigh '+sign,thigh,skin);
+    const knee=node(hip,'knee '+sign,[sign*.038,-.76,0]);
+    const calf=loft([
+      {y:-.70,rx:.09,rz:.103,cx:0},
+      {y:-.61,rx:.11,rz:.126,cx:0},
+      {y:-.43,rx:.138,rz:.162,cx:0},
+      {y:-.25,rx:.158,rz:.17,cx:0},
+      {y:-.10,rx:.162,rz:.16,cx:0},
+      {y:.08,rx:.151,rz:.145,cx:0}
+    ],6,28);
+    mesh(knee,'calf '+sign,calf,skin);
+    const foot=node(knee,'foot '+sign,[0,-.665,.03]);
+    ell(foot,'ankle',skin,[0,.01,0],[.095,.15,.12]);
+    ell(foot,'foot',skin,[0,-.07,.16],[.145,.115,.265]);
+    legs[sign]={hip,knee,foot};
+  }
+  leg(-1);leg(1);
+  // A deliberately subtle patterned cloth texture; no downloaded image files.
+  const c=document.createElement('canvas');c.width=c.height=512;
+  const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,512,512);
+  let seed=39;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+  for(let i=0;i<1800;i++){
+    const x=rnd()*512,y=rnd()*512,rr=.2+rnd()*1.5;
+    ctx.fillStyle='rgba(35,51,68,'+(.01+rnd()*.045)+')';
+    ctx.fillRect(x,y,rr,rr*3);
+  }
+  for(let i=0;i<34;i++){
+    const x=rnd()*512,y=rnd()*512;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+16,y+6,x+35,y-7);
+    ctx.lineWidth=.6+rnd()*.6;ctx.strokeStyle='rgba(233,187,128,.12)';ctx.stroke();
+  }
+  const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;
+  bodiceMat.map=texture;bodiceMat.needsUpdate=true;
+  // A narrow brass thread defines the collar without covering the shoulder socket.
+  const collar=new THREE.Mesh(new THREE.TorusGeometry(.117,.012,8,48),gold);
+  collar.rotation.x=Math.PI/2;collar.position.set(0,2.969,0);figure.add(collar);
+  // Film set: shallow circular plinth and a large lit ring BEHIND the human.
+  const plinth=mesh(scene,'stone plinth',new THREE.CylinderGeometry(1.43,1.51,.16,64),shadowmat,[0,-.075,0]);
+  plinth.receiveShadow=true;
+  const trim=mesh(scene,'brass stage line',new THREE.TorusGeometry(1.43,.018,8,84),gold,[0,.016,0]);
+  trim.rotation.x=Math.PI/2;
+  const ground=mesh(scene,'ground',new THREE.PlaneGeometry(100,100),shadowmat,[0,-.16,0]);
+  ground.rotation.x=-Math.PI/2;ground.castShadow=false;ground.receiveShadow=true;
+  const halo=mesh(scene,'backdrop halo',new THREE.TorusGeometry(1.93,.017,9,104),gold,[0,1.85,-1.05]);
+  // Face and body remain inside the ring; depth is obvious from oblique angles.
+  for(let i=0;i<19;i++){
+    const a=i*2.39996,r=2.05+(i/19)*.5;
+    const fleck=ell(scene,'distant atelier light',i%3===0?white:gold,[Math.cos(a)*r,1.85+Math.sin(a)*r,-1.65],[.014,.014,.014]);
+    fleck.castShadow=false;
+  }
+
+  // Optional diagnostic markers: actual parent joint centres, no invented bones.
+  const diagnostic=[];
+  const markMat=new THREE.MeshBasicMaterial({color:0x69fff1,depthTest:false});
+  for(const group of [arms[1].sh,arms[-1].sh,arms[1].elbow,arms[-1].elbow]){
+    const marker=new THREE.Mesh(new THREE.SphereGeometry(.042,10,8),markMat);
+    marker.renderOrder=10;marker.visible=false;group.add(marker);diagnostic.push(marker);
+  }
+  let pose='breathe',running=true,showJoints=false,elapsed=0,finish='paint';
+  const manual={shoulder:0,elbow:0,head:0};
+  const target={rs:.09,ls:-.09,re:0,le:0,head:.04};
+  const state={rs:.09,ls:-.09,re:0,le:0,head:.04};
+  const rangeNames=['shoulder','elbow','head'];
+  const toRad=deg=>deg*Math.PI/180;
+  const selectBtns=(group,attribute,value)=>{
+    document.querySelectorAll('#'+group+' [data-'+attribute+']').forEach(b=>b.classList.toggle('selected',b.dataset[attribute]===value));
+  };
+  function choosePose(p){pose=p;selectBtns('poses','pose',p)}
+  document.querySelectorAll('#poses button').forEach(b=>b.addEventListener('click',()=>choosePose(b.dataset.pose)));
+  function chooseView(v){
+    selectBtns('views','view',v);
+    const views={front:[0,2.05,7.15],three:[4.5,3.05,6.5],side:[7.5,2.05,0],back:[0,2.15,-7.15]};
+    camera.position.set(...views[v]);orbit.target.set(0,1.85,0);orbit.update();
+  }
+  document.querySelectorAll('#views button').forEach(b=>b.addEventListener('click',()=>chooseView(b.dataset.view)));
+  function chooseFinish(f){
+    finish=f;selectBtns('finishes','finish',f);
+    if(f==='clay'){
+      skin.color.set('#b38e7a');skin.roughness=.93;cloth.roughness=.93;bodiceMat.roughness=.96;hairmat.roughness=.91;
+    } else if(f==='porcelain'){
+      skin.color.set('#e0b7a1');skin.roughness=.17;skin.metalness=.045;
+      bodiceMat.roughness=.17;hairmat.roughness=.26;cloth.roughness=.28;
+    } else {
+      skin.color.set('#b78e7c');skin.roughness=.71;skin.metalness=0;
+      bodiceMat.roughness=.75;hairmat.roughness=.65;cloth.roughness=.78;
+    }
+    if(f==='clay')skin.metalness=0;
+  }
+  document.querySelectorAll('#finishes button').forEach(b=>b.addEventListener('click',()=>chooseFinish(b.dataset.finish)));
+  for(const k of rangeNames){
+    $(k).addEventListener('input',()=>{
+      manual[k]=toRad(Number($(k).value));$(k+'Val').textContent=$(k).value+'°';
+      choosePose('manual');
+    });
+  }
+  function sharpness(){
+    const q=Number($('detail').value)/100;
+    renderer.setPixelRatio(Math.min((window.devicePixelRatio||1)*q,3));
+    renderer.setSize(stage.clientWidth,stage.clientHeight,false);
+    $('detailVal').textContent=$('detail').value+'%';
+  }
+  $('detail').addEventListener('input',sharpness);
+  $('joints').addEventListener('click',()=>{showJoints=!showJoints;diagnostic.forEach(m=>m.visible=showJoints);$('joints').textContent=showJoints?'Hide joint centres':'Show joint centres'});
+  $('motion').addEventListener('click',()=>{running=!running;$('motion').textContent=running?'Pause motion':'Play motion'});
+  $('reset').addEventListener('click',()=>{
+    for(const k of rangeNames){$(k).value=0;manual[k]=0;$(k+'Val').textContent='0°';}
+    choosePose('breathe');chooseView('three');chooseFinish('paint');
+  });
+  const clock=new THREE.Clock();
+  function loop(){
+    requestAnimationFrame(loop);
+    const dt=Math.min(clock.getDelta(),.055);
+    if(running)elapsed+=dt;
+    const t=elapsed;
+    if(pose==='manual'){target.rs=manual.shoulder;target.re=manual.elbow;target.head=manual.head;target.ls=-.08;target.le=0;}
+    if(pose==='breathe'){target.rs=.115+.024*Math.sin(t*.85);target.re=.02;target.ls=-.115;target.le=-.03;target.head=.05+.065*Math.sin(t*.51);}
+    if(pose==='still'){target.rs=.08;target.re=0;target.ls=-.08;target.le=0;target.head=0;}
+    if(pose==='open'){target.rs=1.42;target.ls=-1.42;target.re=0;target.le=0;target.head=0;}
+    if(pose==='reach'){target.rs=1.08;target.ls=-.09;target.re=-.12;target.le=0;target.head=-.14;}
+    if(pose==='wave'){target.rs=1.32;target.ls=-.10;target.re=-1.05+.24*Math.sin(t*4);target.le=0;target.head=.11+.09*Math.sin(t*.7);}
+    const k=running?1-Math.exp(-dt*7):0;
+    for(const key of Object.keys(state))state[key]+=(target[key]-state[key])*k;
+    arms[1].sh.rotation.z=state.rs;arms[-1].sh.rotation.z=state.ls;
+    arms[1].elbow.rotation.z=state.re;arms[-1].elbow.rotation.z=state.le;
+    headPivot.rotation.y=state.head;
+    figure.position.y=.012*Math.sin(t*1.55);
+    figure.rotation.y=.022*Math.sin(t*.48);
+    orbit.update();renderer.render(scene,camera);
+  }
+  function resize(){camera.aspect=stage.clientWidth/stage.clientHeight;camera.updateProjectionMatrix();renderer.setSize(stage.clientWidth,stage.clientHeight,false)}
+  new ResizeObserver(resize).observe(stage);sharpness();resize();
+  chooseFinish('paint');
+  status.textContent='LIVE 3D · full camera orbit · shoulder joint study · touch enabled';
+  loop();
+}catch(error){
+  $('fatal').style.display='block';
+  $('fatal').textContent='The 3D viewer could not start: '+error.message;
+  status.textContent='3D viewer error';console.error(error);
+}
+</script>
+</body></html>
