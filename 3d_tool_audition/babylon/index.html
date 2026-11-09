@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Creature Study 03 · Babylon.js</title><style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#10121d;color:#f2ebde;font:15px/1.55 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}main{max-width:1050px;margin:auto;padding:21px 16px 50px}.eyebrow{color:#d5b18b;letter-spacing:.22em;font-size:11px;font-weight:700}h1{font:normal clamp(38px,8vw,68px)/1.07 Georgia,serif;margin:8px 0 13px;letter-spacing:-.05em}p{color:#c5bdba;margin:9px 0 16px}#stage{height:min(68vh,690px);min-height:350px;border:1px solid #594d5d;border-radius:22px;background:#1d1a2b;position:relative;overflow:hidden;touch-action:none}canvas{width:100%;height:100%;display:block;touch-action:none;outline:none}.hud{position:absolute;top:12px;left:12px;border-radius:12px;padding:9px 12px;background:#171624d9;border:1px solid #7a6b7770;font-size:12px;pointer-events:none}.status{position:absolute;bottom:12px;left:12px;color:#f6e3d2;font-size:12px;background:#171624cc;padding:5px 9px;border-radius:8px}.buttons{display:flex;flex-wrap:wrap;gap:8px;margin:13px 0}.buttons button{border:1px solid #87727b;border-radius:30px;background:#343042;color:#f2ebde;padding:10px 14px;font-size:14px}.buttons button.active{background:#e9bb83;color:#211925;border-color:#e9bb83}.group{background:#242132;border:1px solid #4e485a;border-radius:14px;padding:11px;margin:8px 0}.group label{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:6px}.group input{width:100%;accent-color:#e9bb83}.info{font-size:12px;color:#a9a4b4}a{color:#ebc593}.side{margin-top:12px}@media(min-width:760px){.layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px}.side{margin-top:0}#stage{height:min(75vh,720px)}}#fail{display:none;position:absolute;inset:0;background:#231e2e;color:#ffdfd1;padding:30px;z-index:2}</style></head><body><main>
+<div class="eyebrow">3D TOOL AUDITION / TEST 03 · BABYLON.JS</div><h1>The porcelain voyager.</h1>
+<p>A second browser-native creature, made with Babylon.js. Orbit around it, move the joints, switch materials, and inspect the lights and shadows.</p>
+<div class="layout"><div id="stage"><canvas id="renderCanvas" tabindex="0"></canvas><div class="hud">Drag: orbit · Pinch: zoom<br>Try turning behind the shoulders</div><div id="status" class="status">Loading 3D engine…</div><div id="fail"></div></div>
+<div class="side"><div class="buttons"><button id="wave" class="active">Wave</button><button id="idle">Idle</button><button id="pause">Pause</button><button id="reset">Reset camera</button></div>
+<div class="group"><label for="shoulder">Shoulder <output id="shoulderValue">0°</output></label><input type="range" id="shoulder" min="-135" max="135" value="0"></div>
+<div class="group"><label for="elbow">Elbow <output id="elbowValue">0°</output></label><input type="range" id="elbow" min="-120" max="120" value="0"></div>
+<div class="group"><label for="head">Head <output id="headValue">0°</output></label><input type="range" id="head" min="-75" max="75" value="0"></div>
+<div class="group"><label for="resolution">Sharpness <output id="resolutionValue">100%</output></label><input type="range" id="resolution" min="55" max="200" value="100" step="5"></div>
+<div class="group"><label for="light">Key light <output id="lightValue">100%</output></label><input type="range" id="light" min="15" max="220" value="100" step="5"></div>
+<div class="buttons"><button id="paint" class="active">Painted</button><button id="gloss">Glossy</button></div>
+<p class="info">Sharpness changes the canvas resolution, not the number of polygons. Compare close-up eyes, the elbow and the shoulder seam. All geometry is real-time 3D.</p>
+<p class="info"><a href="../../three/">Creature 02 / Three.js</a> · <a href="../../">Creature 01 / Blender</a> · <a href="https://github.com/moiraleevincent/GPT/blob/main/3d_tool_audition/babylon/index.html">Source code</a></p></div></div></main>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script>
+(function(){
+const fail=(message)=>{const f=document.getElementById('fail');f.style.display='block';f.textContent='3D viewer error: '+message;};
+try {
+if(!window.BABYLON)throw Error('Babylon.js library could not load');
+const B=BABYLON,canvas=document.getElementById('renderCanvas'),engine=new B.Engine(canvas,true,{preserveDrawingBuffer:true,stencil:true},true),scene=new B.Scene(engine);
+scene.clearColor=new B.Color4(.085,.070,.123,1);
+const camera=new B.ArcRotateCamera('Touch orbit',-Math.PI*.37,Math.PI*.41,7.5,new B.Vector3(0,1.5,0),scene);
+camera.attachControl(canvas,true);camera.lowerRadiusLimit=3;camera.upperRadiusLimit=13;camera.lowerBetaLimit=.22;camera.upperBetaLimit=Math.PI*.51;camera.wheelPrecision=45;camera.pinchPrecision=60;camera.inertia=.8;camera.panningSensibility=0;
+function color(hex){return B.Color3.FromHexString(hex)}
+scene.ambientColor=color('#9e8ab8');
+const hemi=new B.HemisphericLight('ambient',new B.Vector3(0,1,0),scene);hemi.intensity=.75;hemi.diffuse=color('#bcc5ff');hemi.groundColor=color('#514165');
+const key=new B.DirectionalLight('cinematic key',new B.Vector3(.55,-1,.8),scene);key.position=new B.Vector3(-3,6,-4);key.intensity=2.4;key.diffuse=color('#ffdfb4');
+const rim=new B.PointLight('lavender rim',new B.Vector3(2.5,3.7,2),scene);rim.diffuse=color('#a1b6ff');rim.intensity=28;
+const shadow=new B.ShadowGenerator(1024,key);shadow.useBlurExponentialShadowMap=true;shadow.blurKernel=18;
+function material(n,hex,metal=.0,rough=.55){const m=new B.PBRMaterial(n,scene);m.albedoColor=color(hex);m.metallic=metal;m.roughness=rough;return m}
+const ivory=material('porcelain glaze','#e7d7cb',.03,.38),plum=material('plum porcelain','#775482',.02,.54),wine=material('raspberry painted glaze','#c77c87',.03,.62),gold=material('gold fittings','#d3a974',.75,.24),ink=material('inky pupils','#191326',.12,.22),pearl=material('eye enamel','#ffedda',.05,.28),floorMat=material('deep violet floor','#262232',.02,.89);
+function pivot(n,pos,parent){const node=new B.TransformNode(n,scene);node.position=new B.Vector3(...pos);if(parent)node.parent=parent;return node}
+function orb(n,pos,sc,mat,parent,segments=32){const mesh=B.MeshBuilder.CreateSphere(n,{segments,diameter:2},scene);mesh.position=new B.Vector3(...pos);mesh.scaling=new B.Vector3(...sc);mesh.material=mat;if(parent)mesh.parent=parent;shadow.addShadowCaster(mesh);return mesh}
+function torus(n,diameter,thick,mat,pos,parent){const mesh=B.MeshBuilder.CreateTorus(n,{diameter,thickness:thick,tessellation:96},scene);mesh.position=new B.Vector3(...pos);mesh.material=mat;if(parent)mesh.parent=parent;shadow.addShadowCaster(mesh);return mesh}
+const root=pivot('whole character',[0,0,0]);
+orb('body',[0,1.4,0],[.51,.67,.42],ivory,root);
+orb('belly badge',[0,1.38,-.397],[.31,.39,.048],plum,root);
+const neck=orb('collar',[0,1.94,0],[.23,.16,.24],gold,root);
+const head=pivot('head turn',[0,2.02,0],root);
+orb('head',[0,.33,0],[.45,.44,.41],ivory,head);
+for(const sign of [-1,1]){orb('ear', [sign*.43,.51,.0],[.15,.22,.15],plum,head);orb('eye enamel',[sign*.17,.39,-.375],[.11,.105,.045],pearl,head);orb('pupil',[sign*.17,.40,-.417],[.053,.07,.025],ink,head);orb('cheek',[sign*.27,.22,-.344],[.102,.049,.026],wine,head)}
+orb('nose',[0,.24,-.408],[.075,.065,.048],gold,head);
+const mouth=torus('smile',.23,.019,ink,[0,.13,-.398],head);mouth.rotation.z=Math.PI;mouth.rotation.x=.15;
+const arms=[];
+for(const sign of [-1,1]){
+ const sh=pivot('shoulder pivot '+sign,[sign*.5,1.72,0],root);
+ orb('shoulder',[sign*.055,-.07,0],[.23,.24,.24],plum,sh);
+ orb('upper arm',[sign*.17,-.28,0],[.18,.34,.19],plum,sh);
+ const el=pivot('elbow pivot '+sign,[sign*.25,-.53,0],sh);
+ orb('elbow brass',[0,0,0],[.17,.17,.17],gold,el);
+ orb('forearm',[sign*.047,-.23,0],[.15,.28,.15],ivory,el);
+ orb('glove',[sign*.07,-.5,0],[.16,.16,.15],gold,el);
+ arms.push({sh,el,sign});
+ orb('leg',[sign*.25,.67,0],[.22,.45,.25],plum,root);
+ orb('shoe',[sign*.25,.2,-.12],[.25,.17,.38],gold,root);
+}
+const stage=B.MeshBuilder.CreateCylinder('raised platform',{diameter:3.6,height:.12,tessellation:80},scene);stage.position.y=-.035;stage.material=plum;stage.receiveShadows=true;
+const ground=B.MeshBuilder.CreateGround('ground',{width:200,height:200},scene);ground.position.y=-.11;ground.material=floorMat;ground.receiveShadows=true;
+const halo=torus('halo',3.04,.042,gold,[0,1.52,.95],null);halo.rotation.x=Math.PI/2; // orient into vertical plane
+// Cylinder/tori are oriented in XZ plane; turn halo toward camera-facing XY plane instead.
+halo.rotation.x=0;
+for(let i=0;i<28;i++){const a=i*2.3999632,r=1.85+Math.sqrt(i/28)*.63;orb('glint'+i,[Math.sin(a)*r,1.48+Math.cos(a)*r,1.18],[.023,.023,.023],i%3?gold:pearl,null,10)}
+const controls={shoulder:document.getElementById('shoulder'),elbow:document.getElementById('elbow'),head:document.getElementById('head'),resolution:document.getElementById('resolution'),light:document.getElementById('light')};
+const val=k=>document.getElementById(k+'Value');
+let mode='wave',playing=true,elapsed=0,last=performance.now(),glossy=false;
+function modeSet(m){mode=m;document.getElementById('wave').classList.toggle('active',m==='wave');document.getElementById('idle').classList.toggle('active',m==='idle')}
+document.getElementById('wave').onclick=()=>modeSet('wave');document.getElementById('idle').onclick=()=>modeSet('idle');
+document.getElementById('pause').onclick=()=>{playing=!playing;document.getElementById('pause').textContent=playing?'Pause':'Play'};
+document.getElementById('reset').onclick=()=>{camera.alpha=-Math.PI*.37;camera.beta=Math.PI*.41;camera.radius=7.5;camera.target.set(0,1.5,0)};
+function setQuality(){const ratio=window.devicePixelRatio||1,mult=Number(controls.resolution.value)/100;engine.setHardwareScalingLevel(1/Math.min(3.25,ratio*mult));val('resolution').textContent=controls.resolution.value+'%'}
+for(const keyName of Object.keys(controls)){controls[keyName].oninput=()=>{if(keyName==='resolution')setQuality();else{val(keyName).textContent=controls[keyName].value+(keyName==='light'?'%':'°');if(keyName!=='light')modeSet('manual')}}}
+function paintSet(isGlossy){glossy=isGlossy;for(const m of [ivory,plum,wine]){m.roughness=isGlossy?.12:.52;m.metallic=isGlossy?.22:.02}document.getElementById('paint').classList.toggle('active',!isGlossy);document.getElementById('gloss').classList.toggle('active',isGlossy)}
+document.getElementById('paint').onclick=()=>paintSet(false);document.getElementById('gloss').onclick=()=>paintSet(true);
+function animate(){const now=performance.now(),delta=Math.min(.05,(now-last)/1000);last=now;if(playing)elapsed+=delta;const t=elapsed;
+const s=mode==='manual'?Number(controls.shoulder.value)*Math.PI/180:mode==='wave'?(-.27-.72*(.5+.5*Math.sin(t*2.7))):0;
+const e=mode==='manual'?Number(controls.elbow.value)*Math.PI/180:mode==='wave'?.18+.60*(.5+.5*Math.sin(t*3.3)):0;
+arms[1].sh.rotation.z=s;arms[1].el.rotation.z=e;arms[0].sh.rotation.z=mode==='wave'?.06*Math.sin(t*1.5):0;
+head.rotation.y=mode==='manual'?Number(controls.head.value)*Math.PI/180:.16*Math.sin(t*.85);
+root.position.y=.027*Math.sin(t*2.1);key.intensity=2.4*Number(controls.light.value)/100;
+}
+setQuality();
+engine.runRenderLoop(()=>{animate();scene.render()});
+window.addEventListener('resize',()=>engine.resize());
+document.getElementById('status').textContent='Babylon.js · live 3D · drag to explore';
+}catch(e){fail(e.message);console.error(e)}
+})();
+</script></body></html>
