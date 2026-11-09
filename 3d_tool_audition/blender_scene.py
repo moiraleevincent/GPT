@@ -5,7 +5,9 @@ from mathutils import Vector
 ROOT=Path(__file__).resolve().parent
 OUT=ROOT/"output"; OUT.mkdir(exist_ok=True)
 bpy.ops.object.select_all(action="SELECT"); bpy.ops.object.delete(use_global=False)
-sc=bpy.context.scene; sc.render.engine="BLENDER_EEVEE"
+sc=bpy.context.scene; sc.render.engine="CYCLES"; sc.cycles.device="CPU"; sc.cycles.samples=12
+if hasattr(sc.cycles,"use_denoising"): sc.cycles.use_denoising=False
+if hasattr(bpy.context.view_layer.cycles,"use_denoising"): bpy.context.view_layer.cycles.use_denoising=False
 sc.render.resolution_x=640; sc.render.resolution_y=640; sc.render.resolution_percentage=100
 sc.render.fps=12; sc.frame_start=1; sc.frame_end=48
 sc.render.image_settings.file_format="PNG"
