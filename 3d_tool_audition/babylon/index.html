@@ -13,7 +13,7 @@
 <div class="group"><label for="light">Key light <output id="lightValue">100%</output></label><input type="range" id="light" min="15" max="220" value="100" step="5"></div>
 <div class="buttons"><button id="paint" class="active">Painted</button><button id="gloss">Glossy</button></div>
 <p class="info">Sharpness changes the canvas resolution, not the number of polygons. Compare close-up eyes, the elbow and the shoulder seam. All geometry is real-time 3D.</p>
-<p class="info"><a href="../../three/">Creature 02 / Three.js</a> · <a href="../../">Creature 01 / Blender</a> · <a href="https://github.com/moiraleevincent/GPT/blob/main/3d_tool_audition/babylon/index.html">Source code</a></p></div></div></main>
+<p class="info"><a href="../three/">Creature 02 / Three.js</a> · <a href="../">Creature 01 / Blender</a> · <a href="https://github.com/moiraleevincent/GPT/blob/main/3d_tool_audition/babylon/index.html">Source code</a></p></div></div></main>
 <script src="https://cdn.babylonjs.com/babylon.js"></script>
 <script>
 (function(){
@@ -61,7 +61,7 @@ const stage=B.MeshBuilder.CreateCylinder('raised platform',{diameter:3.6,height:
 const ground=B.MeshBuilder.CreateGround('ground',{width:200,height:200},scene);ground.position.y=-.11;ground.material=floorMat;ground.receiveShadows=true;
 const halo=torus('halo',3.04,.042,gold,[0,1.52,.95],null);halo.rotation.x=Math.PI/2; // orient into vertical plane
 // Cylinder/tori are oriented in XZ plane; turn halo toward camera-facing XY plane instead.
-halo.rotation.x=0;
+halo.rotation.x=Math.PI/2;
 for(let i=0;i<28;i++){const a=i*2.3999632,r=1.85+Math.sqrt(i/28)*.63;orb('glint'+i,[Math.sin(a)*r,1.48+Math.cos(a)*r,1.18],[.023,.023,.023],i%3?gold:pearl,null,10)}
 const controls={shoulder:document.getElementById('shoulder'),elbow:document.getElementById('elbow'),head:document.getElementById('head'),resolution:document.getElementById('resolution'),light:document.getElementById('light')};
 const val=k=>document.getElementById(k+'Value');
