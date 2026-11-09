@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10202b"><title>Creature Study 04 · Blender + Three.js</title>
+<style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0e1b27;color:#edf3f3;font:15px/1.5 system-ui,-apple-system,sans-serif}main{max-width:850px;margin:auto;padding:23px 16px 46px}h1{font:normal clamp(36px,9vw,64px)/1.04 Georgia,serif;margin:8px 0}p{color:#b6c8d2}.eyebrow{letter-spacing:.22em;color:#d4aa86;font-size:11px}#stage{position:relative;height:60vh;min-height:360px;max-height:680px;border:1px solid #506b7e;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 55% 40%,#36485a,#0c1d2a);touch-action:none}canvas{display:block;touch-action:none}#status{position:absolute;bottom:12px;left:12px;background:#091923bb;border-radius:12px;padding:9px 13px;font-size:13px;color:#faf0dd}.tip{position:absolute;top:12px;left:12px;border-radius:12px;background:#091923bb;padding:10px;font-size:12px}.buttons{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}button{border:1px solid #7894a2;border-radius:999px;background:#233b4b;color:#e9f6f6;padding:12px 18px;font-size:14px}a{color:#e9bf8c}.note{border:1px solid #506b7e;border-radius:14px;padding:13px;margin-top:18px;font-size:13px}</style></head>
+<body><main><div class="eyebrow">3D TOOL AUDITION · TEST 04</div><h1>Made in Blender.<br>Alive in the browser.</h1><p>This is a genuine Blender-built 3D model exported as a GLB file and opened interactively in Three.js. Orbit around it, inspect the mesh, and play its Blender-authored animation.</p>
+<section id="stage"><div class="tip">Drag to orbit · Pinch to zoom</div><div id="status">Loading Blender GLB…</div></section>
+<div class="buttons"><button id="play">Pause animation</button><button id="reset">Reset camera</button><button id="wire">Show wireframe</button></div>
+<div class="note">The important test: can we make a reusable character in Blender and then interact with the actual exported model in Three.js? This viewer does <strong>not</strong> recreate the creature from JavaScript primitives. It loads the exported <code>.glb</code> asset.<p><a href="output/hybrid_creature.glb">Download GLB model</a> · <a href="https://github.com/moiraleevincent/GPT/actions/workflows/3d-hybrid-audition.yml">Build status / editable Blender project</a> · <a href="../three/">Compare Three.js</a> · <a href="../babylon/">Compare Babylon.js</a></p></div>
+</main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const stage=document.getElementById('stage'),status=document.getElementById('status');
+let renderer,cam,controls,mixer,model,clips=[],playing=true,wire=false;
+try {
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x152637);
+cam=new THREE.PerspectiveCamera(44,1,.05,100);cam.position.set(4.7,3.3,6.5);
+renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.4;renderer.shadowMap.enabled=true;stage.appendChild(renderer.domElement);
+controls=new OrbitControls(cam,renderer.domElement);controls.target.set(0,1.6,0);controls.enableDamping=true;controls.minDistance=2;controls.maxDistance=12;controls.update();
+scene.add(new THREE.HemisphereLight(0xc2e4ff,0x283c50,2.5));
+function light(pos,intensity,color){const l=new THREE.DirectionalLight(color,intensity);l.position.set(...pos);scene.add(l)}
+light([-3,6,5],3.1,0xffdcc0);light([3,4,-3],2.3,0x8ad6ed);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:0x1e3142,roughness:.95}));ground.rotation.x=-Math.PI/2;ground.position.y=-.1;scene.add(ground);
+new GLTFLoader().load('output/hybrid_creature.glb',gltf=>{
+ model=gltf.scene;scene.add(model);
+ model.traverse(o=>{if(o.isMesh){o.castShadow=true;if(o.material){o.material=o.material.clone();}}});
+ if(gltf.animations.length){mixer=new THREE.AnimationMixer(model);clips=gltf.animations;for(const clip of clips)mixer.clipAction(clip).play();status.textContent='Blender GLB loaded · '+clips.length+' animation(s)';}
+ else status.textContent='Blender GLB loaded · no animation clips found';
+},xhr=>{if(xhr.total)status.textContent='Loading 3D asset · '+Math.round(xhr.loaded/xhr.total*100)+'%';},err=>{status.textContent='Blender GLB not available yet. Check the export workflow. '+(err.message||'');console.error(err)});
+document.getElementById('play').onclick=()=>{playing=!playing;document.getElementById('play').textContent=playing?'Pause animation':'Play animation'};
+document.getElementById('reset').onclick=()=>{cam.position.set(4.7,3.3,6.5);controls.target.set(0,1.6,0);controls.update()};
+document.getElementById('wire').onclick=()=>{wire=!wire;if(model)model.traverse(o=>{if(o.isMesh&&o.material)o.material.wireframe=wire});document.getElementById('wire').textContent=wire?'Hide wireframe':'Show wireframe'};
+function resize(){cam.aspect=stage.clientWidth/stage.clientHeight;cam.updateProjectionMatrix();renderer.setSize(stage.clientWidth,stage.clientHeight,false)}new ResizeObserver(resize).observe(stage);resize();
+const clock=new THREE.Clock();function tick(){requestAnimationFrame(tick);const dt=Math.min(clock.getDelta(),.07);if(playing&&mixer)mixer.update(dt);controls.update();renderer.render(scene,cam)}tick();
+}catch(e){status.textContent='Viewer error: '+e.message;console.error(e)}
+</script></body></html>
