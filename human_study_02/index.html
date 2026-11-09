@@ -35,10 +35,10 @@ input[type=range]{width:100%;margin:9px 0 0;accent-color:#d6ac7f}
 </style></head><body><main>
 <div class="eyebrow">SHARED ANATOMY · STUDY 06 · THREE.JS</div>
 <h1>A figure <em>measured.</em></h1>
-<p class="intro">The same character, redesigned using a shared proportion grid. Longer legs, slimmer arms and joint landmarks you can reveal while she moves.</p>
+<p class="intro">A shared-proportion sculpture with fuller upper thighs, a softer hip-to-glute transition, and slimmer knees. Rotate her to inspect the new silhouette.</p>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D human figure">
-<div class="stage-label"><strong>ATELIER 02 · ANATOMY</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
+<div class="stage-label"><strong>ATELIER 02 · HIP / THIGH PASS</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
 <div id="status">Constructing the figure…</div><div id="fatal"></div>
 </section>
 <aside class="controls">
@@ -134,15 +134,28 @@ try {
   const figure=node(scene,'FIGURE');
   // Central anatomy is ONE continuous torso-pelvis-neck mesh.
   const torso=loft([
-    {y:1.43,rx:.19,rz:.155},{y:1.50,rx:.32,rz:.22},
-    {y:1.62,rx:.395,rz:.27},{y:1.76,rx:.405,rz:.255},
-    {y:1.90,rx:.325,rz:.208},{y:2.04,rx:.30,rz:.193},
+    // The pelvic volume expands from the waist into the hip crest. The
+    // cross-section moves posteriorly at the gluteal level, which improves
+    // the side silhouette WITHOUT changing neck/chest or overall height.
+    {y:1.43,rx:.225,rz:.185,cz:-.028},
+    {y:1.50,rx:.36,rz:.265,cz:-.060},
+    {y:1.62,rx:.452,rz:.315,cz:-.075},
+    {y:1.76,rx:.455,rz:.290,cz:-.037},
+    {y:1.90,rx:.335,rz:.210,cz:-.005},
+    {y:2.04,rx:.30,rz:.193},
     {y:2.19,rx:.354,rz:.215},{y:2.35,rx:.405,rz:.244},
     {y:2.51,rx:.47,rz:.255},{y:2.65,rx:.49,rz:.23},
     {y:2.75,rx:.345,rz:.192},{y:2.81,rx:.155,rz:.13},
     {y:2.92,rx:.105,rz:.099},{y:2.99,rx:.112,rz:.105}
   ],6,48);
   mesh(figure,'continuous torso / pelvis / neck',torso,skin);
+  // Two softly intersecting gluteal masses contribute the rounded posterior
+  // profile. Their outer edges overlap the pelvis AND proximal thighs; unlike
+  // a butt sphere pasted onto the back, both centres sit inside the pelvis.
+  // Future iterations can fuse this into the deforming surface.
+  for(const side of [-1,1]){
+    ell(figure,'gluteal contour '+side,skin,[side*.205,1.565,-.272],[.276,.215,.218]);
+  }
   // A separate fitted front garment is a very thin surface following the torso,
   // deliberately kept away from arm sockets, not a stack of intersecting spheres.
   const bodice=loft([
@@ -272,25 +285,29 @@ try {
   // Pelvis and leg lofts with their own tapered anatomical stations.
   const legs={};
   function leg(sign){
-    const hip=node(figure,'hip '+sign,[sign*.195,1.60,0]);
+    // Shared hip origin: the leg's thickest volume is deliberately proximal,
+    // near the gluteal fold; it gradually narrows toward the knee.
+    const hip=node(figure,'hip '+sign,[sign*.217,1.60,0]);
     const thigh=loft([
-      {y:-.78,rx:.165,rz:.168,cx:sign*.038},
-      {y:-.68,rx:.187,rz:.177,cx:sign*.035},
-      {y:-.46,rx:.207,rz:.207,cx:sign*.035},
-      {y:-.23,rx:.231,rz:.231,cx:sign*.024},
-      {y:-.035,rx:.246,rz:.236,cx:0},
-      {y:.12,rx:.165,rz:.16,cx:-sign*.011}
-    ],6,32);
+      {y:-.79,rx:.142,rz:.145,cx:sign*.022},
+      {y:-.67,rx:.155,rz:.164,cx:sign*.025},
+      {y:-.51,rx:.180,rz:.190,cx:sign*.027},
+      {y:-.34,rx:.225,rz:.226,cx:sign*.024},
+      {y:-.19,rx:.273,rz:.267,cx:sign*.018},
+      {y:-.035,rx:.294,rz:.283,cx:0},
+      {y:.105,rx:.245,rz:.238,cx:-sign*.016},
+      {y:.185,rx:.112,rz:.122,cx:-sign*.008}
+    ],6,40);
     mesh(hip,'thigh '+sign,thigh,skin);
     const knee=node(hip,'knee '+sign,[sign*.038,-.76,0]);
     const calf=loft([
       {y:-.70,rx:.09,rz:.103,cx:0},
-      {y:-.61,rx:.11,rz:.126,cx:0},
-      {y:-.43,rx:.138,rz:.162,cx:0},
-      {y:-.25,rx:.158,rz:.17,cx:0},
-      {y:-.10,rx:.162,rz:.16,cx:0},
-      {y:.08,rx:.151,rz:.145,cx:0}
-    ],6,28);
+      {y:-.61,rx:.108,rz:.124,cx:0},
+      {y:-.43,rx:.137,rz:.159,cx:0},
+      {y:-.25,rx:.154,rz:.167,cx:0},
+      {y:-.10,rx:.141,rz:.149,cx:0},
+      {y:.08,rx:.126,rz:.131,cx:0}
+    ],6,32);
     mesh(knee,'calf '+sign,calf,skin);
     const foot=node(knee,'foot '+sign,[0,-.665,.03]);
     ell(foot,'ankle',skin,[0,.01,0],[.095,.15,.12]);
