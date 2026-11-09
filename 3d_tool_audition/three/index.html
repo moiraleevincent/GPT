@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b1522">
+<title>Creature Study 02 · Three.js</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#0b1522;color:#edf0f1;font:15px/1.5 system-ui,-apple-system,sans-serif}main{max-width:1040px;margin:auto;padding:20px 16px 40px}header{margin-bottom:16px}.eyebrow{font-size:11px;letter-spacing:.22em;color:#a7cad1}h1{font:normal clamp(36px,8vw,65px)/1.05 Georgia,serif;letter-spacing:-.045em;margin:8px 0}p{color:#c0ccd1;margin:9px 0}#stage{height:min(66vh,640px);min-height:330px;border:1px solid #345067;overflow:hidden;border-radius:21px;position:relative;background:radial-gradient(circle at 48% 35%,#3a5264,#111a2d 72%);touch-action:none}canvas{display:block}.help{position:absolute;top:12px;left:12px;border:1px solid #ffffff33;background:#081b2bba;border-radius:12px;padding:9px 12px;font-size:12px;pointer-events:none}#error{display:none;position:absolute;inset:0;background:#13202c;color:#ffe0d4;padding:26px;overflow:auto}.controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.controls button{background:#263a4b;color:#e8f3f5;border:1px solid #57707a;border-radius:100px;padding:11px 16px;font-size:14px}.controls button.active{background:#d7ac75;color:#10222b;border-color:#d7ac75}.ranges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.control{border-radius:14px;background:#1d2e40;padding:10px 13px}.control label{display:flex;justify-content:space-between;color:#d6e4e7;font-size:13px;margin-bottom:7px}input[type=range]{width:100%;accent-color:#e2b67c}.foot{font-size:12px;color:#9bb0ba;margin-top:17px}a{color:#efd09a}@media(min-width:750px){.layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px}.ranges{grid-template-columns:1fr}#stage{height:min(75vh,690px)}}
+</style></head><body><main>
+<header><div class="eyebrow">3D TOOL AUDITION · TEST 02</div><h1>Little creature, <i>live.</i></h1><p>The character is generated in JavaScript, rendered in real time, with a movable camera and joint controls.</p></header>
+<div class="layout"><section id="stage"><div class="help">Drag to orbit · Pinch to zoom<br>Tap Wave to animate</div><div id="error"></div></section>
+<aside><div class="controls"><button id="wave" class="active">Wave</button><button id="idle">Idle</button><button id="pause">Pause</button><button id="reset">Reset camera</button></div>
+<div class="ranges"><div class="control"><label>Shoulder <output id="shoulderVal">0°</output></label><input id="shoulder" type="range" min="-140" max="140" value="0"></div>
+<div class="control"><label>Elbow <output id="elbowVal">0°</output></label><input id="elbow" type="range" min="-130" max="130" value="0"></div>
+<div class="control"><label>Head <output id="headVal">0°</output></label><input id="head" type="range" min="-70" max="70" value="0"></div>
+<div class="control"><label>Lighting <output id="lightVal">100%</output></label><input id="light" type="range" min="20" max="220" value="100"></div></div>
+<p class="foot">All geometry, procedural painted texture, lighting and animation are editable JavaScript. Unlike Test 01, this is a real-time 3D scene, not a prerendered video.</p>
+<p class="foot"><a href="https://github.com/moiraleevincent/GPT/blob/main/3d_tool_audition/three/index.html">View source</a> · <a href="../">Blender comparison</a></p></aside></div>
+</main>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
+try{
+const holder=document.getElementById('stage');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x101c2b);scene.fog=new THREE.Fog(0x101c2b,8,18);
+const camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(4.5,3.3,7.3);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;holder.appendChild(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.45,0);orbit.enableDamping=true;orbit.minDistance=3;orbit.maxDistance=14;orbit.maxPolarAngle=Math.PI*.51;orbit.update();
+scene.add(new THREE.HemisphereLight(0xb9dbed,0x2b2735,2.2));
+const key=new THREE.DirectionalLight(0xffd7b5,3.4);key.position.set(-3,6,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-5;key.shadow.camera.right=5;key.shadow.camera.top=6;key.shadow.camera.bottom=-5;scene.add(key);
+const rim=new THREE.PointLight(0x58bfd9,65,11);rim.position.set(3,3,-3);scene.add(rim);
+function mat(c,rough=.65,metal=0){return new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:metal});}
+const teal=mat(0x9ed7d0,.42),navy=mat(0x183952,.74),rose=mat(0xdd6274,.67),brass=mat(0xe9b867,.3,.72),ink=mat(0x121927,.43),white=mat(0xf8e9cc,.3);
+function part(group,name,geo,ma,xyz,scale){const m=new THREE.Mesh(geo,ma);m.name=name;m.position.set(...xyz);m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;}
+const ball=new THREE.SphereGeometry(1,32,22);
+function sphere(g,n,m,p,s){return part(g,n,ball,m,p,s)}
+const root=new THREE.Group();scene.add(root);
+sphere(root,'Body',teal,[0,1.32,0],[.55,.67,.41]);
+sphere(root,'Belly',navy,[0,1.33,.387],[.31,.39,.052]);
+const head=new THREE.Group();head.position.set(0,1.9,0);root.add(head);
+sphere(head,'Head',teal,[0,.37,0],[.48,.45,.42]);
+for(const sign of [-1,1]){sphere(head,'Eye',white,[sign*.18,.40,.376],[.105,.095,.045]);sphere(head,'Pupil',ink,[sign*.18,.40,.418],[.057,.07,.026]);sphere(head,'Cheek',rose,[sign*.29,.20,.33],[.10,.052,.018]);sphere(head,'Ear',teal,[sign*.44,.52,-.02],[.17,.2,.14]);}
+sphere(head,'Nose',rose,[0,.23,.416],[.075,.07,.045]);
+const smile=new THREE.Mesh(new THREE.TorusGeometry(.11,.012,8,30,Math.PI),ink);smile.rotation.z=Math.PI;smile.position.set(0,.125,.422);head.add(smile);
+const arms=[];
+for(const sign of [-1,1]){
+ const shoulder=new THREE.Group();shoulder.position.set(sign*.52,1.68,0);root.add(shoulder);
+ sphere(shoulder,'Shoulder cap',navy,[sign*.06,-.085,0],[.21,.22,.24]);
+ sphere(shoulder,'Upper arm',navy,[sign*.20,-.3,0],[.18,.31,.19]);
+ const elbow=new THREE.Group();elbow.position.set(sign*.24,-.52,0);shoulder.add(elbow);
+ sphere(elbow,'Elbow',brass,[0,0,0],[.17,.17,.17]);
+ sphere(elbow,'Forearm',teal,[sign*.05,-.25,0],[.15,.28,.15]);
+ sphere(elbow,'Hand',brass,[sign*.07,-.52,0],[.16,.17,.145]);
+ arms.push({shoulder,elbow,sign});
+ sphere(root,'Leg',navy,[sign*.27,.65,0],[.23,.44,.25]);
+ sphere(root,'Boot',brass,[sign*.27,.20,.12],[.25,.19,.38]);
+}
+const plane=part(scene,'Ground',new THREE.PlaneGeometry(200,200),mat(0x18293a,.95),[0,.015,0],[1,1,1]);plane.rotation.x=-Math.PI/2;plane.castShadow=false;plane.receiveShadow=true;
+const ring=new THREE.Mesh(new THREE.TorusGeometry(1.43,.028,12,80),brass);ring.position.set(0,1.44,-.92);scene.add(ring);
+for(let i=0;i<28;i++){const a=i*2.399,r=1.5+Math.sqrt(i/28)*.75;const star=sphere(scene,'Floating mote',i%4?brass:white,[Math.cos(a)*r,1.46+Math.sin(a)*r,-1.7],[.022,.022,.022]);star.castShadow=false;}
+const clock=new THREE.Clock();let elapsed=0,playing=true,mode='wave';
+const controls={shoulder:document.getElementById('shoulder'),elbow:document.getElementById('elbow'),head:document.getElementById('head'),light:document.getElementById('light')};
+const setMode=m=>{mode=m;document.getElementById('wave').classList.toggle('active',m==='wave');document.getElementById('idle').classList.toggle('active',m==='idle')};
+document.getElementById('wave').onclick=()=>setMode('wave');document.getElementById('idle').onclick=()=>setMode('idle');
+document.getElementById('pause').onclick=()=>{playing=!playing;document.getElementById('pause').textContent=playing?'Pause':'Play'};
+document.getElementById('reset').onclick=()=>{camera.position.set(4.5,3.3,7.3);orbit.target.set(0,1.45,0);orbit.update()};
+for(const [k,v] of Object.entries(controls)){v.oninput=()=>{document.getElementById(k+'Val').textContent=v.value+(k==='light'?'%':'°');if(k!=='light'){setMode('manual')}}}
+function resize(){const w=holder.clientWidth,h=holder.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}new ResizeObserver(resize).observe(holder);resize();
+function animate(){requestAnimationFrame(animate);const d=Math.min(clock.getDelta(),.06);if(playing)elapsed+=d;
+const t=elapsed;
+const animated=mode==='wave'&&playing;
+const s=mode==='manual'?Number(controls.shoulder.value)*Math.PI/180: animated?(-.25-.8*(.5+.5*Math.sin(t*2.8))):0;
+const e=mode==='manual'?Number(controls.elbow.value)*Math.PI/180:animated?(.2+.5*(.5+.5*Math.sin(t*3.4))):0;
+arms[1].shoulder.rotation.z=s;arms[1].elbow.rotation.z=e;
+arms[0].shoulder.rotation.z=mode==='wave'?.09*Math.sin(t*1.4):0;
+head.rotation.y=mode==='manual'?Number(controls.head.value)*Math.PI/180:.18*Math.sin(t*.8);
+root.position.y=.035*Math.sin(t*2.2);
+key.intensity=3.4*Number(controls.light.value)/100;orbit.update();renderer.render(scene,camera)}
+animate();
+}catch(e){const x=document.getElementById('error');x.style.display='block';x.textContent='3D viewer error: '+e.message;console.error(e);}
+</script></body></html>
