@@ -1,0 +1,40 @@
+name: 3D Tool Audition — Blender creature
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '3d_tool_audition/blender_scene.py'
+      - '.github/workflows/3d-tool-audition.yml'
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender and FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y blender ffmpeg
+      - name: Render procedural creature
+        run: blender -b -t 4 --factory-startup --python-exit-code 1 --python 3d_tool_audition/blender_scene.py
+      - name: Encode video
+        run: ffmpeg -y -framerate 12 -i 3d_tool_audition/output/frames/frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 21 -movflags +faststart 3d_tool_audition/output/creature.mp4
+      - name: Preserve editable 3D scene
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-creature-audition
+          path: |
+            3d_tool_audition/output/creature.blend
+            3d_tool_audition/output/poster.png
+            3d_tool_audition/output/creature.mp4
+      - name: Publish rendered media
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 3d_tool_audition/output/poster.png 3d_tool_audition/output/creature.mp4
+          git commit -m "Render Blender creature audition [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
