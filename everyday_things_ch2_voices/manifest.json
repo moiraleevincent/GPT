@@ -1,0 +1,51 @@
+{
+  "title": "The Psychology of Everyday Actions \u2014 Kokoro Voice Study",
+  "source": "Original adaptations of concepts from chapter 2 of Don Norman's The Design of Everyday Things; not book quotations.",
+  "sample_rate": 24000,
+  "samples": [
+    {
+      "passage": "two_gulfs",
+      "title": "The two gulfs",
+      "voice": "host",
+      "voice_name": "Kore / Nova blend",
+      "speed": 1.04,
+      "file": "audio/two_gulfs_host.mp3",
+      "seconds": 24.29,
+      "bytes": 389421,
+      "text": "When you approach an unfamiliar device, there are two questions. First: what can I do, and how do I do it? That is the gulf of execution. Second: what happened after I acted, and did it accomplish what I wanted? That is the gulf of evaluation. Good design narrows both distances. It makes the possible actions clear, and the results easy to understand."
+    },
+    {
+      "passage": "two_gulfs",
+      "title": "The two gulfs",
+      "voice": "george",
+      "voice_name": "George",
+      "speed": 0.98,
+      "file": "audio/two_gulfs_george.mp3",
+      "seconds": 28.29,
+      "bytes": 453549,
+      "text": "When you approach an unfamiliar device, there are two questions. First: what can I do, and how do I do it? That is the gulf of execution. Second: what happened after I acted, and did it accomplish what I wanted? That is the gulf of evaluation. Good design narrows both distances. It makes the possible actions clear, and the results easy to understand."
+    },
+    {
+      "passage": "wrong_blame",
+      "title": "Blaming the wrong things",
+      "voice": "host",
+      "voice_name": "Kore / Nova blend",
+      "speed": 1.04,
+      "file": "audio/wrong_blame_host.mp3",
+      "seconds": 23.4,
+      "bytes": 375213,
+      "text": "You turn a control, wait, and nothing seems to happen. You try again. This time, perhaps, you wonder whether you misunderstood something obvious. But when people repeatedly struggle with an ordinary object, the important question is not whether they are clever enough to use it. It is whether the design has given them enough information to succeed."
+    },
+    {
+      "passage": "wrong_blame",
+      "title": "Blaming the wrong things",
+      "voice": "george",
+      "voice_name": "George",
+      "speed": 0.98,
+      "file": "audio/wrong_blame_george.mp3",
+      "seconds": 26.98,
+      "bytes": 432429,
+      "text": "You turn a control, wait, and nothing seems to happen. You try again. This time, perhaps, you wonder whether you misunderstood something obvious. But when people repeatedly struggle with an ordinary object, the important question is not whether they are clever enough to use it. It is whether the design has given them enough information to succeed."
+    }
+  ]
+}
