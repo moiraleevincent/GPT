@@ -3,12 +3,13 @@ name: Publish Blender Lab viewer to GitHub Pages
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Character Lab — render Star Keeper"]
+    workflows: ["Character Lab — render Star Keeper", "3D Tool Audition — Blender creature"]
     types: [completed]
     branches: [main]
   push:
     branches: [main]
     paths:
+      - "3d_tool_audition/**"
       - "blender_lab/index.html"
       - "blender_lab/output/first_motion.mp4"
       - "blender_lab/output/poster.png"
@@ -51,6 +52,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Assemble the Blender viewer site
         run: |
+          mkdir -p site/3d_tool_audition/output
+          cp 3d_tool_audition/index.html site/3d_tool_audition/index.html
+          if [ -f 3d_tool_audition/output/creature.mp4 ]; then cp 3d_tool_audition/output/creature.mp4 site/3d_tool_audition/output/; fi
+          if [ -f 3d_tool_audition/output/poster.png ]; then cp 3d_tool_audition/output/poster.png site/3d_tool_audition/output/; fi
           mkdir -p site/blender_lab/output
           cp blender_lab/index.html site/blender_lab/index.html
           cp blender_lab/output/first_motion.mp4 site/blender_lab/output/
