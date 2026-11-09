@@ -52,6 +52,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Assemble the Blender viewer site
         run: |
+          mkdir -p site/3d_tool_audition/babylon
+          cp 3d_tool_audition/babylon/index.html site/3d_tool_audition/babylon/index.html
           mkdir -p site/3d_tool_audition/three
           cp 3d_tool_audition/three/index.html site/3d_tool_audition/three/index.html
           mkdir -p site/3d_tool_audition/output
