@@ -17,7 +17,7 @@ jobs:
       - name: Install Blender and FFmpeg
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y blender ffmpeg
+          sudo apt-get install -y blender ffmpeg libegl1 libgl1-mesa-dri
       - name: Render procedural creature
         run: blender -b -t 4 --factory-startup --python-exit-code 1 --python 3d_tool_audition/blender_scene.py
       - name: Encode video
