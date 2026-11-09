@@ -12,7 +12,7 @@ h1 em{font-weight:normal;color:#d4b695}
 .intro{color:#bfc9cb;line-height:1.7;max-width:650px;font-size:14px;margin-bottom:19px}
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
 #stage{height:min(67svh,710px);min-height:380px;position:relative;overflow:hidden;border-radius:18px;border:1px solid #53606b77;background:radial-gradient(circle at 47% 36%,#394653,#182430 60%,#101a26);touch-action:none}
-#stage canvas{display:block;touch-action:none}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none}
 .stage-label{position:absolute;top:15px;left:15px;background:#111d29bf;border:1px solid #9cafbd38;border-radius:11px;padding:8px 11px;pointer-events:none;font-size:11px;color:#e6dcd4}
 .stage-label strong{display:block;color:#e8c9a2;font-size:10px;letter-spacing:.16em}
 #status{position:absolute;bottom:15px;left:15px;right:15px;max-width:370px;background:#111d29d9;color:#d3e1e6;border-radius:11px;padding:9px 12px;font-size:11px;pointer-events:none}
@@ -47,7 +47,7 @@ input[type=range]{width:100%;margin:9px 0 0;accent-color:#d6ac7f}
 <button data-pose="reach">Reach</button><button data-pose="open">Arms wide</button>
 <button data-pose="still">Rest</button></div>
 <div class="section">CAMERA</div><div class="buttons" id="views">
-<button data-view="front">Front</button><button data-view="three" class="selected">Three-quarter</button>
+<button data-view="front" class="selected">Front</button><button data-view="three">Three-quarter</button>
 <button data-view="side">Side</button><button data-view="back">Back</button></div>
 <div class="section">ANATOMICAL GRID</div><div class="buttons"><button id="guides">Show proportion guides</button></div><p class="subtle">Target 7½ heads; crotch near body midpoint, elbow near waist, fingers mid-thigh. Click to compare with the moving figure.</p><div class="section">ARTICULATION</div>
 <div class="range"><label for="shoulder">Right shoulder <output id="shoulderVal">0°</output></label><input id="shoulder" type="range" min="-45" max="160" value="0"></div>
@@ -76,9 +76,9 @@ try {
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   stage.appendChild(renderer.domElement);
   const orbit=new OrbitControls(camera,renderer.domElement);
-  orbit.target.set(0,2.48,0);camera.position.set(5.2,3.6,8.0);
+  orbit.target.set(0,2.48,0);camera.position.set(0,2.48,10);
   orbit.enableDamping=true;orbit.dampingFactor=.08;
-  orbit.minDistance=1.35;orbit.maxDistance=13;
+  orbit.minDistance=1.35;orbit.maxDistance=40;
   orbit.minPolarAngle=.13;orbit.maxPolarAngle=Math.PI-.16;
   orbit.enablePan=true;orbit.update();
   scene.add(new THREE.HemisphereLight(0xc2d6e3,0x3f3238,2.1));
@@ -402,10 +402,36 @@ try {
   };
   function choosePose(p){pose=p;selectBtns('poses','pose',p)}
   document.querySelectorAll('#poses button').forEach(b=>b.addEventListener('click',()=>choosePose(b.dataset.pose)));
+  // Camera framing is derived from the complete, transformed character,
+  // not the size of individual meshes or an arbitrary fixed camera offset.
+  // The background halo and plinth are deliberately excluded from these bounds.
+  scene.updateMatrixWorld(true);
+  const figureBounds=new THREE.Box3().setFromObject(figure);
+  const figureSize=figureBounds.getSize(new THREE.Vector3());
+  const figureCentre=figureBounds.getCenter(new THREE.Vector3());
+  let selectedView='front',cameraManuallyMoved=false;
+  renderer.domElement.addEventListener('pointerdown',()=>{cameraManuallyMoved=true;});
+  renderer.domElement.addEventListener('wheel',()=>{cameraManuallyMoved=true;},{passive:true});
   function chooseView(v){
+    selectedView=v;
+    cameraManuallyMoved=false;
     selectBtns('views','view',v);
-    const views={front:[0,2.5,8.4],three:[5.2,3.6,8.0],side:[8.5,2.5,0],back:[0,2.5,-8.4]};
-    camera.position.set(...views[v]);orbit.target.set(0,2.48,0);orbit.update();
+    const aspect=Math.max(.25,stage.clientWidth/Math.max(1,stage.clientHeight));
+    const tanHalfVertical=Math.tan(THREE.MathUtils.degToRad(camera.fov)*.5);
+    // Use projected body width in each view. Allow margins for her hair,
+    // hanging hands, labels and the bottom status on narrow phone screens.
+    const width=v==='side'?figureSize.z:
+                v==='three'?Math.hypot(figureSize.x,figureSize.z)*.82:figureSize.x;
+    const heightDistance=(figureSize.y*.5)/tanHalfVertical;
+    const widthDistance=(width*.5)/(tanHalfVertical*aspect);
+    const distance=Math.max(heightDistance,widthDistance)*1.31+figureSize.z*.55;
+    const directions={
+      front:[0,0,1],three:[.55,.10,.83],side:[1,0,0],back:[0,0,-1]
+    };
+    const offset=new THREE.Vector3(...directions[v]).normalize().multiplyScalar(distance);
+    orbit.target.copy(figureCentre);
+    camera.position.copy(figureCentre).add(offset);
+    orbit.update();
   }
   document.querySelectorAll('#views button').forEach(b=>b.addEventListener('click',()=>chooseView(b.dataset.view)));
   function chooseFinish(f){
@@ -439,7 +465,7 @@ try {
   $('motion').addEventListener('click',()=>{running=!running;$('motion').textContent=running?'Pause motion':'Play motion'});
   $('reset').addEventListener('click',()=>{
     for(const k of rangeNames){$(k).value=0;manual[k]=0;$(k+'Val').textContent='0°';}
-    choosePose('breathe');chooseView('three');chooseFinish('paint');
+    choosePose('breathe');chooseView('front');chooseFinish('paint');
   });
   const clock=new THREE.Clock();
   function loop(){
@@ -462,9 +488,17 @@ try {
     figure.rotation.y=.022*Math.sin(t*.48);
     orbit.update();renderer.render(scene,camera);
   }
-  function resize(){camera.aspect=stage.clientWidth/stage.clientHeight;camera.updateProjectionMatrix();renderer.setSize(stage.clientWidth,stage.clientHeight,false)}
+  function resize(){
+    if(!stage.clientWidth||!stage.clientHeight)return;
+    camera.aspect=stage.clientWidth/stage.clientHeight;
+    camera.updateProjectionMatrix();
+    // false is correct only because canvas CSS now explicitly fills #stage.
+    // Keep CSS pixels separate from the DPR-scaled GPU drawing buffer.
+    renderer.setSize(stage.clientWidth,stage.clientHeight,false);
+    if(!cameraManuallyMoved)chooseView(selectedView);
+  }
   new ResizeObserver(resize).observe(stage);sharpness();resize();
-  chooseFinish('paint');
+  chooseView('front');chooseFinish('paint');
   status.textContent='LIVE 3D · shared anatomy grid · touch enabled';
   loop();
 }catch(error){
