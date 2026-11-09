@@ -68,13 +68,6 @@ for name,pos,power,size,color in [
 sc.world.color=(.10,.10,.10)
 
 # Export the Blender-built mesh hierarchy as a reusable GLB (not rendered frames).
-# Use explicit hierarchy pivots for animation, without rebuilding geometry in Three.js.
-for frame,sh,el,hd in [(1,0,0,0),(12,-.5,-.18,.12),(24,-1.1,-.6,-.18),(36,-.65,-.35,.12),(48,0,0,0)]:
- arm_pivots[1][0].rotation_euler.z=sh
- arm_pivots[1][1].rotation_euler.z=el
- head.rotation_euler.z=hd
- for ob in (arm_pivots[1][0],arm_pivots[1][1],head):
-  ob.keyframe_insert(data_path="rotation_euler",frame=frame)
 sc.frame_start=1;sc.frame_end=48;sc.render.fps=12
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/"hybrid_creature.blend"))
 bpy.ops.export_scene.gltf(filepath=str(OUT/"hybrid_creature.glb"),export_format='GLB',export_animations=True,export_lights=False,export_cameras=False)
