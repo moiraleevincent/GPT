@@ -1,0 +1,37 @@
+name: 3D Hybrid Audition — Export Blender GLB
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '3d_tool_audition/hybrid/build_glb.py'
+      - '.github/workflows/3d-hybrid-audition.yml'
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install headless Blender
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y blender libegl1 libgl1-mesa-dri
+      - name: Build mesh and export GLB
+        run: blender -b -t 4 --factory-startup --python-exit-code 1 --python 3d_tool_audition/hybrid/build_glb.py
+      - name: Keep editable source
+        uses: actions/upload-artifact@v4
+        with:
+          name: hybrid-blender-original
+          path: |
+            3d_tool_audition/hybrid/output/hybrid_creature.blend
+            3d_tool_audition/hybrid/output/hybrid_creature.glb
+      - name: Commit web-viewable GLB
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 3d_tool_audition/hybrid/output/hybrid_creature.glb
+          git commit -m "Publish Blender GLB for Three.js [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
