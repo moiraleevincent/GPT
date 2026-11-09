@@ -44,11 +44,16 @@ for s in [-1,1]:
  eye=ell("eye white",(.18*s,-.36,.42),(.11,.042,.11),gold);parent(eye,head)
  iris=ell("eye ink",(.18*s,-.399,.42),(.052,.029,.065),dark);parent(iris,head)
  cheek=ell("painted cheek",(.29*s,-.338,.23),(.11,.026,.055),pink);parent(cheek,head)
- shoulder=empty("shoulder pivot "+str(s),(.49*s,0,1.77),root)
- arm=ell("upper arm "+str(s),(.20*s,-.01,-.23),(.22,.21,.37),blue);parent(arm,shoulder)
- elbow=empty("elbow pivot "+str(s),(.37*s,0,-.48),shoulder)
- fore=ell("forearm "+str(s),(.055*s,-.01,-.19),(.16,.16,.29),porcelain);parent(fore,elbow)
- hand=ell("hand "+str(s),(.1*s,-.02,-.43),(.15,.13,.17),gold);parent(hand,elbow)
+ # Place the shoulder pivot INSIDE the torso silhouette. This ensures the
+ # entire articulated arm rotates from inside the shoulder instead of floating
+ # alongside it. Cap and upper-arm volumes overlap at all animated poses.
+ shoulder=empty("shoulder pivot "+str(s),(.39*s,0,1.77),root)
+ cap=ell("overlapping shoulder cap "+str(s),(.07*s,0,-.045),(.27,.28,.27),blue);parent(cap,shoulder)
+ arm=ell("upper arm "+str(s),(.14*s,-.01,-.25),(.225,.225,.38),blue);parent(arm,shoulder)
+ elbow=empty("elbow pivot "+str(s),(.24*s,0,-.51),shoulder)
+ joint=ell("elbow cover "+str(s),(0,0,0),(.17,.18,.17),gold);parent(joint,elbow)
+ fore=ell("forearm "+str(s),(.035*s,-.01,-.23),(.165,.18,.30),porcelain);parent(fore,elbow)
+ hand=ell("hand "+str(s),(.07*s,-.02,-.48),(.16,.14,.17),gold);parent(hand,elbow)
  leg=ell("leg "+str(s),(.25*s,-.01,.60),(.23,.26,.46),blue);parent(leg,root)
  foot=ell("foot "+str(s),(.25*s,-.21,.20),(.24,.39,.16),gold);parent(foot,root)
  if s==1:
