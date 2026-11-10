@@ -1,0 +1,176 @@
+{
+  "title": "Torso-only surface measurements from animated Three.js figure",
+  "source": "human_study_02/index.html",
+  "sourceBlobSha": "ea74b8a42a8ab5e1153fac615506045f04d83b0e",
+  "overallFigureHeight": 4.958,
+  "headHeight": 0.655,
+  "axes": {
+    "x": "transverse left/right",
+    "y": "vertical after piecewise proportionalY map",
+    "z": "anterior positive / posterior negative"
+  },
+  "measurementNotes": [
+    "All measurements describe elliptical loft ring input, not an anatomical skeletal landmark.",
+    "Nominal depth precedes the integrated posterior glute displacement and excludes the fitted garment.",
+    "Actual silhouette may exceed stations due to curve interpolation.",
+    "Chosen body proportions are an art scale, not population norms.",
+    "Both unremapped station Y and transformed world Y are preserved."
+  ],
+  "crossSections": [
+    {
+      "parameterY": 1.43,
+      "worldY": 2.35575,
+      "heightFraction": 0.47514,
+      "halfWidth": 0.247,
+      "frontBackRadius": 0.196,
+      "zCentre": -0.03,
+      "nominalWidth": 0.494,
+      "nominalDepth": 0.392
+    },
+    {
+      "parameterY": 1.5,
+      "worldY": 2.445,
+      "heightFraction": 0.49314,
+      "halfWidth": 0.419,
+      "frontBackRadius": 0.288,
+      "zCentre": -0.069,
+      "nominalWidth": 0.838,
+      "nominalDepth": 0.576
+    },
+    {
+      "parameterY": 1.62,
+      "worldY": 2.598,
+      "heightFraction": 0.524,
+      "halfWidth": 0.559,
+      "frontBackRadius": 0.34,
+      "zCentre": -0.081,
+      "nominalWidth": 1.118,
+      "nominalDepth": 0.68
+    },
+    {
+      "parameterY": 1.76,
+      "worldY": 2.7765,
+      "heightFraction": 0.56,
+      "halfWidth": 0.53642,
+      "frontBackRadius": 0.301,
+      "zCentre": -0.044,
+      "nominalWidth": 1.07284,
+      "nominalDepth": 0.602
+    },
+    {
+      "parameterY": 1.9,
+      "worldY": 2.955,
+      "heightFraction": 0.59601,
+      "halfWidth": 0.326,
+      "frontBackRadius": 0.209,
+      "zCentre": -0.004,
+      "nominalWidth": 0.652,
+      "nominalDepth": 0.418
+    },
+    {
+      "parameterY": 2.04,
+      "worldY": 3.1335,
+      "heightFraction": 0.63201,
+      "halfWidth": 0.267,
+      "frontBackRadius": 0.188,
+      "zCentre": 0,
+      "nominalWidth": 0.534,
+      "nominalDepth": 0.376
+    },
+    {
+      "parameterY": 2.19,
+      "worldY": 3.32475,
+      "heightFraction": 0.67058,
+      "halfWidth": 0.317,
+      "frontBackRadius": 0.215,
+      "zCentre": 0,
+      "nominalWidth": 0.634,
+      "nominalDepth": 0.43
+    },
+    {
+      "parameterY": 2.35,
+      "worldY": 3.52875,
+      "heightFraction": 0.71173,
+      "halfWidth": 0.378,
+      "frontBackRadius": 0.244,
+      "zCentre": 0,
+      "nominalWidth": 0.756,
+      "nominalDepth": 0.488
+    },
+    {
+      "parameterY": 2.51,
+      "worldY": 3.73275,
+      "heightFraction": 0.75287,
+      "halfWidth": 0.4493,
+      "frontBackRadius": 0.255,
+      "zCentre": 0,
+      "nominalWidth": 0.8986,
+      "nominalDepth": 0.51
+    },
+    {
+      "parameterY": 2.65,
+      "worldY": 3.91125,
+      "heightFraction": 0.78888,
+      "halfWidth": 0.444,
+      "frontBackRadius": 0.23,
+      "zCentre": 0,
+      "nominalWidth": 0.888,
+      "nominalDepth": 0.46
+    },
+    {
+      "parameterY": 2.75,
+      "worldY": 4.03875,
+      "heightFraction": 0.81459,
+      "halfWidth": 0.363,
+      "frontBackRadius": 0.192,
+      "zCentre": 0,
+      "nominalWidth": 0.726,
+      "nominalDepth": 0.384
+    },
+    {
+      "parameterY": 2.81,
+      "worldY": 4.11525,
+      "heightFraction": 0.83002,
+      "halfWidth": 0.2,
+      "frontBackRadius": 0.13,
+      "zCentre": 0,
+      "nominalWidth": 0.4,
+      "nominalDepth": 0.26
+    },
+    {
+      "parameterY": 2.92,
+      "worldY": 4.2555,
+      "heightFraction": 0.85831,
+      "halfWidth": 0.105,
+      "frontBackRadius": 0.099,
+      "zCentre": 0,
+      "nominalWidth": 0.21,
+      "nominalDepth": 0.198
+    },
+    {
+      "parameterY": 2.99,
+      "worldY": 4.32825,
+      "heightFraction": 0.87298,
+      "halfWidth": 0.112,
+      "frontBackRadius": 0.105,
+      "zCentre": 0,
+      "nominalWidth": 0.224,
+      "nominalDepth": 0.21
+    }
+  ],
+  "contourProxies": {
+    "maximumHipRing": 1.62,
+    "waistRing": 2.04,
+    "upperTorsoRing": 2.65,
+    "neckRing": 2.92
+  },
+  "ringRatios": {
+    "hipToWaistWidth": 2.09363,
+    "upperTorsoToWaistWidth": 1.66292
+  },
+  "referenceLinks": [
+    "https://www.iso.org/standard/65246.html",
+    "https://www.makehumancommunity.org/about/license.html",
+    "https://static.makehumancommunity.org/about/concepts/basemesh.html"
+  ]
+}
