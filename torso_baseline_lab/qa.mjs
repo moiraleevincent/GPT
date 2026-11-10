@@ -61,7 +61,23 @@ try{
   if(!bRatioMetrics.includes('Waist'))problems.push('Preset lost measurement table');
   if(initialMetrics===afterMetrics)problems.push('Numeric deltas did not respond to slider');
   if(!status.includes('CURRENT HIP'))problems.push('Missing model status');
-  const report={status,initialMetrics,afterMetrics,bRatioStatus,bRatioMetrics,problems};
+  // Structural-envelope test: the envelope stays fixed while skin shrinks.
+  await page.locator('#toBaseline').click();
+  await page.locator('#showBones').click();
+  await page.waitForTimeout(300);
+  await page.locator('#stage').screenshot({path:out+'/skeleton-overlay-front.png'});
+  const envelopeBaseline=await page.locator('#boneStatus').innerText();
+  if(!envelopeBaseline.includes('No intersection'))problems.push('Bone envelope unexpectedly intersects baseline: '+envelopeBaseline);
+  await page.getByRole('button',{name:'Side',exact:true}).click();
+  await page.waitForTimeout(300);
+  await page.locator('#stage').screenshot({path:out+'/skeleton-overlay-side.png'});
+  await page.getByRole('button',{name:'Front',exact:true}).click();
+  await page.locator('#range-waist').evaluate(el=>{el.value='65';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  await page.waitForTimeout(300);
+  const envelopeNarrowWaist=await page.locator('#boneStatus').innerText();
+  await page.locator('#stage').screenshot({path:out+'/skeleton-intersection-waist65.png'});
+  if(!envelopeNarrowWaist.includes('PROXY INTERSECTION'))problems.push('Bone test failed to flag extreme waist deformation: '+envelopeNarrowWaist);
+  const report={status,initialMetrics,afterMetrics,bRatioStatus,bRatioMetrics,envelopeBaseline,envelopeNarrowWaist,problems};
   await fs.writeFile(out+'/qa.json',JSON.stringify(report,null,2)+'\n');
   console.log('TORSO_QA_REPORT '+JSON.stringify(report));
   if(problems.length)process.exitCode=1;
