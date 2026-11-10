@@ -23,6 +23,7 @@ on:
       - "body_study_02/index.html"
       - "body_study_02/figure.svg"
       - "torso_landmark_lab/index.html"
+      - "torso_baseline_lab/**"
       - "body_leg_lab/index.html"
       - "body_arm_lab/index.html"
       - "stillwater/**"
@@ -89,6 +90,10 @@ jobs:
           cp body_study_02/figure.svg site/body_study_02/figure.svg
           mkdir -p site/torso_landmark_lab
           cp torso_landmark_lab/index.html site/torso_landmark_lab/index.html
+          mkdir -p site/torso_baseline_lab
+          cp torso_baseline_lab/index.html site/torso_baseline_lab/index.html
+          cp torso_baseline_lab/measurements.json site/torso_baseline_lab/measurements.json
+          cp torso_baseline_lab/README.md site/torso_baseline_lab/README.md
           mkdir -p site/body_leg_lab
           cp body_leg_lab/index.html site/body_leg_lab/index.html
           mkdir -p site/body_arm_lab
