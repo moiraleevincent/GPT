@@ -112,8 +112,8 @@ try{
     // Keep every ring in vertical order; the front-centre has a slight V.
     const rawFade=Math.max(0,Math.min(1,(1.66-s.y)/.23));
     const bottomBlend=rawFade*rawFade*(3-2*rawFade);
-    const sideCut=Math.pow(Math.abs(side),2)*.14;
-    const frontVDip=Math.pow(Math.max(0,front),4)*.025;
+    const sideCut=Math.pow(Math.abs(side),2)*.055;
+    const frontVDip=Math.pow(Math.max(0,front),4)*.008;
     const y=remapY(s.y+bottomBlend*v.hem*(sideCut-frontVDip));
     return [x,y,z];
   }
@@ -191,7 +191,7 @@ try{
   // those ratios at exactly the original 3D waist station, without
   // claiming the source's shoulder contour equals a bony acromion.
   $('from2D').addEventListener('click',()=>{
-    applySettings({waist:100,hip:88,ribs:100,shoulder:105,front:100,back:100,hem:100});
+    applySettings({waist:100,hip:88,ribs:100,shoulder:105,front:100,back:100,hem:0});
   });
   $('toBaseline').addEventListener('click',()=>{
     applySettings({waist:100,hip:100,ribs:100,shoulder:100,front:100,back:100,hem:0});
