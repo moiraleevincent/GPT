@@ -35,10 +35,10 @@ input[type=range]{width:100%;margin:9px 0 0;accent-color:#d6ac7f}
 </style></head><body><main>
 <div class="eyebrow">SHARED ANATOMY · STUDY 06 · THREE.JS</div>
 <h1>A figure <em>measured.</em></h1>
-<p class="intro">An anatomical lower-leg study: smaller knee transitions, paired calf muscle forms, a subtler shin ridge, and a finer Achilles/ankle taper. Rotate to inspect the front, side, and rear contours.</p>
+<p class="intro">A new lower-leg construction method: asymmetric inner and outer calf widths, a flatter front shin and controlled posterior volume. Compare it directly with the previous version using the toggle.</p>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D human figure">
-<div class="stage-label"><strong>ATELIER 02 · LOWER LEG ANATOMY</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
+<div class="stage-label"><strong>ATELIER 02 · ANATOMICAL LOFT TEST</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
 <div id="status">Constructing the figure…</div><div id="fatal"></div>
 </section>
 <aside class="controls">
@@ -48,8 +48,8 @@ input[type=range]{width:100%;margin:9px 0 0;accent-color:#d6ac7f}
 <button data-pose="still">Rest</button></div>
 <div class="section">CAMERA</div><div class="buttons" id="views">
 <button data-view="front" class="selected">Front</button><button data-view="three">Three-quarter</button>
-<button data-view="side">Side</button><button data-view="back">Back</button></div>
-<div class="section">ANATOMICAL GRID</div><div class="buttons"><button id="guides">Show proportion guides</button></div><p class="subtle">Target 7½ heads; crotch near body midpoint, elbow near waist, fingers mid-thigh. Click to compare with the moving figure.</p><div class="section">ARTICULATION</div>
+<button data-view="side">Side</button><button data-view="back">Back</button><button data-view="legs">Leg close-up</button></div>
+<div class="section">LOWER-LEG SHAPE TEST</div><div class="buttons"><button id="compareCalves">Show previous calves</button></div><p class="subtle">Compare the old elliptical calves with the new asymmetrical, anatomy-guided cross-sections at the same camera angle.</p><div class="section">ANATOMICAL GRID</div><div class="buttons"><button id="guides">Show proportion guides</button></div><p class="subtle">Target 7½ heads; crotch near body midpoint, elbow near waist, fingers mid-thigh. Click to compare with the moving figure.</p><div class="section">ARTICULATION</div>
 <div class="range"><label for="shoulder">Right shoulder <output id="shoulderVal">0°</output></label><input id="shoulder" type="range" min="-45" max="160" value="0"></div>
 <div class="range"><label for="elbow">Right elbow <output id="elbowVal">0°</output></label><input id="elbow" type="range" min="-130" max="110" value="0"></div>
 <div class="range"><label for="head">Head turn <output id="headVal">0°</output></label><input id="head" type="range" min="-65" max="65" value="0"></div>
@@ -130,6 +130,52 @@ try {
     geometry.setAttribute('uv',new THREE.Float32BufferAttribute(normuv,2));
     geometry.setIndex(indices);geometry.computeVertexNormals();
     return geometry;
+  }
+
+  // Unlike an ellipse, this loft has independent MEDIAL and LATERAL widths,
+  // a flatter anterior tibial surface, a small outer-front shin ridge and a
+  // controlled posterior bulge. All are smoothly interpolated along the shin.
+  // sign=+1 is the body's right, sign=-1 is its left.
+  function anatomicalShin(stations,sign,subdivisions=7,radial=56){
+    const vertices=[],uvs=[],indices=[];
+    const props=['y','rx','rz','cx','cz','medial','lateral','frontFlat','shinRidge','rear'];
+    const count=(stations.length-1)*subdivisions;
+    for(let row=0;row<=count;row++){
+      const i=Math.min(stations.length-2,Math.floor(row/subdivisions));
+      const t=row===count?1:(row-i*subdivisions)/subdivisions;
+      const a=stations[Math.max(0,i-1)],b=stations[i],c=stations[i+1],d=stations[Math.min(stations.length-1,i+2)];
+      const v={};
+      for(const k of props)v[k]=catmull(a[k]??0,b[k]??0,c[k]??0,d[k]??0,t);
+      for(let ring=0;ring<=radial;ring++){
+        const theta=ring*2*Math.PI/radial,sideX=Math.cos(theta),frontZ=Math.sin(theta);
+        const medial=Math.max(0,-sideX*sign),lateral=Math.max(0,sideX*sign);
+        const width=Math.max(.03,v.rx+v.medial*medial*medial+v.lateral*lateral*lateral);
+        const x=v.cx+width*sideX;
+        // Positive Z faces the camera/front; negative Z is the back of the calf.
+        let z=v.cz+v.rz*frontZ;
+        if(frontZ>0){
+          // The shin's anterior plane is flatter than a circular cylinder.
+          z-=v.frontFlat*frontZ*frontZ;
+          // Tibialis anterior gives a restrained ridge on the OUTER-front.
+          const frontOuter=Math.exp(-Math.pow((sideX*sign-.49)/.29,2));
+          z+=v.shinRidge*frontZ*frontOuter;
+        } else {
+          // Posterior relief is capped at the source profiles: no protruding
+          // muscle spheres and no large per-vertex Gaussian lumps.
+          z-=v.rear*frontZ*frontZ;
+        }
+        vertices.push(x,v.y,z);uvs.push(ring/radial,row/count);
+      }
+    }
+    for(let row=0;row<count;row++)for(let ring=0;ring<radial;ring++){
+      const a=row*(radial+1)+ring,b=a+1,c=a+radial+1,d=c+1;
+      indices.push(a,c,b,b,c,d);
+    }
+    const geo=new THREE.BufferGeometry();
+    geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+    geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+    geo.setIndex(indices);geo.computeVertexNormals();
+    return geo;
   }
   const figure=node(scene,'FIGURE');
   // Study 02 — hand-painted silhouette correction, applied to the existing
@@ -309,6 +355,7 @@ try {
   arm(-1);arm(1);
   // Pelvis and leg lofts with their own tapered anatomical stations.
   const legs={};
+  const previousCalves=[],anatomicalCalves=[];
   function leg(sign){
     // Shared hip origin: the leg's thickest volume is deliberately proximal,
     // near the gluteal fold; it gradually narrows toward the knee.
@@ -341,10 +388,39 @@ try {
     thighVerts.needsUpdate=true;thigh.computeVertexNormals();
     mesh(hip,'thigh with medial knee transition '+sign,thigh,skin);
     const knee=node(hip,'knee '+sign,[sign*.038,-.76,0]);
+
+    // Anatomical stations: from ankle (negative Y) to kneecap (positive Y).
+    // MEDIAL gastrocnemius is fuller and extends LOWER; LATERAL is subtler
+    // and peaks slightly higher. The tibialis anterior remains understated.
+    // Back projection is reduced relative to the earlier ellipse + Gaussian.
+    const profile=[
+      {y:-.70,rx:.076,rz:.087,cx:-sign*.006,cz:.002,
+        medial:.003,lateral:0,frontFlat:.011,shinRidge:.004,rear:0},
+      {y:-.60,rx:.087,rz:.098,cx:-sign*.009,cz:0,
+        medial:.006,lateral:.002,frontFlat:.015,shinRidge:.008,rear:.001},
+      {y:-.49,rx:.098,rz:.112,cx:-sign*.013,cz:-.005,
+        medial:.014,lateral:.004,frontFlat:.019,shinRidge:.012,rear:.002},
+      {y:-.37,rx:.107,rz:.122,cx:-sign*.018,cz:-.009,
+        medial:.026,lateral:.009,frontFlat:.021,shinRidge:.015,rear:.003},
+      {y:-.28,rx:.112,rz:.130,cx:-sign*.019,cz:-.015,
+        medial:.041,lateral:.013,frontFlat:.022,shinRidge:.016,rear:.006},
+      {y:-.19,rx:.115,rz:.135,cx:-sign*.017,cz:-.015,
+        medial:.036,lateral:.022,frontFlat:.022,shinRidge:.016,rear:.009},
+      {y:-.10,rx:.110,rz:.129,cx:-sign*.011,cz:-.009,
+        medial:.018,lateral:.023,frontFlat:.019,shinRidge:.013,rear:.006},
+      {y:0,rx:.103,rz:.121,cx:-sign*.004,cz:-.003,
+        medial:.008,lateral:.010,frontFlat:.015,shinRidge:.009,rear:.001},
+      {y:.09,rx:.106,rz:.120,cx:0,cz:0,
+        medial:.003,lateral:.002,frontFlat:.012,shinRidge:.006,rear:0}
+    ];
+    const shapedCalf=anatomicalShin(profile,sign,7,56);
+    const anatomicalCalfMesh=mesh(knee,'anatomy-guided shin and calf '+sign,shapedCalf,skin);
+    anatomicalCalves.push(anatomicalCalfMesh);
+    // Keep the previous mesh for an apples-to-apples toggle, not rendering.
     // Knee to ankle: front shin stays relatively straight while the centre
     // of the cross-section shifts backwards where gastrocnemius swells.
     // Extra height stations let the upper calf and Achilles taper differ.
-    const calf=loft([
+    const previousCalf=loft([
       {y:-.70,rx:.084-paintover.achillesTaper*.45,rz:.097,
         cx:-sign*.006,cz:.003},
       {y:-.60,rx:.096-paintover.achillesTaper*.50,rz:.108,
@@ -359,7 +435,7 @@ try {
     // Smooth muscle relief is sculpted INTO this single calf mesh. The two
     // gastrocnemius heads live on the BACK (negative z) and are deliberately
     // asymmetric; the tibialis anterior is a much subtler front-outer ridge.
-    const calfVerts=calf.attributes.position;
+    const calfVerts=previousCalf.attributes.position;
     const gauss=(value,centre,width)=>Math.exp(-Math.pow((value-centre)/width,2));
     for(let i=0;i<calfVerts.count;i++){
       const x=calfVerts.getX(i), y=calfVerts.getY(i), z=calfVerts.getZ(i);
@@ -377,14 +453,26 @@ try {
         y,
         z-relief+paintover.shinRidge*shin);
     }
-    calfVerts.needsUpdate=true;calf.computeVertexNormals();
-    mesh(knee,'asymmetric gastrocnemius soleus and shin '+sign,calf,skin);
+    calfVerts.needsUpdate=true;previousCalf.computeVertexNormals();
+    const previousCalfMesh=mesh(knee,'previous elliptical calf '+sign,previousCalf,skin);
+    previousCalfMesh.visible=false;
+    previousCalves.push(previousCalfMesh);
     const foot=node(knee,'foot '+sign,[0,-.665,.03]);
     ell(foot,'ankle',skin,[0,.01,0],[.095,.15,.12]);
     ell(foot,'foot',skin,[0,-.07,.16],[.145,.115,.265]);
     legs[sign]={hip,knee,foot};
   }
   leg(-1);leg(1);
+  let showOldCalves=false;
+  $('compareCalves').addEventListener('click',()=>{
+    showOldCalves=!showOldCalves;
+    for(const m of previousCalves)m.visible=showOldCalves;
+    for(const m of anatomicalCalves)m.visible=!showOldCalves;
+    $('compareCalves').textContent=showOldCalves?'Show anatomy-guided calves':'Show previous calves';
+    status.textContent=showOldCalves?
+      'PREVIOUS LOWER LEGS · elliptical section + posterior bumps':
+      'ANATOMICAL LOWER LEGS · asymmetric inner/outer calf and flatter shin';
+  });
   // A deliberately subtle patterned cloth texture; no downloaded image files.
   const c=document.createElement('canvas');c.width=c.height=512;
   const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,512,512);
@@ -503,6 +591,13 @@ try {
     selectedView=v;
     cameraManuallyMoved=false;
     selectBtns('views','view',v);
+    if(v==='legs'){
+      // Inspect the knees, calf and ankle without changing the rig or orbit.
+      orbit.target.set(0,1.11,0);
+      camera.position.set(0,1.11,3.55);
+      orbit.update();
+      return;
+    }
     const aspect=Math.max(.25,stage.clientWidth/Math.max(1,stage.clientHeight));
     const tanHalfVertical=Math.tan(THREE.MathUtils.degToRad(camera.fov)*.5);
     // Use projected body width in each view. Allow margins for her hair,
