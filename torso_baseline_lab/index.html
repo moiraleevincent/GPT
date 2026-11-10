@@ -33,6 +33,9 @@ footer{color:var(--muted);font-size:12px;padding:13px 2px}a{color:#ffd0bf;text-u
 <div class="stage-bottom" id="status">Building surface…</div><div id="fatal"></div></section>
 <aside class="sidebar"><div class="group">FIXED CAMERA VIEWS</div>
 <div class="buttons" id="views"><button data-view="front" aria-pressed="true">Front</button><button data-view="three" aria-pressed="false">¾</button><button data-view="side" aria-pressed="false">Side</button><button data-view="back" aria-pressed="false">Back</button></div>
+<div class="group">REFERENCE PROPORTIONS</div>
+<div class="buttons"><button id="from2D" class="wide">Match approved 2D B ratios</button><button id="toBaseline" class="wide">Original 3D ratios</button></div>
+<p class="note">Our approved 2D B sketch used shoulder : waist : hip = 174 : 100 : 184. This is a <b>drawing reference</b>, not an anatomical norm.</p>
 <div class="group">MEASUREMENT OVERLAYS</div><div class="buttons">
 <button class="wide" id="showRings" aria-pressed="false">Show contour stations</button>
 <button class="wide" id="showGhost" aria-pressed="false">Show old geometry</button></div>
@@ -57,13 +60,15 @@ const $=id=>document.getElementById(id);
 const status=$('status'),stage=$('stage'),sliders=$('sliders');
 try{
   const scene=new THREE.Scene();scene.background=new THREE.Color('#172734');
-  const camera=new THREE.PerspectiveCamera(38,1,.02,50);
+  // Orthographic projection prevents depth/foreshortening from changing
+  // measured screen-space silhouette widths between comparison presets.
+  const camera=new THREE.OrthographicCamera(-1.4,1.4,1.3,-1.3,.02,50);
   const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   stage.insertBefore(renderer.domElement,stage.firstChild);
   const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;
-  orbit.minDistance=2.4;orbit.maxDistance=7.5;
+  orbit.minZoom=.75;orbit.maxZoom=4;
   const target=new THREE.Vector3(0,3.345,0);
   camera.position.set(0,3.345,3.6);orbit.target.copy(target);orbit.update();
   scene.add(new THREE.HemisphereLight('#f9eaf0','#3c5462',2.4));
@@ -103,10 +108,13 @@ try{
     const x=rx*side;
     const depth=front>=0?v.front:v.back;
     const z=s.cz+s.rz*front*depth;
-    const bottomBlend=Math.max(0,1-(s.y-BASE[0].y)/.078);
-    const hipCut=Math.pow(Math.abs(side),1.7)*.050;
-    const centreDip=Math.pow(Math.max(0,front),3)*.013;
-    const y=remapY(s.y+bottomBlend*v.hem*(hipCut-centreDip));
+    // The hem curves up at the sides, tapering smoothly into the pelvis.
+    // Keep every ring in vertical order; the front-centre has a slight V.
+    const rawFade=Math.max(0,Math.min(1,(1.66-s.y)/.23));
+    const bottomBlend=rawFade*rawFade*(3-2*rawFade);
+    const sideCut=Math.pow(Math.abs(side),2)*.14;
+    const frontVDip=Math.pow(Math.max(0,front),4)*.025;
+    const y=remapY(s.y+bottomBlend*v.hem*(sideCut-frontVDip));
     return [x,y,z];
   }
   function buildGeometry(v){
@@ -170,6 +178,24 @@ try{
   for(const [key,c] of Object.entries(controls)){
     $('range-'+key).addEventListener('input',e=>{c.value=Number(e.target.value);$('value-'+key).textContent=c.value+'%';redraw();});
   }
+  function applySettings(changes){
+    for(const [key,value] of Object.entries(changes)){
+      const c=controls[key];if(!c)continue;
+      c.value=value;
+      $('range-'+key).value=value;
+      $('value-'+key).textContent=value+'%';
+    }
+    redraw();
+  }
+  // Landmark experiment B used 174:100:184. Values below approximate
+  // those ratios at exactly the original 3D waist station, without
+  // claiming the source's shoulder contour equals a bony acromion.
+  $('from2D').addEventListener('click',()=>{
+    applySettings({waist:100,hip:88,ribs:100,shoulder:105,front:100,back:100,hem:100});
+  });
+  $('toBaseline').addEventListener('click',()=>{
+    applySettings({waist:100,hip:100,ribs:100,shoulder:100,front:100,back:100,hem:0});
+  });
   function selectedButtons(view){document.querySelectorAll('[data-view]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.view===view)));}
   function setView(view){
     selectedButtons(view);
@@ -182,8 +208,8 @@ try{
   $('showRings').addEventListener('click',e=>{rings.visible=!rings.visible;e.currentTarget.setAttribute('aria-pressed',String(rings.visible));});
   $('showGhost').addEventListener('click',e=>{original.visible=!original.visible;e.currentTarget.setAttribute('aria-pressed',String(original.visible));});
   $('reset').addEventListener('click',()=>{
-    for(const [key,c] of Object.entries(controls)){c.value=key==='hem'?0:100;$('range-'+key).value=c.value;$('value-'+key).textContent=c.value+'%';}
-    redraw();setView('front');
+    applySettings({waist:100,hip:100,ribs:100,shoulder:100,front:100,back:100,hem:0});
+    camera.zoom=1;camera.updateProjectionMatrix();setView('front');
   });
   $('snapshot').addEventListener('click',()=>{
     renderer.render(scene,camera);
@@ -191,7 +217,11 @@ try{
   });
   function resize(){
     const w=Math.max(50,stage.clientWidth),h=Math.max(50,stage.clientHeight);
-    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+    renderer.setSize(w,h,false);
+    const visibleHeight=2.63,aspect=w/h;
+    camera.left=-visibleHeight*aspect*.5;camera.right=visibleHeight*aspect*.5;
+    camera.top=visibleHeight*.5;camera.bottom=-visibleHeight*.5;
+    camera.updateProjectionMatrix();
   }
   window.addEventListener('resize',resize);
   new ResizeObserver(resize).observe(stage);
