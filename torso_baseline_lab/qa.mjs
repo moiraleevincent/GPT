@@ -35,9 +35,25 @@ try{
   await page.locator('#stage').screenshot({path:out+'/delta-waist-and-measuring-rings.png'});
   const afterMetrics=await page.locator('#metricRows').innerText();
   const status=await page.locator('#status').innerText();
+  await page.locator('#showGhost').click();
+  await page.locator('#showRings').click();
+  await page.locator('#from2D').click();
+  await page.locator('#range-hip').evaluate(el=>el.dispatchEvent(new Event('input',{bubbles:true})));
+  await page.waitForTimeout(300);
+  await page.locator('#stage').screenshot({path:out+'/approved-2D-ratios-front.png'});
+  const bRatioStatus=await page.locator('#status').innerText();
+  const bRatioMetrics=await page.locator('#metricRows').innerText();
+  await page.getByRole('button',{name:'Side',exact:true}).click();
+  await page.waitForTimeout(300);
+  await page.locator('#stage').screenshot({path:out+'/approved-2D-ratios-side.png'});
+  // Front-view width ratio should match the approved 2D hip/waist value
+  // within a small interpolation/rounding tolerance.
+  const m=bRatioStatus.match(/WIDTH ([\d.]+):1/);
+  if(!m||Math.abs(Number(m[1])-1.84)>.065)problems.push('2D ratio preset failed: '+bRatioStatus);
+  if(!bRatioMetrics.includes('Waist'))problems.push('Preset lost measurement table');
   if(initialMetrics===afterMetrics)problems.push('Numeric deltas did not respond to slider');
   if(!status.includes('CURRENT HIP'))problems.push('Missing model status');
-  const report={status,initialMetrics,afterMetrics,problems};
+  const report={status,initialMetrics,afterMetrics,bRatioStatus,bRatioMetrics,problems};
   await fs.writeFile(out+'/qa.json',JSON.stringify(report,null,2)+'\n');
   console.log('TORSO_QA_REPORT '+JSON.stringify(report));
   if(problems.length)process.exitCode=1;
