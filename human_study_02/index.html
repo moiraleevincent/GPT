@@ -35,10 +35,10 @@ input[type=range]{width:100%;margin:9px 0 0;accent-color:#d6ac7f}
 </style></head><body><main>
 <div class="eyebrow">SHARED ANATOMY · STUDY 06 · THREE.JS</div>
 <h1>A figure <em>measured.</em></h1>
-<p class="intro">A sculpting pass guided by a hand-drawn add/remove map: softer shoulders, a cleaner waist, fuller hip transitions, tapered thighs and refined calves. Rotate her to compare the silhouette.</p>
+<p class="intro">An anatomical lower-leg study: smaller knee transitions, paired calf muscle forms, a subtler shin ridge, and a finer Achilles/ankle taper. Rotate to inspect the front, side, and rear contours.</p>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D human figure">
-<div class="stage-label"><strong>ATELIER 02 · DRAW-OVER PASS</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
+<div class="stage-label"><strong>ATELIER 02 · LOWER LEG ANATOMY</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
 <div id="status">Constructing the figure…</div><div id="fatal"></div>
 </section>
 <aside class="controls">
@@ -139,7 +139,9 @@ try {
   const paintover=Object.freeze({
     shoulderTrim:.046, waistPinch:.020, hipFlare:.054,
     midThighTrim:.023, kneeTrim:.015,
-    calfTrim:.018, innerCalfShift:.023
+    calfTrim:.018, innerCalfShift:.023,
+    kneeTeardrop:.025, medialCalf:.065, lateralCalf:.045,
+    shinRidge:.017, achillesTaper:.012
   });
   // Central anatomy is ONE continuous torso-pelvis-neck mesh.
   const torso=loft([
@@ -324,19 +326,59 @@ try {
       {y:.105,rx:.279+paintover.hipFlare*.22,rz:.258,cx:-sign*.009},
       {y:.185,rx:.127,rz:.138,cx:-sign*.010}
     ],6,48);
-    mesh(hip,'thigh '+sign,thigh,skin);
+    // The vastus medialis sits just above and toward the inside of the
+    // kneecap. Move the local front-inner contour by a SMALL amount rather
+    // than attaching a round shape that would look like a knee pad.
+    const thighVerts=thigh.attributes.position;
+    const gaussian=(x,centre,width)=>Math.exp(-Math.pow((x-centre)/width,2));
+    for(let i=0;i<thighVerts.count;i++){
+      const x=thighVerts.getX(i), y=thighVerts.getY(i), z=thighVerts.getZ(i);
+      const inner=Math.max(0,Math.min(1,(-sign*x-.01)/.14));
+      const front=Math.max(0,Math.min(1,(z+.02)/.14));
+      const mound=paintover.kneeTeardrop*gaussian(y,-.585,.116)*inner*front;
+      thighVerts.setXYZ(i,x-sign*mound,y,z+mound*.40);
+    }
+    thighVerts.needsUpdate=true;thigh.computeVertexNormals();
+    mesh(hip,'thigh with medial knee transition '+sign,thigh,skin);
     const knee=node(hip,'knee '+sign,[sign*.038,-.76,0]);
+    // Knee to ankle: front shin stays relatively straight while the centre
+    // of the cross-section shifts backwards where gastrocnemius swells.
+    // Extra height stations let the upper calf and Achilles taper differ.
     const calf=loft([
-      // Narrow the blue outer calf side; shift the cross-section inward
-      // (green) while preserving the exact knee pivot and ankle height.
-      {y:-.70,rx:.090-paintover.calfTrim*.24,rz:.103,cx:-sign*paintover.innerCalfShift*.48},
-      {y:-.61,rx:.108-paintover.calfTrim*.37,rz:.124,cx:-sign*paintover.innerCalfShift*.80},
-      {y:-.43,rx:.137-paintover.calfTrim*.55,rz:.157,cx:-sign*paintover.innerCalfShift},
-      {y:-.25,rx:.154-paintover.calfTrim*.75,rz:.165,cx:-sign*paintover.innerCalfShift*.90},
-      {y:-.10,rx:.141-paintover.calfTrim*.85,rz:.148,cx:-sign*paintover.innerCalfShift*.45},
-      {y:.08,rx:.126-paintover.kneeTrim*.50,rz:.129,cx:0}
-    ],6,32);
-    mesh(knee,'calf '+sign,calf,skin);
+      {y:-.70,rx:.084-paintover.achillesTaper*.45,rz:.097,
+        cx:-sign*.006,cz:.003},
+      {y:-.60,rx:.096-paintover.achillesTaper*.50,rz:.108,
+        cx:-sign*.012,cz:-.002},
+      {y:-.49,rx:.108,rz:.127,cx:-sign*.019,cz:-.012},
+      {y:-.36,rx:.128,rz:.158,cx:-sign*.025,cz:-.027},
+      {y:-.24,rx:.139,rz:.177,cx:-sign*.025,cz:-.039},
+      {y:-.13,rx:.138,rz:.166,cx:-sign*.018,cz:-.026},
+      {y:-.02,rx:.125,rz:.142,cx:-sign*.010,cz:-.010},
+      {y:.09,rx:.117,rz:.125,cx:0,cz:0}
+    ],6,48);
+    // Smooth muscle relief is sculpted INTO this single calf mesh. The two
+    // gastrocnemius heads live on the BACK (negative z) and are deliberately
+    // asymmetric; the tibialis anterior is a much subtler front-outer ridge.
+    const calfVerts=calf.attributes.position;
+    const gauss=(value,centre,width)=>Math.exp(-Math.pow((value-centre)/width,2));
+    for(let i=0;i<calfVerts.count;i++){
+      const x=calfVerts.getX(i), y=calfVerts.getY(i), z=calfVerts.getZ(i);
+      const rear=Math.max(0,Math.min(1,(-z-.018)/.14));
+      const anterior=Math.max(0,Math.min(1,(z-.025)/.12));
+      const medial=gauss(x,-sign*.073,.108)*gauss(y,-.240,.165);
+      const lateral=gauss(x,sign*.064,.102)*gauss(y,-.181,.153);
+      const relief=rear*(paintover.medialCalf*medial+paintover.lateralCalf*lateral);
+      // A small medial silhouette swell reads from the front, but the main
+      // mass remains posterior as it is in real superficial calf anatomy.
+      const innerEdge=gauss(y,-.285,.154)*gauss(x,-sign*.108,.080);
+      const shin=anterior*gauss(x,sign*.070,.096)*gauss(y,-.320,.245);
+      calfVerts.setXYZ(i,
+        x-sign*.014*innerEdge,
+        y,
+        z-relief+paintover.shinRidge*shin);
+    }
+    calfVerts.needsUpdate=true;calf.computeVertexNormals();
+    mesh(knee,'asymmetric gastrocnemius soleus and shin '+sign,calf,skin);
     const foot=node(knee,'foot '+sign,[0,-.665,.03]);
     ell(foot,'ankle',skin,[0,.01,0],[.095,.15,.12]);
     ell(foot,'foot',skin,[0,-.07,.16],[.145,.115,.265]);
