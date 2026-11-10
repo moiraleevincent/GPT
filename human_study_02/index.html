@@ -35,10 +35,10 @@ input[type=range]{width:100%;margin:9px 0 0;accent-color:#d6ac7f}
 </style></head><body><main>
 <div class="eyebrow">SHARED ANATOMY · STUDY 06 · THREE.JS</div>
 <h1>A figure <em>measured.</em></h1>
-<p class="intro">A curvier figure study: wider hips, a clearer waist, fuller upper thighs, and gluteal contours sculpted into the pelvis itself. Compare her from every angle.</p>
+<p class="intro">A sculpting pass guided by a hand-drawn add/remove map: softer shoulders, a cleaner waist, fuller hip transitions, tapered thighs and refined calves. Rotate her to compare the silhouette.</p>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D human figure">
-<div class="stage-label"><strong>ATELIER 02 · CURVE STUDY</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
+<div class="stage-label"><strong>ATELIER 02 · DRAW-OVER PASS</strong> Drag to orbit · pinch to zoom<br>Front / side / rear views below</div>
 <div id="status">Constructing the figure…</div><div id="fatal"></div>
 </section>
 <aside class="controls">
@@ -132,20 +132,33 @@ try {
     return geometry;
   }
   const figure=node(scene,'FIGURE');
+  // Study 02 — hand-painted silhouette correction, applied to the existing
+  // head-unit proportions. GREEN = add volume, BLUE = subtract volume.
+  // Centralized parameters let us revise the drawing without re-scaling
+  // unrelated parts of the body or changing animation joint origins.
+  const paintover=Object.freeze({
+    shoulderTrim:.046, waistPinch:.020, hipFlare:.054,
+    midThighTrim:.023, kneeTrim:.015,
+    calfTrim:.018, innerCalfShift:.023
+  });
   // Central anatomy is ONE continuous torso-pelvis-neck mesh.
   const torso=loft([
     // The pelvic volume expands from the waist into the hip crest. The
     // cross-section moves posteriorly at the gluteal level, which improves
     // the side silhouette WITHOUT changing neck/chest or overall height.
-    {y:1.43,rx:.238,rz:.196,cz:-.030},
-    {y:1.50,rx:.392,rz:.285,cz:-.069},
-    {y:1.62,rx:.505,rz:.336,cz:-.081},
-    {y:1.76,rx:.497,rz:.301,cz:-.044},
-    {y:1.90,rx:.334,rz:.209,cz:-.004},
-    {y:2.04,rx:.279,rz:.188},
-    {y:2.19,rx:.337,rz:.215},{y:2.35,rx:.405,rz:.244},
-    {y:2.51,rx:.47,rz:.255},{y:2.65,rx:.49,rz:.23},
-    {y:2.75,rx:.345,rz:.192},{y:2.81,rx:.155,rz:.13},
+    // Fuller outer hip, but the high waist remains deliberately narrow.
+    {y:1.43,rx:.247,rz:.196,cz:-.030},
+    {y:1.50,rx:.392+paintover.hipFlare*.50,rz:.288,cz:-.069},
+    {y:1.62,rx:.505+paintover.hipFlare,rz:.340,cz:-.081},
+    {y:1.76,rx:.497+paintover.hipFlare*.73,rz:.301,cz:-.044},
+    {y:1.90,rx:.334-paintover.waistPinch*.40,rz:.209,cz:-.004},
+    {y:2.04,rx:.279-paintover.waistPinch*.60,rz:.188},
+    {y:2.19,rx:.337-paintover.waistPinch,rz:.215},
+    {y:2.35,rx:.405-paintover.waistPinch*1.35,rz:.244},
+    {y:2.51,rx:.470-paintover.shoulderTrim*.45,rz:.255},
+    {y:2.65,rx:.490-paintover.shoulderTrim,rz:.230},
+    // Green trapezius/clavicle fill; blue on the outside shoulder cap.
+    {y:2.75,rx:.363,rz:.192},{y:2.81,rx:.200,rz:.130},
     {y:2.92,rx:.105,rz:.099},{y:2.99,rx:.112,rz:.105}
   ],6,48);
   // Sculpt both gluteal contours directly into the continuous pelvis surface.
@@ -166,11 +179,12 @@ try {
   // A separate fitted front garment is a very thin surface following the torso,
   // deliberately kept away from arm sockets, not a stack of intersecting spheres.
   const bodice=loft([
-    {y:1.47,rx:.232,rz:.174},{y:1.58,rx:.373,rz:.240},
-    {y:1.71,rx:.425,rz:.265},{y:1.84,rx:.345,rz:.229},
-    {y:1.96,rx:.295,rz:.214},{y:2.10,rx:.300,rz:.209},
-    {y:2.28,rx:.375,rz:.236},{y:2.43,rx:.43,rz:.259},
-    {y:2.57,rx:.43,rz:.272},{y:2.66,rx:.36,rz:.235},{y:2.75,rx:.24,rz:.193},{y:2.82,rx:.128,rz:.145}
+    // Clothing follows the recontoured body rather than its old outline.
+    {y:1.47,rx:.244,rz:.174},{y:1.58,rx:.402,rz:.240},
+    {y:1.71,rx:.452,rz:.265},{y:1.84,rx:.334,rz:.229},
+    {y:1.96,rx:.280,rz:.214},{y:2.10,rx:.282,rz:.209},
+    {y:2.28,rx:.353,rz:.236},{y:2.43,rx:.413,rz:.259},
+    {y:2.57,rx:.410,rz:.272},{y:2.66,rx:.345,rz:.235},{y:2.75,rx:.24,rz:.193},{y:2.82,rx:.128,rz:.145}
   ],6,48);
   const bodiceMat=cloth.clone();bodiceMat.side=THREE.FrontSide;
   // Show front half only; leave shoulders and upper back exposed.
@@ -243,15 +257,17 @@ try {
   // overlaps the ribcage during abduction rather than beginning outside it.
   const arms={};
   function arm(sign){
-    const sh=node(figure,sign===1?'right shoulder joint':'left shoulder joint',[sign*.402,2.64,0]);
+    // Blue on the outside shoulder: narrow the cap while preserving the
+    // overlap with the clavicle and the existing elbow pivot hierarchy.
+    const sh=node(figure,sign===1?'right shoulder joint':'left shoulder joint',[sign*.389,2.64,0]);
     const upper=loft([
-      {y:-.75,rx:.110,rz:.113,cx:sign*.12},
-      {y:-.68,rx:.142,rz:.151,cx:sign*.12},
-      {y:-.51,rx:.157,rz:.161,cx:sign*.12},
-      {y:-.30,rx:.185,rz:.185,cx:sign*.115},
-      {y:-.13,rx:.220,rz:.214,cx:sign*.103},
-      {y:0,rx:.243,rz:.226,cx:sign*.065},
-      {y:.095,rx:.20,rz:.185,cx:sign*.018},
+      {y:-.75,rx:.108,rz:.113,cx:sign*.120},
+      {y:-.68,rx:.141,rz:.151,cx:sign*.120},
+      {y:-.51,rx:.154,rz:.161,cx:sign*.119},
+      {y:-.30,rx:.178,rz:.185,cx:sign*.107},
+      {y:-.13,rx:.207,rz:.214,cx:sign*.090},
+      {y:0,rx:.243-paintover.shoulderTrim*.73,rz:.221,cx:sign*.055},
+      {y:.095,rx:.200-paintover.shoulderTrim*.50,rz:.182,cx:sign*.020},
       {y:.16,rx:.075,rz:.085,cx:sign*.005},
       {y:.18,rx:.012,rz:.018,cx:sign*.005}
     ],6,32);
@@ -294,26 +310,31 @@ try {
   function leg(sign){
     // Shared hip origin: the leg's thickest volume is deliberately proximal,
     // near the gluteal fold; it gradually narrows toward the knee.
-    const hip=node(figure,'hip '+sign,[sign*.224,1.60,0]);
+    // Retain upper-thigh fullness, carve the blue outer/inner excess lower
+    // down, and soften the change at the knee. The outer curve narrows
+    // earlier while hip-side fullness stays near the pelvic attachment.
+    const hip=node(figure,'hip '+sign,[sign*.229,1.60,0]);
     const thigh=loft([
-      {y:-.79,rx:.141,rz:.143,cx:sign*.022},
-      {y:-.67,rx:.156,rz:.163,cx:sign*.026},
-      {y:-.51,rx:.184,rz:.196,cx:sign*.029},
-      {y:-.34,rx:.241,rz:.237,cx:sign*.032},
-      {y:-.19,rx:.311,rz:.280,cx:sign*.026},
-      {y:-.035,rx:.329,rz:.302,cx:sign*.018},
-      {y:.105,rx:.279,rz:.258,cx:-sign*.010},
-      {y:.185,rx:.127,rz:.138,cx:-sign*.011}
+      {y:-.79,rx:.141-paintover.kneeTrim*.78,rz:.140,cx:sign*.020},
+      {y:-.67,rx:.156-paintover.kneeTrim,rz:.160,cx:sign*.019},
+      {y:-.51,rx:.184-paintover.midThighTrim*.70,rz:.191,cx:sign*.022},
+      {y:-.34,rx:.241-paintover.midThighTrim,rz:.230,cx:sign*.024},
+      {y:-.19,rx:.311-paintover.midThighTrim*.50,rz:.278,cx:sign*.026},
+      {y:-.035,rx:.329+paintover.hipFlare*.11,rz:.300,cx:sign*.025},
+      {y:.105,rx:.279+paintover.hipFlare*.22,rz:.258,cx:-sign*.009},
+      {y:.185,rx:.127,rz:.138,cx:-sign*.010}
     ],6,48);
     mesh(hip,'thigh '+sign,thigh,skin);
     const knee=node(hip,'knee '+sign,[sign*.038,-.76,0]);
     const calf=loft([
-      {y:-.70,rx:.09,rz:.103,cx:0},
-      {y:-.61,rx:.108,rz:.124,cx:0},
-      {y:-.43,rx:.137,rz:.159,cx:0},
-      {y:-.25,rx:.154,rz:.167,cx:0},
-      {y:-.10,rx:.141,rz:.149,cx:0},
-      {y:.08,rx:.126,rz:.131,cx:0}
+      // Narrow the blue outer calf side; shift the cross-section inward
+      // (green) while preserving the exact knee pivot and ankle height.
+      {y:-.70,rx:.090-paintover.calfTrim*.24,rz:.103,cx:-sign*paintover.innerCalfShift*.48},
+      {y:-.61,rx:.108-paintover.calfTrim*.37,rz:.124,cx:-sign*paintover.innerCalfShift*.80},
+      {y:-.43,rx:.137-paintover.calfTrim*.55,rz:.157,cx:-sign*paintover.innerCalfShift},
+      {y:-.25,rx:.154-paintover.calfTrim*.75,rz:.165,cx:-sign*paintover.innerCalfShift*.90},
+      {y:-.10,rx:.141-paintover.calfTrim*.85,rz:.148,cx:-sign*paintover.innerCalfShift*.45},
+      {y:.08,rx:.126-paintover.kneeTrim*.50,rz:.129,cx:0}
     ],6,32);
     mesh(knee,'calf '+sign,calf,skin);
     const foot=node(knee,'foot '+sign,[0,-.665,.03]);
