@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Torso Atelier — Anatomy Baseline</title>
+<style>
+:root{color-scheme:dark;--bg:#111a24;--panel:#1e2b36;--text:#f0e9e2;--muted:#aab9c3;--warm:#eeb6a4;--line:#50616f}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,sans-serif}
+main{max-width:1300px;margin:auto;padding:12px}h1{font:600 clamp(24px,4vw,38px)/1.13 Georgia,serif;margin:4px 0 9px;letter-spacing:-.03em}header p{color:var(--muted);margin:0 0 14px;max-width:850px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.stage{height:min(65svh,690px);min-height:340px;position:relative;overflow:hidden;background:#172734;border:1px solid #576877;border-radius:17px}
+.stage canvas{display:block;width:100%;height:100%;touch-action:none}
+.stage-label{position:absolute;top:11px;left:12px;pointer-events:none;background:#172734c8;padding:8px 10px;border-radius:9px;font-size:11px;z-index:1;color:#d7e0e5}.stage-label b{color:var(--warm)}
+#fatal{display:none;position:absolute;inset:0;background:#1b2833;padding:20px;color:#ffb5a4;white-space:pre-wrap;z-index:3}
+.stage-bottom{position:absolute;bottom:13px;left:13px;right:13px;pointer-events:none;color:#dae1e7;font-size:11px;text-shadow:0 1px 5px #000}
+.sidebar{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px;min-width:0}
+.group{margin:15px 0 7px;font-size:11px;letter-spacing:.13em;color:var(--warm);font-weight:700}
+.buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+button{font:600 12px system-ui;color:var(--text);background:#324350;border:1px solid #596b76;border-radius:8px;padding:10px 5px;touch-action:manipulation;cursor:pointer}
+button[aria-pressed="true"]{background:var(--warm);border-color:var(--warm);color:#242a33}
+button.wide{grid-column:span 2}.slider{margin:11px 0}.slider label{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+output{font-weight:700;color:#ffd2c5;font-variant-numeric:tabular-nums}
+input[type=range]{display:block;width:100%;margin:6px 0;accent-color:var(--warm)}
+.note{color:var(--muted);font-size:12px;margin:8px 0 3px}
+.metrics{margin-top:9px;width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.metrics th,.metrics td{text-align:right;border-bottom:1px solid #425461;padding:7px 3px;white-space:nowrap}
+.metrics th:first-child,.metrics td:first-child{text-align:left}
+.metrics th{color:#d7c7bf;font-weight:600}
+footer{color:var(--muted);font-size:12px;padding:13px 2px}a{color:#ffd0bf;text-underline-offset:3px}
+@media(min-width:850px){main{padding:20px}.layout{grid-template-columns:minmax(0,1fr) 340px}.stage{height:min(80vh,780px);min-height:540px}.sidebar{max-height:80vh;overflow:auto}}
+</style></head><body><main>
+<header><div class="group">ATELIER 03 · RESTART</div><h1>Torso only. Measured in 3D.</h1>
+<p>One continuous shell. No limbs, head, muscles attached as separate objects, or garment. Named measurement stations are mapped from our existing figure; the controls deform the shell and report differences from that saved starting geometry.</p></header>
+<div class="layout"><section class="stage" id="stage" aria-label="Interactive 3D torso">
+<div class="stage-label"><b>BASELINE / DELTA</b> · touch to rotate<br>One procedural surface · front is +Z</div>
+<div class="stage-bottom" id="status">Building surface…</div><div id="fatal"></div></section>
+<aside class="sidebar"><div class="group">FIXED CAMERA VIEWS</div>
+<div class="buttons" id="views"><button data-view="front" aria-pressed="true">Front</button><button data-view="three" aria-pressed="false">¾</button><button data-view="side" aria-pressed="false">Side</button><button data-view="back" aria-pressed="false">Back</button></div>
+<div class="group">MEASUREMENT OVERLAYS</div><div class="buttons">
+<button class="wide" id="showRings" aria-pressed="false">Show contour stations</button>
+<button class="wide" id="showGhost" aria-pressed="false">Show old geometry</button></div>
+<p class="note">These rings are measured <b>surface contours</b>, not the location of underlying bones.</p>
+<div class="group">INDEPENDENT SURFACE CONTROLS</div>
+<div id="sliders"></div>
+<div class="buttons"><button class="wide" id="reset">Restore baseline</button><button class="wide" id="snapshot">Save a PNG image</button></div>
+<div class="group">DELTA — WIDTH FROM BASELINE</div>
+<table class="metrics"><thead><tr><th>Station</th><th>Old</th><th>Now</th><th>Δ</th></tr></thead><tbody id="metricRows"></tbody></table>
+<p class="note">Numbers are model units; the historical figure height is 4.958 units. Changes are deliberate artistic adjustments, not population norms.</p>
+</aside></div>
+<footer><a href="measurements.json">Raw 14-station baseline</a> · <a href="README.md">Measurement contract</a> · <a href="../human_study_02/">Earlier complete figure</a><br>
+Anatomical terminology can be informed by ISO 7250-1, but marker locations have not been validated against a reference human scan. This is a geometry experiment.</footer>
+</main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const BASE=[{"y":1.43,"rx":0.247,"rz":0.196,"cz":-0.03},{"y":1.5,"rx":0.419,"rz":0.288,"cz":-0.069},{"y":1.62,"rx":0.559,"rz":0.34,"cz":-0.081},{"y":1.76,"rx":0.53642,"rz":0.301,"cz":-0.044},{"y":1.9,"rx":0.326,"rz":0.209,"cz":-0.004},{"y":2.04,"rx":0.267,"rz":0.188,"cz":0},{"y":2.19,"rx":0.317,"rz":0.215,"cz":0},{"y":2.35,"rx":0.378,"rz":0.244,"cz":0},{"y":2.51,"rx":0.4493,"rz":0.255,"cz":0},{"y":2.65,"rx":0.444,"rz":0.23,"cz":0},{"y":2.75,"rx":0.363,"rz":0.192,"cz":0},{"y":2.81,"rx":0.2,"rz":0.13,"cz":0},{"y":2.92,"rx":0.105,"rz":0.099,"cz":0},{"y":2.99,"rx":0.112,"rz":0.105,"cz":0}];
+const height=4.958;
+const $=id=>document.getElementById(id);
+const status=$('status'),stage=$('stage'),sliders=$('sliders');
+try{
+  const scene=new THREE.Scene();scene.background=new THREE.Color('#172734');
+  const camera=new THREE.PerspectiveCamera(38,1,.02,50);
+  const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  stage.insertBefore(renderer.domElement,stage.firstChild);
+  const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;
+  orbit.minDistance=2.4;orbit.maxDistance=7.5;
+  const target=new THREE.Vector3(0,3.345,0);
+  camera.position.set(0,3.345,3.6);orbit.target.copy(target);orbit.update();
+  scene.add(new THREE.HemisphereLight('#f9eaf0','#3c5462',2.4));
+  const area=new THREE.DirectionalLight('#ffffff',3.5);area.position.set(-2.8,5.8,4);scene.add(area);
+  const rim=new THREE.DirectionalLight('#99c9f1',2);rim.position.set(2,3,-3);scene.add(rim);
+  const skin=new THREE.MeshStandardMaterial({color:'#d5a38e',metalness:.02,roughness:.73,side:THREE.DoubleSide});
+  const originalMat=new THREE.MeshBasicMaterial({color:'#7de4e2',wireframe:true,transparent:true,opacity:.24,depthWrite:false,side:THREE.DoubleSide});
+  const measureMat=new THREE.LineBasicMaterial({color:'#f6dfaa',transparent:true,opacity:.88,depthTest:false});
+  const round=x=>Math.round(x*1000)/1000;
+  const remapY=y=>y<=1.42?y*1.65:y<=2.93?2.343+(y-1.42)*1.275:4.26825+(y-2.93);
+  const bell=(x,c,r)=>Math.exp(-Math.pow((x-c)/r,2));
+  const cat=(a,b,c,d,t)=>.5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t);
+  const controls={
+    waist:{label:'Waist width',value:100,min:65,max:140,baseY:2.04,spread:.19},
+    hip:{label:'Hip width',value:100,min:65,max:135,baseY:1.62,spread:.20},
+    ribs:{label:'Ribcage width',value:100,min:70,max:135,baseY:2.39,spread:.25},
+    shoulder:{label:'Upper torso width',value:100,min:75,max:135,baseY:2.67,spread:.15},
+    front:{label:'Front depth',value:100,min:65,max:140},
+    back:{label:'Back depth',value:100,min:65,max:140},
+    hem:{label:'Panty-shaped lower edge',value:0,min:0,max:100}
+  };
+  for(const [key,c] of Object.entries(controls)){
+    const el=document.createElement('div');el.className='slider';
+    el.innerHTML='<label for="range-'+key+'">'+c.label+' <output id="value-'+key+'">'+(key==='hem'?c.value+'%':c.value+'%')+'</output></label>'+
+      '<input type="range" id="range-'+key+'" min="'+c.min+'" max="'+c.max+'" step="1" value="'+c.value+'">';
+    sliders.append(el);
+  }
+  function values(){return Object.fromEntries(Object.entries(controls).map(([k,c])=>[k,c.value/100]));}
+  function stationShape(s,u,v){
+    const scale=1+
+       (v.waist-1)*bell(s.y,2.04,.19)+
+       (v.hip-1)*bell(s.y,1.62,.20)+
+       (v.ribs-1)*bell(s.y,2.39,.25)+
+       (v.shoulder-1)*bell(s.y,2.67,.15);
+    const rad=2*Math.PI*u,side=Math.cos(rad),front=Math.sin(rad);
+    const rx=Math.max(.03,s.rx*scale);
+    const x=rx*side;
+    const depth=front>=0?v.front:v.back;
+    const z=s.cz+s.rz*front*depth;
+    const bottomBlend=Math.max(0,1-(s.y-BASE[0].y)/.078);
+    const hipCut=Math.pow(Math.abs(side),1.7)*.050;
+    const centreDip=Math.pow(Math.max(0,front),3)*.013;
+    const y=remapY(s.y+bottomBlend*v.hem*(hipCut-centreDip));
+    return [x,y,z];
+  }
+  function buildGeometry(v){
+    const vertices=[],indices=[],uvs=[],n=64,sub=8,steps=(BASE.length-1)*sub;
+    for(let j=0;j<=steps;j++){
+      const i=Math.min(BASE.length-2,Math.floor(j/sub));
+      const t=j===steps?1:(j-i*sub)/sub;
+      const p0=BASE[Math.max(0,i-1)],p1=BASE[i],p2=BASE[i+1],p3=BASE[Math.min(BASE.length-1,i+2)];
+      const s={};for(const k of ['y','rx','rz','cz'])s[k]=cat(p0[k],p1[k],p2[k],p3[k],t);
+      for(let k=0;k<=n;k++){
+        const pos=stationShape(s,k/n,v);
+        vertices.push(...pos);uvs.push(k/n,j/steps);
+      }
+    }
+    for(let j=0;j<steps;j++)for(let k=0;k<n;k++){
+      const a=j*(n+1)+k,b=a+1,c=a+n+1,d=c+1;
+      indices.push(a,c,b,b,c,d);
+    }
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+    g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+    g.setIndex(indices);g.computeVertexNormals();
+    return g;
+  }
+  const defaults=Object.fromEntries(Object.keys(controls).map(k=>[k,1]));defaults.hem=0;
+  const original=new THREE.Mesh(buildGeometry(defaults),originalMat);
+  const current=new THREE.Mesh(buildGeometry(values()),skin);
+  scene.add(original,current);original.visible=false;
+  const rings=new THREE.Group();scene.add(rings);rings.visible=false;
+  const labels=[
+    ['Hip',1.62],['Waist',2.04],['Lower ribs',2.19],['Chest',2.51],['Upper torso',2.65]
+  ];
+  function ringAt(s,v){
+    const vertices=[];
+    for(let i=0;i<96;i++)vertices.push(new THREE.Vector3(...stationShape(s,i/96,v)));
+    return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(vertices),measureMat);
+  }
+  function updateRings(v){
+    rings.clear();
+    for(const [,oldY] of labels){const s=BASE.find(row=>Math.abs(row.y-oldY)<.00001);rings.add(ringAt(s,v));}
+  }
+  function stationWidth(row,v){
+    const shape=(theta)=>stationShape(row,theta,v);
+    return shape(0)[0]-shape(.5)[0];
+  }
+  function refreshMetrics(v){
+    $('metricRows').innerHTML=labels.map(([name,y])=>{
+      const row=BASE.find(r=>Math.abs(r.y-y)<.00001),old=stationWidth(row,defaults),now=stationWidth(row,v);
+      return '<tr><td>'+name+'</td><td>'+round(old).toFixed(3)+'</td><td>'+round(now).toFixed(3)+
+        '</td><td>'+((now-old)>=0?'+':'')+round(now-old).toFixed(3)+'</td></tr>';
+    }).join('');
+  }
+  function redraw(){
+    const v=values();
+    const old=current.geometry;current.geometry=buildGeometry(v);old.dispose();
+    updateRings(v);refreshMetrics(v);
+    const hip=BASE.find(s=>s.y===1.62),waist=BASE.find(s=>s.y===2.04);
+    const ratio=stationWidth(hip,v)/stationWidth(waist,v);
+    status.textContent='CURRENT HIP / WAIST WIDTH '+ratio.toFixed(2)+':1 · Delta measured in fixed coordinates';
+  }
+  for(const [key,c] of Object.entries(controls)){
+    $('range-'+key).addEventListener('input',e=>{c.value=Number(e.target.value);$('value-'+key).textContent=c.value+'%';redraw();});
+  }
+  function selectedButtons(view){document.querySelectorAll('[data-view]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.view===view)));}
+  function setView(view){
+    selectedButtons(view);
+    const d=3.55;
+    const positions={front:[0,0,d],three:[d*.55,d*.14,d*.90],side:[d,0,0],back:[0,0,-d]};
+    camera.position.set(...positions[view].map((x,i)=>x+target.toArray()[i]));
+    orbit.target.copy(target);orbit.update();
+  }
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+  $('showRings').addEventListener('click',e=>{rings.visible=!rings.visible;e.currentTarget.setAttribute('aria-pressed',String(rings.visible));});
+  $('showGhost').addEventListener('click',e=>{original.visible=!original.visible;e.currentTarget.setAttribute('aria-pressed',String(original.visible));});
+  $('reset').addEventListener('click',()=>{
+    for(const [key,c] of Object.entries(controls)){c.value=key==='hem'?0:100;$('range-'+key).value=c.value;$('value-'+key).textContent=c.value+'%';}
+    redraw();setView('front');
+  });
+  $('snapshot').addEventListener('click',()=>{
+    renderer.render(scene,camera);
+    const a=document.createElement('a');a.download='torso-atlas.png';a.href=renderer.domElement.toDataURL('image/png');a.click();
+  });
+  function resize(){
+    const w=Math.max(50,stage.clientWidth),h=Math.max(50,stage.clientHeight);
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize',resize);
+  new ResizeObserver(resize).observe(stage);
+  resize();redraw();setView('front');
+  function frame(){requestAnimationFrame(frame);orbit.update();renderer.render(scene,camera);}
+  frame();
+} catch(err){
+  $('fatal').style.display='block';
+  $('fatal').textContent='Viewer error:\n'+(err&&err.stack||err);
+  console.error(err);
+}
+</script></body></html>
