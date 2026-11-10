@@ -46,6 +46,14 @@ try{
   await page.getByRole('button',{name:'Side',exact:true}).click();
   await page.waitForTimeout(300);
   await page.locator('#stage').screenshot({path:out+'/approved-2D-ratios-side.png'});
+  await page.locator('#range-hem').evaluate(el=>{el.value='100';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  await page.waitForTimeout(300);
+  await page.locator('#stage').screenshot({path:out+'/hem-experiment-side.png'});
+  await page.getByRole('button',{name:'Front',exact:true}).click();
+  await page.waitForTimeout(300);
+  await page.locator('#stage').screenshot({path:out+'/hem-experiment-front.png'});
+  // Hem deformation is a vertical contour experiment: it should not
+  // change any measured station width above the bottom 1.66 body level.
   // Front-view width ratio should match the approved 2D hip/waist value
   // within a small interpolation/rounding tolerance.
   const m=bRatioStatus.match(/WIDTH ([\d.]+):1/);
