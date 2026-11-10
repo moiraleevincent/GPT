@@ -1,0 +1,41 @@
+name: Torso baseline — browser rendering QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "torso_baseline_lab/index.html"
+      - "torso_baseline_lab/qa.mjs"
+      - ".github/workflows/torso-baseline-qa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Node for Playwright
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Playwright browser driver
+        run: npm install --no-save --ignore-scripts playwright-core@1.58.0
+      - name: Start local viewer server
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/torso-server.log 2>&1 &
+          sleep 2
+      - name: Render fixed camera views and verify slider deltas
+        run: node torso_baseline_lab/qa.mjs
+      - name: Keep review images and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: torso-baseline-views
+          path: torso_baseline_lab/qa-output/
+          if-no-files-found: warn
+          retention-days: 14
