@@ -30,7 +30,7 @@ try{
   await page.getByRole('button',{name:'Front',exact:true}).click();
   await page.locator('#showRings').click();
   await page.locator('#showGhost').click();
-  await page.locator('#range-waist').fill('120');
+  await page.locator('#range-waist').evaluate(el=>{el.value='120';el.dispatchEvent(new Event('input',{bubbles:true}));});
   await page.waitForTimeout(300);
   await page.locator('#stage').screenshot({path:out+'/delta-waist-and-measuring-rings.png'});
   const afterMetrics=await page.locator('#metricRows').innerText();
