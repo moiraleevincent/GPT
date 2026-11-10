@@ -38,8 +38,10 @@ footer{color:var(--muted);font-size:12px;padding:13px 2px}a{color:#ffd0bf;text-u
 <p class="note">Our approved 2D B sketch used shoulder : waist : hip = 174 : 100 : 184. This is a <b>drawing reference</b>, not an anatomical norm.</p>
 <div class="group">MEASUREMENT OVERLAYS</div><div class="buttons">
 <button class="wide" id="showRings" aria-pressed="false">Show contour stations</button>
-<button class="wide" id="showGhost" aria-pressed="false">Show old geometry</button></div>
-<p class="note">These rings are measured <b>surface contours</b>, not the location of underlying bones.</p>
+<button class="wide" id="showGhost" aria-pressed="false">Show old geometry</button>
+<button class="wide" id="showBones" aria-pressed="false">Show skeletal envelope</button></div>
+<p class="note">Gold: surface stations. Cyan: estimated ribcage envelope. Coral: estimated pelvis. <b>The skeletal envelopes are adjustable hypotheses, not measured bones.</b></p>
+<div id="boneStatus" role="status" class="note">Skeletal envelope estimate: hidden</div>
 <div class="group">INDEPENDENT SURFACE CONTROLS</div>
 <div id="sliders"></div>
 <div class="buttons"><button class="wide" id="reset">Restore baseline</button><button class="wide" id="snapshot">Save a PNG image</button></div>
@@ -77,6 +79,8 @@ try{
   const skin=new THREE.MeshStandardMaterial({color:'#d5a38e',metalness:.02,roughness:.73,side:THREE.DoubleSide});
   const originalMat=new THREE.MeshBasicMaterial({color:'#7de4e2',wireframe:true,transparent:true,opacity:.24,depthWrite:false,side:THREE.DoubleSide});
   const measureMat=new THREE.LineBasicMaterial({color:'#f6dfaa',transparent:true,opacity:.88,depthTest:false});
+  const ribMat=new THREE.LineBasicMaterial({color:'#74e1e8',transparent:true,opacity:.90,depthTest:false});
+  const pelvisMat=new THREE.LineBasicMaterial({color:'#ff947e',transparent:true,opacity:.90,depthTest:false});
   const round=x=>Math.round(x*1000)/1000;
   const remapY=y=>y<=1.42?y*1.65:y<=2.93?2.343+(y-1.42)*1.275:4.26825+(y-2.93);
   const bell=(x,c,r)=>Math.exp(-Math.pow((x-c)/r,2));
@@ -144,6 +148,52 @@ try{
   const current=new THREE.Mesh(buildGeometry(values()),skin);
   scene.add(original,current);original.visible=false;
   const rings=new THREE.Group();scene.add(rings);rings.visible=false;
+  // Interior skeletal envelopes: deliberately independent of the
+  // deformable skin and FIXED in model space. These are provisional
+  // inferred constraints, not a scan or verified anthropometric target.
+  //
+  // Source anatomy terminology: OpenStax A&P thoracic cage §7.4 and
+  // pelvic girdle §8.3. Their numerical shape below is a test assumption.
+  const boneSections=[
+    {name:'Lower costal boundary',zone:'rib',y:2.19,x:.272,front:.158,back:.157,cz:0},
+    {name:'Lower thoracic cage',zone:'rib',y:2.35,x:.312,front:.179,back:.176,cz:0},
+    {name:'Middle thoracic cage',zone:'rib',y:2.51,x:.366,front:.192,back:.187,cz:0},
+    {name:'Upper thoracic cage',zone:'rib',y:2.65,x:.367,front:.173,back:.171,cz:0},
+    {name:'Pelvic bowl',zone:'pelvis',y:1.50,x:.330,front:.205,back:.201,cz:-.069},
+    {name:'Lateral pelvic frame',zone:'pelvis',y:1.62,x:.445,front:.246,back:.240,cz:-.081},
+    {name:'Upper iliac wings',zone:'pelvis',y:1.76,x:.435,front:.215,back:.210,cz:-.044},
+    {name:'Iliac crest vicinity',zone:'pelvis',y:1.90,x:.238,front:.140,back:.142,cz:-.004}
+  ];
+  const skeleton=new THREE.Group();scene.add(skeleton);skeleton.visible=false;
+  function bonePoint(b,u){
+    const angle=2*Math.PI*u,side=Math.cos(angle),front=Math.sin(angle);
+    return new THREE.Vector3(
+      b.x*side,remapY(b.y),
+      b.cz+(front>=0?b.front:b.back)*front
+    );
+  }
+  for(const b of boneSections){
+    const points=Array.from({length:96},(_,i)=>bonePoint(b,i/96));
+    const ring=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points),
+      b.zone==='rib'?ribMat:pelvisMat);
+    ring.name=b.name+' — provisional estimate';ring.renderOrder=4;
+    skeleton.add(ring);
+  }
+  function checkSkeletalEnvelope(v){
+    let narrowest={margin:Infinity,name:'',zone:'',surface:''};
+    for(const b of boneSections){
+      const row=BASE.find(r=>Math.abs(r.y-b.y)<1e-6);
+      const tests=[
+        {label:'left',margin:-stationShape(row,.5,v)[0]-b.x},
+        {label:'right',margin:stationShape(row,0,v)[0]-b.x},
+        {label:'front',margin:stationShape(row,.25,v)[2]-(b.cz+b.front)},
+        {label:'back',margin:(b.cz-b.back)-stationShape(row,.75,v)[2]}
+      ];
+      for(const t of tests)if(t.margin<narrowest.margin)
+        narrowest={margin:t.margin,name:b.name,zone:b.zone,surface:t.label};
+    }
+    return narrowest;
+  }
   const labels=[
     ['Hip',1.62],['Waist',2.04],['Lower ribs',2.19],['Chest',2.51],['Upper torso',2.65]
   ];
@@ -171,6 +221,15 @@ try{
     const v=values();
     const old=current.geometry;current.geometry=buildGeometry(v);old.dispose();
     updateRings(v);refreshMetrics(v);
+    const constraint=checkSkeletalEnvelope(v);
+    const clearance=constraint.margin;
+    const text=clearance<0?
+      'PROXY INTERSECTION · '+constraint.name+' at '+constraint.surface+
+      ' exceeds the visible surface by '+Math.abs(clearance).toFixed(3)+' units':
+      'No intersection with estimated envelope · minimum sampled clearance '+clearance.toFixed(3)+
+      ' units ('+constraint.name+', '+constraint.surface+')';
+    $('boneStatus').textContent=text+' — provisional geometry only, not clinical anatomy.';
+    $('boneStatus').style.color=clearance<0?'#ffa792':'#b5d7d8';
     const hip=BASE.find(s=>s.y===1.62),waist=BASE.find(s=>s.y===2.04);
     const ratio=stationWidth(hip,v)/stationWidth(waist,v);
     status.textContent='CURRENT HIP / WAIST WIDTH '+ratio.toFixed(2)+':1 · Delta measured in fixed coordinates';
@@ -207,6 +266,11 @@ try{
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
   $('showRings').addEventListener('click',e=>{rings.visible=!rings.visible;e.currentTarget.setAttribute('aria-pressed',String(rings.visible));});
   $('showGhost').addEventListener('click',e=>{original.visible=!original.visible;e.currentTarget.setAttribute('aria-pressed',String(original.visible));});
+  $('showBones').addEventListener('click',e=>{
+    skeleton.visible=!skeleton.visible;
+    e.currentTarget.setAttribute('aria-pressed',String(skeleton.visible));
+    e.currentTarget.textContent=skeleton.visible?'Hide skeletal envelope':'Show skeletal envelope';
+  });
   $('reset').addEventListener('click',()=>{
     applySettings({waist:100,hip:100,ribs:100,shoulder:100,front:100,back:100,hem:0});
     camera.zoom=1;camera.updateProjectionMatrix();setView('front');
