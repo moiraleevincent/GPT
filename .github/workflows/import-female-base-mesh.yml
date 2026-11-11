@@ -1,0 +1,36 @@
+name: Import CC0 female base mesh
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/import-female-base-mesh.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Download original model and verify uploaded-file checksum
+        env:
+          MODEL_URL: https://files.innerscene.com/library/female-base-mesh-3d-person-rigged-a-pose-dba97ed5/c5dce4aeeb1e549cec36/female-base-mesh-base_female.glb
+        run: |
+          set -euo pipefail
+          mkdir -p torso_mesh_lab/assets
+          curl --fail --location --retry 3 --silent --show-error "$MODEL_URL" --output torso_mesh_lab/assets/female-base-mesh-base_female.glb
+          echo '7e45ef5ef58d4e6a3aa17ef4078cb5ffb02c3964cef67c393973a6d4c0a8cbf8  torso_mesh_lab/assets/female-base-mesh-base_female.glb' | sha256sum -c -
+          test "$(stat -c %s torso_mesh_lab/assets/female-base-mesh-base_female.glb)" -eq 4497424
+      - name: Commit checked model
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add torso_mesh_lab/assets/female-base-mesh-base_female.glb
+          if ! git diff --cached --quiet; then
+            git commit -m "Add verified CC0 female base mesh for torso lab"
+            git push origin HEAD:main
+          fi
