@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — First Look</title>
+<title>Torso Mesh Lab — Waist Experiment</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -34,6 +34,10 @@ button:focus-visible,input:focus-visible{outline:2px solid #ffd9bc;outline-offse
 .meter b{color:var(--accent)}
 a{color:#ffcfb5}
 #reset{width:100%;margin-top:12px}
+.waist-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+.waist-row output{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+#waist{width:100%;display:block;margin:15px 0 6px;accent-color:var(--accent)}
+.waist-hint{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 0 0}
 footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 @media(min-width:850px){main{padding:24px 20px 60px}.layout{grid-template-columns:minmax(0,1fr) 288px}#stage{height:min(77vh,790px);min-height:520px}}
 </style>
@@ -41,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 01</small>
-<h1>Meet the base mesh.</h1>
-<p>The real GLB file we uploaded to GitHub. Rotate it, examine the shape, and inspect its rig.</p>
+<small>3D HUMAN STUDY / TEST 02</small>
+<h1>Shape the waist.</h1>
+<p>One experiment: gently narrow or widen the waist while keeping her original rig and the rest of her anatomy.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>ORIGINAL BODY</b> · one finger to rotate<br>Pinch to zoom · drag with two fingers to pan</div>
+  <div class="stage-label"><b>WAIST EXPERIMENT / V2</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -59,11 +63,15 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-view="back" aria-pressed="false">Back</button>
 </div>
 <button id="reset">Reset camera</button>
+<h2>Change the waist</h2>
+<div class="waist-row"><label for="waist">Waist width</label><output id="waistValue" for="waist">100%</output></div>
+<input id="waist" type="range" min="70" max="130" step="1" value="100" aria-label="Waist width relative to original body">
+<p class="waist-hint">100% is the original body. Smaller narrows the waist; larger widens it. This is a shape scale, not a tape measurement in centimetres.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">This first test leaves the body shape untouched. The next version can add measurements and shape controls.</p>
+<p class="note">Only the waist band changes. The transition fades into the unchanged ribcage and pelvis, and the original skeleton stays in place.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -80,8 +88,67 @@ const info=document.getElementById("info");
 const wire=document.getElementById("wire");
 const bones=document.getElementById("bones");
 const viewButtons=[...document.querySelectorAll("[data-view]")];
+const waistInput=document.getElementById("waist");
+const waistValue=document.getElementById("waistValue");
 let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
 const mats=new Set();
+
+// Preserve the original rig and skinning. Only change rest-pose vertex positions
+// of the main body surface, and keep an untouched copy for exact reset to 100%.
+const waistDeformers=[];
+function smooth01(x){
+  const t=Math.max(0,Math.min(1,x));
+  return t*t*(3-2*t);
+}
+function setupWaist(mesh){
+  if(!mesh.isSkinnedMesh || mesh.geometry.getAttribute("position").count < 30000)return;
+  const geometry=mesh.geometry.clone();
+  mesh.geometry=geometry;
+  const positions=geometry.getAttribute("position");
+  const original=new Float32Array(positions.array);
+  const influence=new Float32Array(positions.count);
+  let affected=0;
+  for(let i=0;i<positions.count;i++){
+    const x=original[3*i],y=original[3*i+1];
+    // In this GLB the waist sits near Y=0.967 m; the pelvis is lower,
+    // and the ribcage is above. Smooth fade prevents a hard seam.
+    const v=1-smooth01((Math.abs(y-0.967)-0.045)/0.13);
+    // Confine the effect to the torso, not arms passing nearby in Y.
+    const h=1-smooth01((Math.abs(x)-0.205)/0.085);
+    const w=v*h;
+    influence[i]=w;
+    if(w>0.001)affected++;
+  }
+  waistDeformers.push({geometry,positions,original,influence,affected});
+}
+function applyWaist(){
+  const pct=Number(waistInput.value);
+  waistValue.textContent=pct+"%";
+  if(!waistDeformers.length)return;
+  const delta=pct/100-1;
+  for(const item of waistDeformers){
+    const {geometry,positions,original,influence}=item;
+    const array=positions.array;
+    for(let i=0;i<influence.length;i++){
+      const k=i*3;
+      array[k]=original[k]*(1+delta*influence[i]);
+    }
+    positions.needsUpdate=true;
+    geometry.computeVertexNormals();
+    geometry.computeBoundingSphere();
+    geometry.computeBoundingBox();
+  }
+}
+let waistFrame=0;
+waistInput.addEventListener("input",()=>{
+  waistValue.textContent=waistInput.value+"%";
+  if(waistFrame)return;
+  waistFrame=requestAnimationFrame(()=>{
+    waistFrame=0;
+    applyWaist();
+  });
+});
+
 function fail(e){
   status.classList.add("error");
   status.textContent="Couldn't load this model: "+(e?.message||String(e));
@@ -139,12 +206,14 @@ try{
       if(node.isMesh){
         count++;
         if(node.isSkinnedMesh)skinned++;
+        setupWaist(node);
         const materials=Array.isArray(node.material)?node.material:[node.material];
         materials.filter(Boolean).forEach(m=>mats.add(m));
         node.frustumCulled=false;
       }
       if(node.isBone)boneCount++;
     });
+    applyWaist();
     skeleton=new THREE.SkeletonHelper(object);
     skeleton.visible=false;
     scene.add(skeleton);
@@ -158,7 +227,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones";
-    status.textContent="Ready! Rotate the body with your finger.";
+    status.textContent="Ready! Try moving the waist slider, then turn to the side.";
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
