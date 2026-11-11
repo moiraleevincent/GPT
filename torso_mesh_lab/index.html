@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#121b26">
+<title>Torso Mesh Lab — First Look</title>
+<style>
+:root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{width:min(1160px,100%);margin:0 auto;padding:16px 13px 50px}
+header small{display:block;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.14em;margin-bottom:5px}
+h1{font:normal clamp(32px,6vw,52px)/1.12 Georgia,serif;margin:0 0 8px;letter-spacing:-.035em}
+header p{margin:0 0 14px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+#stage{height:min(66svh,710px);min-height:370px;overflow:hidden;position:relative;background:radial-gradient(ellipse at 55% 40%,#334758 0%,#1a2b39 51%,#101a26 100%);border:1px solid var(--line);border-radius:20px;touch-action:none}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none}
+#status{position:absolute;bottom:15px;left:15px;right:15px;max-width:380px;font-size:12px;border-radius:12px;background:#172431e3;padding:11px 12px;pointer-events:none}
+#status.error{background:#512f34;color:#ffe6e4}
+.stage-label{position:absolute;top:13px;left:13px;pointer-events:none;font-size:11px;background:#13212dc9;border-radius:11px;padding:8px 11px;color:#dce6eb}
+.stage-label b{color:var(--accent)}
+aside{padding:17px;background:var(--panel);border:1px solid var(--line);border-radius:17px;min-width:0}
+h2{font-size:11px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;margin:0 0 12px}
+h2:not(:first-child){margin-top:23px}
+.views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+button{background:#344655;border:1px solid #657988;border-radius:10px;color:var(--text);font:600 13px system-ui;padding:12px;cursor:pointer;min-height:44px}
+button[aria-pressed="true"]{background:var(--accent);color:#202936;border-color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:2px solid #ffd9bc;outline-offset:3px}
+.toggle{display:flex;align-items:center;gap:11px;min-height:43px;border-bottom:1px solid #53627170}
+.toggle input{width:19px;height:19px;accent-color:var(--accent)}
+.note{color:var(--muted);font-size:12px;margin:12px 0 0;line-height:1.65}
+.meter{background:#162430;border:1px solid #52647488;padding:13px;border-radius:12px;margin-top:12px;font-size:13px}
+.meter b{color:var(--accent)}
+a{color:#ffcfb5}
+#reset{width:100%;margin-top:12px}
+footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
+@media(min-width:850px){main{padding:24px 20px 60px}.layout{grid-template-columns:minmax(0,1fr) 288px}#stage{height:min(77vh,790px);min-height:520px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<small>3D HUMAN STUDY / TEST 01</small>
+<h1>Meet the base mesh.</h1>
+<p>The real GLB file we uploaded to GitHub. Rotate it, examine the shape, and inspect its rig.</p>
+</header>
+<div class="layout">
+<section id="stage" aria-label="Interactive 3D body viewer">
+  <div class="stage-label"><b>ORIGINAL BODY</b> · one finger to rotate<br>Pinch to zoom · drag with two fingers to pan</div>
+  <div id="status" role="status">Loading 3D model…</div>
+</section>
+<aside>
+<h2>View the body</h2>
+<div class="views" id="views">
+  <button data-view="front" aria-pressed="true">Front</button>
+  <button data-view="three" aria-pressed="false">¾ view</button>
+  <button data-view="side" aria-pressed="false">Side</button>
+  <button data-view="back" aria-pressed="false">Back</button>
+</div>
+<button id="reset">Reset camera</button>
+<h2>Inspect geometry</h2>
+<label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
+<label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
+<div class="meter" id="info">Reading model details…</div>
+<p class="note">This first test leaves the body shape untouched. The next version can add measurements and shape controls.</p>
+</aside>
+</div>
+<footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
+</main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+
+const stage=document.getElementById("stage");
+const status=document.getElementById("status");
+const info=document.getElementById("info");
+const wire=document.getElementById("wire");
+const bones=document.getElementById("bones");
+const viewButtons=[...document.querySelectorAll("[data-view]")];
+let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
+const mats=new Set();
+function fail(e){
+  status.classList.add("error");
+  status.textContent="Couldn't load this model: "+(e?.message||String(e));
+}
+function setView(name){
+  if(!camera||!controls)return;
+  const p={front:[0,0,1],three:[.7,.12,1],side:[1,0,0],back:[0,0,-1]}[name]||[0,0,1];
+  const len=Math.hypot(...p);
+  camera.position.set(...p.map(v=>v/len*fitDistance));
+  controls.target.set(0,0,0);
+  controls.update();
+  viewButtons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===name)));
+}
+function resize(){
+  const w=stage.clientWidth,h=stage.clientHeight;
+  camera.aspect=w/h;camera.updateProjectionMatrix();
+  renderer.setSize(w,h,false);
+}
+try{
+  scene=new THREE.Scene();
+  camera=new THREE.PerspectiveCamera(35,1,.02,100);
+  renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.5;
+  stage.prepend(renderer.domElement);
+  scene.add(new THREE.HemisphereLight(0xfff3e5,0x41536b,2.2));
+  const key=new THREE.DirectionalLight(0xffe0c5,3.5);
+  key.position.set(2.5,4,5);scene.add(key);
+  const fill=new THREE.DirectionalLight(0x9dbed9,2.1);
+  fill.position.set(-4,2,-3);scene.add(fill);
+  controls=new OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;controls.dampingFactor=.085;
+  controls.minDistance=.65;controls.maxDistance=9;
+  controls.enablePan=true;
+  resize();
+  window.addEventListener("resize",resize);
+  new ResizeObserver(resize).observe(stage);
+  function animate(){
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene,camera);
+  }
+  animate();
+  new GLTFLoader().load("./assets/female-base-mesh-base_female.glb",gltf=>{
+    object=gltf.scene;
+    const bounds=new THREE.Box3().setFromObject(object);
+    const size=bounds.getSize(new THREE.Vector3());
+    const center=bounds.getCenter(new THREE.Vector3());
+    object.position.sub(center);
+    scene.add(object);
+    let count=0,skinned=0,boneCount=0;
+    object.traverse(node=>{
+      if(node.isMesh){
+        count++;
+        if(node.isSkinnedMesh)skinned++;
+        const materials=Array.isArray(node.material)?node.material:[node.material];
+        materials.filter(Boolean).forEach(m=>mats.add(m));
+        node.frustumCulled=false;
+      }
+      if(node.isBone)boneCount++;
+    });
+    skeleton=new THREE.SkeletonHelper(object);
+    skeleton.visible=false;
+    scene.add(skeleton);
+    const verticalFov=THREE.MathUtils.degToRad(camera.fov);
+    // Fit width and height with some space for A-pose arms.
+    const aspect=stage.clientWidth/stage.clientHeight;
+    const hDist=(size.y*1.17/2)/Math.tan(verticalFov/2);
+    const wDist=(size.x*1.22/2)/(Math.tan(verticalFov/2)*aspect);
+    fitDistance=Math.max(hDist,wDist,1.8);
+    controls.minDistance=fitDistance*.33;
+    controls.maxDistance=fitDistance*3.3;
+    setView("front");
+    info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones";
+    status.textContent="Ready! Rotate the body with your finger.";
+  },xhr=>{
+    if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
+  },fail);
+  viewButtons.forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
+  document.getElementById("reset").addEventListener("click",()=>setView("front"));
+  wire.addEventListener("change",()=>{
+    mats.forEach(mat=>{mat.wireframe=wire.checked;mat.needsUpdate=true;});
+  });
+  bones.addEventListener("change",()=>{if(skeleton)skeleton.visible=bones.checked;});
+}catch(e){fail(e);}
+</script>
+</body>
+</html>
