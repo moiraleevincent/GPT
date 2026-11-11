@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 03</small>
+<small>3D HUMAN STUDY / TEST 04</small>
 <h1>Shape the waist.</h1>
 <p>Make the waist dramatically narrower or wider, then rotate her to check the shape from every angle.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>WAIST EXPERIMENT / V3</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>WAIST EXPERIMENT / V4</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -76,7 +76,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">The effect is deliberately exaggerated for comparison. It fades into the unchanged chest and hips; the skeleton stays in place.</p>
+<p class="note">The width change is still dramatic, but the affected band is now much shorter. Hips and ribcage stay unchanged, and so does the skeleton.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -118,7 +118,9 @@ function setupWaist(mesh){
     const x=original[3*i],y=original[3*i+1];
     // In this GLB the waist sits near Y=0.967 m; the pelvis is lower,
     // and the ribcage is above. Smooth fade prevents a hard seam.
-    const v=1-smooth01((Math.abs(y-0.967)-0.05)/0.20);
+    // Keep the deformation narrowly centered on the actual waist:
+    // nonzero only around Y=0.914..1.058; hips below remain unchanged.
+    const v=1-smooth01((Math.abs(y-0.986)-0.018)/0.054);
     // Confine the effect to the torso, not arms passing nearby in Y.
     const h=1-smooth01((Math.abs(x)-0.23)/0.085);
     const w=v*h;
