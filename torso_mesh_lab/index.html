@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Smooth Hip-to-Thigh Morph</title>
+<title>Torso Mesh Lab — Continuous Body Curve</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -36,7 +36,7 @@ a{color:#ffcfb5}
 #reset{width:100%;margin-top:12px}
 .waist-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
 .waist-row output{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
-#waist{width:100%;display:block;margin:15px 0 6px;accent-color:var(--accent)}
+#curve{width:100%;display:block;margin:15px 0 6px;accent-color:var(--accent)}
 .waist-hint{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 0 0}
 footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 @media(min-width:850px){main{padding:24px 20px 60px}.layout{grid-template-columns:minmax(0,1fr) 288px}#stage{height:min(77vh,790px);min-height:520px}}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 08</small>
-<h1>Shape the body.</h1>
-<p>Two independent experiments: reshape her waist and add volume to her thighs. Rotate the body to inspect the transitions.</p>
+<small>3D HUMAN STUDY / TEST 09</small>
+<h1>One continuous curve.</h1>
+<p>One smooth morph connects the waist, outer hips and thighs. See how the whole silhouette changes together.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V8</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V9</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -63,29 +63,20 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-view="back" aria-pressed="false">Back</button>
 </div>
 <button id="reset">Reset camera</button>
-<h2>Change the waist</h2>
-<div class="waist-row"><label for="waist">Waist size</label><output id="waistValue" for="waist">100%</output></div>
-<input id="waist" type="range" min="40" max="180" step="1" value="100" aria-label="Waist size relative to original body">
-<div class="views" style="margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr))" id="waistPresets">
-  <button data-waist="40">Very narrow</button>
-  <button data-waist="100" aria-pressed="true">Original</button>
-  <button data-waist="180">Very wide</button>
+<h2>Waist · hips · thighs</h2>
+<div class="waist-row"><label for="curve">Connected silhouette</label><output id="curveValue" for="curve">0%</output></div>
+<input id="curve" type="range" min="0" max="100" step="1" value="0" aria-label="Strength of combined waist, hip and thigh body morph">
+<div class="views" style="margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr))" id="curvePresets">
+  <button data-curve="0" aria-pressed="true">Original</button>
+  <button data-curve="50" aria-pressed="false">Gentle</button>
+  <button data-curve="100" aria-pressed="false">Dramatic</button>
 </div>
-<p class="waist-hint">100% is the original body. Try the extremes to see the transition into her ribs and hips.</p>
-<h2>Hips and thighs</h2>
-<div class="waist-row"><label for="thigh">Hip + thigh fullness</label><output id="thighValue" for="thigh">100%</output></div>
-<input id="thigh" type="range" min="100" max="180" step="1" value="100" aria-label="Hip and thigh fullness relative to original body">
-<div class="views" style="margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr))" id="thighPresets">
-  <button data-thigh="100" aria-pressed="true">Original</button>
-  <button data-thigh="145" aria-pressed="false">Fuller</button>
-  <button data-thigh="180" aria-pressed="false">Very full</button>
-</div>
-<p class="waist-hint">One continuous outer silhouette from the upper hip through the thigh, with a longer, gentler fade toward the waist. The original thigh shape remains the foundation.</p>
+<p class="waist-hint">Move right for a more defined waist and fuller outer hips and thighs together. A single continuous curve keeps the transitions connected. 0% restores the original mesh.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">These changes edit the body mesh rather than moving her bones. Both controls start at 100% so you can always return to the original.</p>
+<p class="note">This experimental morph edits the vertices, not the bones. The slider controls one shared anatomical silhouette rather than three isolated body parts.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -102,82 +93,85 @@ const info=document.getElementById("info");
 const wire=document.getElementById("wire");
 const bones=document.getElementById("bones");
 const viewButtons=[...document.querySelectorAll("[data-view]")];
-const waistInput=document.getElementById("waist");
-const waistValue=document.getElementById("waistValue");
-const thighInput=document.getElementById("thigh");
-const thighValue=document.getElementById("thighValue");
-const thighPresets=[...document.querySelectorAll("[data-thigh]")];
-const presetButtons=[...document.querySelectorAll("[data-waist]")];
+const curveInput=document.getElementById("curve");
+const curveValue=document.getElementById("curveValue");
+const curvePresets=[...document.querySelectorAll("[data-curve]")];
 let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
 const mats=new Set();
 
-// Experimental mesh morphs: preserve the rig and always work from
-// untouched rest-pose vertex positions, so sliders cannot accumulate errors.
-const bodyDeformers=[];
+// One shared waist-to-hip-to-thigh profile. Unlike two overlapping
+// masks this controls the vertical silhouette as a *single cubic curve*.
+// The values are deformation amplitudes relative to original geometry.
+const silhouetteControlPoints=[
+  [0.43,  0.00],   // unchanged near knees
+  [0.49,  0.12],
+  [0.60,  0.68],   // rounder outer thighs
+  [0.70,  0.78],
+  [0.79,  0.69],
+  [0.87,  0.62],   // fuller hip, connected to upper thigh
+  [0.92,  0.48],
+  [0.96,  0.15],   // gradual transition from hip into waist
+  [1.005,-0.29],
+  [1.045,-0.43],   // narrowest upper waist influence
+  [1.095,-0.24],
+  [1.16,  0.00]    // unchanged ribcage
+];
 function smooth01(x){
   const t=Math.max(0,Math.min(1,x));
   return t*t*(3-2*t);
 }
+function silhouetteAt(y){
+  const keys=silhouetteControlPoints;
+  if(y<=keys[0][0]||y>=keys[keys.length-1][0])return 0;
+  let i=0;
+  while(i<keys.length-2&&y>keys[i+1][0])i++;
+  const a=keys[i],b=keys[i+1],h=b[0]-a[0],t=(y-a[0])/h;
+  // Cubic Hermite, continuous first derivative at the control points.
+  const m0=i===0?0:(b[1]-keys[i-1][1])/(b[0]-keys[i-1][0]);
+  const m1=i+2===keys.length?0:(keys[i+2][1]-a[1])/(keys[i+2][0]-a[0]);
+  const t2=t*t,t3=t2*t;
+  return (2*t3-3*t2+1)*a[1]+(t3-2*t2+t)*h*m0+
+         (-2*t3+3*t2)*b[1]+(t3-t2)*h*m1;
+}
+const bodyDeformers=[];
 function setupBodyDeformer(mesh){
-  if(!mesh.isSkinnedMesh || mesh.geometry.getAttribute("position").count < 30000)return;
+  if(!mesh.isSkinnedMesh || mesh.geometry.getAttribute("position").count<30000)return;
   const geometry=mesh.geometry.clone();
   mesh.geometry=geometry;
   const positions=geometry.getAttribute("position");
   const original=new Float32Array(positions.array);
-  const waistInfluence=new Float32Array(positions.count);
-  const thighInfluence=new Float32Array(positions.count);
+  const lateral=new Float32Array(positions.count);
+  const depth=new Float32Array(positions.count);
   for(let i=0;i<positions.count;i++){
-    const x=original[3*i],y=original[3*i+1];
-    // Narrow waist band, fading out entirely above the pelvis.
-    const waistY=1-smooth01((Math.abs(y-0.986)-0.018)/0.054);
-    const waistX=1-smooth01((Math.abs(x)-0.23)/0.085);
-    waistInfluence[i]=waistY*waistX;
-    // Upper thigh region in model coordinates: strongest at ~0.63 m
-    // with a gradual fade to zero below ~0.445 and above ~0.815 m.
-    const thighY=1-smooth01((Math.abs(y-0.630)-0.055)/0.130);
-    // Preserve the original thigh effect exactly where it already worked.
-    const thighX=1-smooth01((Math.abs(x)-0.205)/0.055);
-    const originalThigh=thighY*thighX;
-
-    // A long, continuous lateral volume envelope from thigh into hip:
-    // begin the rise within the existing fuller thigh, stay broad over
-    // the outer pelvis, then fade gently before the higher torso.
-    const hipY=smooth01((y-0.605)/0.165)*(1-smooth01((y-0.885)/0.160));
-    // Outer hip only: spare the inner crotch and exclude hands/arms that
-    // can pass through this height at much larger X coordinates.
-    const hipOuter=smooth01((Math.abs(x)-0.055)/0.085);
-    const hipArmGuard=1-smooth01((Math.abs(x)-0.205)/0.045);
-    const hipInfluence=0.80*hipY*hipOuter*hipArmGuard;
-
-    // Smooth union: no hard switch where the thigh and hip influences
-    // cross, and no artificial influence where both zones are zero.
-    // This is continuously differentiable because both envelopes use
-    // smoothstep, avoiding the sharp shoulder produced by Math.max().
-    thighInfluence[i]=1-(1-originalThigh)*(1-hipInfluence);
+    const k=3*i,x=original[k],y=original[k+1],ax=Math.abs(x);
+    const curve=silhouetteAt(y);
+    // The hands/forearms sometimes cross pelvis height in the A-pose:
+    // exclude those distant X positions without affecting the torso.
+    const armGuard=1-smooth01((ax-0.215)/0.09);
+    // Keep the inner thigh / crotch relatively unchanged.
+    const outerSide=smooth01((ax-0.060)/0.105);
+    const mask=outerSide*armGuard;
+    // Positive curve adds soft tissue laterally. Negative curve draws
+    // the sides inward. Both use the *same* height profile.
+    lateral[i]=curve*mask*Math.max(0,ax-0.048);
+    depth[i]=curve*mask;
   }
-  bodyDeformers.push({geometry,positions,original,waistInfluence,thighInfluence});
+  bodyDeformers.push({geometry,positions,original,lateral,depth});
 }
-function applyMorphs(){
-  const waistPct=Number(waistInput.value);
-  const thighPct=Number(thighInput.value);
-  waistValue.textContent=waistPct+"%";
-  thighValue.textContent=thighPct+"%";
-  presetButtons.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.waist)===waistPct)));
-  thighPresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.thigh)===thighPct)));
-  const waistDelta=waistPct/100-1,thighDelta=thighPct/100-1;
+function applyMorph(){
+  const strength=Number(curveInput.value)/100;
+  curveValue.textContent=Math.round(strength*100)+"%";
+  curvePresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.curve)===strength*100)));
   for(const item of bodyDeformers){
-    const {geometry,positions,original,waistInfluence,thighInfluence}=item;
+    const {geometry,positions,original,lateral,depth}=item;
     const arr=positions.array;
-    for(let i=0;i<waistInfluence.length;i++){
-      const k=3*i, x=original[k], z=original[k+2];
-      const w=waistInfluence[i], t=thighInfluence[i];
-      const outward=Math.sign(x)*Math.max(0,Math.abs(x)-0.065);
-      arr[k]=x*(1+waistDelta*w)+thighDelta*t*outward;
+    for(let i=0;i<lateral.length;i++){
+      const k=3*i,x=original[k],z=original[k+2];
+      arr[k]=x+Math.sign(x)*strength*lateral[i];
       arr[k+1]=original[k+1];
-      // For the thighs, front/back volume grows about the
-      // approximate leg-depth center, without touching the pelvis.
-      const waistZ=0.045+(z-0.045)*(1+waistDelta*0.65*w);
-      arr[k+2]=waistZ+thighDelta*t*0.60*(z-0.050);
+      // Shallower front/back response preserves the sagittal shape,
+      // while making the shared curve visible from the side too.
+      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050);
     }
     positions.needsUpdate=true;
     geometry.computeVertexNormals();
@@ -185,33 +179,17 @@ function applyMorphs(){
     geometry.computeBoundingBox();
   }
 }
-presetButtons.forEach(button=>{
+curvePresets.forEach(button=>{
   button.addEventListener("click",()=>{
-    waistInput.value=button.dataset.waist;
-    waistInput.dispatchEvent(new Event("input"));
-  });
-});
-thighPresets.forEach(button=>{
-  button.addEventListener("click",()=>{
-    thighInput.value=button.dataset.thigh;
-    thighInput.dispatchEvent(new Event("input"));
+    curveInput.value=button.dataset.curve;
+    curveInput.dispatchEvent(new Event("input"));
   });
 });
 let morphFrame=0;
-function requestMorph(){
+curveInput.addEventListener("input",()=>{
+  curveValue.textContent=curveInput.value+"%";
   if(morphFrame)return;
-  morphFrame=requestAnimationFrame(()=>{
-    morphFrame=0;
-    applyMorphs();
-  });
-}
-waistInput.addEventListener("input",()=>{
-  waistValue.textContent=waistInput.value+"%";
-  requestMorph();
-});
-thighInput.addEventListener("input",()=>{
-  thighValue.textContent=thighInput.value+"%";
-  requestMorph();
+  morphFrame=requestAnimationFrame(()=>{morphFrame=0;applyMorph();});
 });
 
 function fail(e){
@@ -278,7 +256,7 @@ try{
       }
       if(node.isBone)boneCount++;
     });
-    applyMorphs();
+    applyMorph();
     skeleton=new THREE.SkeletonHelper(object);
     skeleton.visible=false;
     scene.add(skeleton);
@@ -292,7 +270,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones";
-    status.textContent="Ready! Compare Original and Very full to inspect the smooth hip-to-thigh contour.";
+    status.textContent="Ready! Try Gentle, then Dramatic: the waist, hips and thighs now reshape together.";
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
