@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Responsive Waist and Bust</title>
+<title>Torso Mesh Lab — Rounder Bust and Stronger Waist</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 11</small>
+<small>3D HUMAN STUDY / TEST 12</small>
 <h1>One continuous curve.</h1>
-<p>A more responsive waist–hip–thigh curve, protected arms, and a breast-size control that follows the actual rig weights.</p>
+<p>A stronger connected waist curve and a fuller, rounder bust. The breast morph now expands volume in three dimensions instead of pulling the chest forward.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V11</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V12</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -71,7 +71,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-curve="50" aria-pressed="false">Gentle</button>
   <button data-curve="100" aria-pressed="false">Dramatic</button>
 </div>
-<p class="waist-hint">The waist now responds sooner and narrows more strongly. The arms are excluded using their bone weights, and the hip-to-thigh transition stays smooth. 0% restores the original shape.</p>
+<p class="waist-hint">The waist narrows more at the dramatic end, while keeping the smooth transition into the hips and thighs. Arm vertices remain protected. 0% restores the original lower-body shape.</p>
 <h2>Breast fullness</h2>
 <div class="waist-row"><label for="bust">Bust size</label><output id="bustValue" for="bust">170%</output></div>
 <input id="bust" type="range" min="100" max="220" step="1" value="170" aria-label="Breast fullness relative to original body">
@@ -80,7 +80,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-bust="170" aria-pressed="true">Fuller</button>
   <button data-bust="220" aria-pressed="false">Very full</button>
 </div>
-<p class="waist-hint">The bust now expands visibly both forward and outward. Original is 100%; Fuller is 170%; Very full is 220%. These are relative shape settings, not cup sizes.</p>
+<p class="waist-hint">The bust now expands around each breast's own center—width, height and projection—while the edges remain attached to the chest. Original is 100%; Fuller is 170%; Very full is 220%.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
@@ -123,9 +123,9 @@ const silhouetteControlPoints=[
   [0.87,  0.62],   // fuller hip, connected to upper thigh
   [0.92,  0.48],
   [0.96,  0.15],   // gradual transition from hip into waist
-  [1.005,-0.48],
-  [1.045,-0.78],   // narrowest upper waist influence
-  [1.095,-0.40],
+  [1.005,-0.55],
+  [1.045,-0.92],   // narrowest upper waist influence
+  [1.095,-0.46],
   [1.16,  0.00]    // unchanged ribcage
 ];
 function smooth01(x){
@@ -167,7 +167,9 @@ function setupBodyDeformer(mesh){
   for(let i=0;i<boneNames.length;i++){
     if(/upperarm|lowerarm|hand|finger|metacarpal|clavicle|shoulder|thumb/.test(boneNames[i]))armBones.add(i);
   }
-  const breastInfluence=new Float32Array(originalPositions.count);
+  const bustDx=new Float32Array(originalPositions.count);
+  const bustDy=new Float32Array(originalPositions.count);
+  const bustDz=new Float32Array(originalPositions.count);
   const armProtection=new Uint8Array(originalPositions.count);
   let breastVertices=0;
   for(let i=0;i<originalPositions.count;i++){
@@ -178,11 +180,26 @@ function setupBodyDeformer(mesh){
       if(indices[j]===left||indices[j]===right)w+=weights[j];
       if(armBones.has(indices[j]))armWeight+=weights[j];
     }
-    // Breast weights peak around 0.67 in this GLB. Use a soft
-    // broad falloff, so the full breast moves rather than only its tip.
-    const t=smooth01((w-0.008)/0.48);
-    breastInfluence[i]=t;
-    if(t>0.001)breastVertices++;
+    // Breast weights tell us WHICH points belong to breast tissue.
+    // Geometry determines HOW they swell: an ellipsoidal envelope centered
+    // on each breast, fading smoothly into the chest on all sides.
+    // Unlike the previous model, this does not translate every weighted
+    // vertex forward by a similar amount (which created pointed bulges).
+    const x=originalPositions.getX(i);
+    const y=originalPositions.getY(i);
+    const z=originalPositions.getZ(i);
+    const ax=Math.abs(x);
+    const radius=Math.hypot((ax-0.101)/0.110,(y-1.188)/0.145);
+    const radial=1-smooth01((radius-0.79)/0.37);
+    const front=smooth01((z-0.028)/0.082);
+    const tissue=smooth01((w-0.003)/0.25);
+    const influence=radial*front*tissue;
+    // Precompute independent 3D displacements so that each slider input
+    // starts from the exact original coordinates, including nipple details.
+    bustDx[i]=Math.sign(x)*0.25*influence*(ax-0.101);
+    bustDy[i]=0.10*influence*(y-1.188);
+    bustDz[i]=0.60*influence*(z-0.050);
+    if(influence>0.001)breastVertices++;
     if(armWeight>=0.02){
       armProtection[i]=1;
       if(bodySurface)protectedArmVertices++;
@@ -215,7 +232,7 @@ function setupBodyDeformer(mesh){
       depth[i]=curve*mask;
     }
   }
-  bodyDeformers.push({geometry,positions,original,lateral,depth,breastInfluence});
+  bodyDeformers.push({geometry,positions,original,lateral,depth,bustDx,bustDy,bustDz});
 }
 function applyMorph(){
   const sliderValue=Number(curveInput.value);
@@ -230,19 +247,15 @@ function applyMorph(){
   curvePresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.curve)===sliderValue)));
   bustPresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.bust)===bustPct)));
   for(const item of bodyDeformers){
-    const {geometry,positions,original,lateral,depth,breastInfluence}=item;
+    const {geometry,positions,original,lateral,depth,bustDx,bustDy,bustDz}=item;
     const arr=positions.array;
     for(let i=0;i<lateral.length;i++){
       const k=3*i,x=original[k],z=original[k+2];
-      const breast=breastInfluence[i]*bustStrength;
-      // Lateral body curve and breast shape are independent:
-      // main volume projects forward (+Z); small sideways expansion
-      // rounds the outer breast without shifting the ribcage.
-      arr[k]=x+Math.sign(x)*(strength*lateral[i]+0.040*breast);
-      // Gently spread upper and lower breast vertices around their
-      // natural central height as the breast grows.
-      arr[k+1]=original[k+1]+0.10*breast*(original[k+1]-1.165);
-      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050)+0.140*breast;
+      // A true volume-style morph around the breast mound, preserving
+      // the base connection and spreading tissue laterally and vertically.
+      arr[k]=x+Math.sign(x)*strength*lateral[i]+bustStrength*bustDx[i];
+      arr[k+1]=original[k+1]+bustStrength*bustDy[i];
+      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050)+bustStrength*bustDz[i];
     }
     positions.needsUpdate=true;
     geometry.computeVertexNormals();
@@ -354,7 +367,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones<br>Breast vertices: "+activeBreastVertices+" · Arm vertices protected: "+protectedArmVertices;
-    status.textContent=activeBreastVertices>0?"Ready! Try the new bust and waist controls.":"Breast weights not found — please tell me what you see.";
+    status.textContent=activeBreastVertices>0?"Ready! Compare Original and Very full: the bust should round out instead of stretching forward.":"Breast weights not found — please tell me what you see.";
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
