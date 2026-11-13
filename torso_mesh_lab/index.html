@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Strong Waist Experiment</title>
+<title>Torso Mesh Lab — Waist and Thigh Morphs</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 04</small>
-<h1>Shape the waist.</h1>
-<p>Make the waist dramatically narrower or wider, then rotate her to check the shape from every angle.</p>
+<small>3D HUMAN STUDY / TEST 05</small>
+<h1>Shape the body.</h1>
+<p>Two independent experiments: reshape her waist and add volume to her thighs. Rotate the body to inspect the transitions.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>WAIST EXPERIMENT / V4</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V5</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -71,12 +71,21 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-waist="100" aria-pressed="true">Original</button>
   <button data-waist="180">Very wide</button>
 </div>
-<p class="waist-hint">Move the slider or tap a preset. 100% is the original body. This deliberately extreme test changes both waist width and depth, not a circumference in centimetres.</p>
+<p class="waist-hint">100% is the original body. Try the extremes to see the transition into her ribs and hips.</p>
+<h2>Thigh fullness</h2>
+<div class="waist-row"><label for="thigh">Thigh volume</label><output id="thighValue" for="thigh">100%</output></div>
+<input id="thigh" type="range" min="100" max="180" step="1" value="100" aria-label="Thigh fullness relative to original body">
+<div class="views" style="margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr))" id="thighPresets">
+  <button data-thigh="100" aria-pressed="true">Original</button>
+  <button data-thigh="145" aria-pressed="false">Fuller</button>
+  <button data-thigh="180" aria-pressed="false">Very full</button>
+</div>
+<p class="waist-hint">Adds fullness to both upper legs, mostly outward and front-to-back. Knees and hips should stay unchanged.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">The width change is still dramatic, but the affected band is now much shorter. Hips and ribcage stay unchanged, and so does the skeleton.</p>
+<p class="note">These changes edit the body mesh rather than moving her bones. Both controls start at 100% so you can always return to the original.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -95,56 +104,66 @@ const bones=document.getElementById("bones");
 const viewButtons=[...document.querySelectorAll("[data-view]")];
 const waistInput=document.getElementById("waist");
 const waistValue=document.getElementById("waistValue");
+const thighInput=document.getElementById("thigh");
+const thighValue=document.getElementById("thighValue");
+const thighPresets=[...document.querySelectorAll("[data-thigh]")];
 const presetButtons=[...document.querySelectorAll("[data-waist]")];
 let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
 const mats=new Set();
 
-// Preserve the original rig and skinning. Only change rest-pose vertex positions
-// of the main body surface, and keep an untouched copy for exact reset to 100%.
-const waistDeformers=[];
+// Experimental mesh morphs: preserve the rig and always work from
+// untouched rest-pose vertex positions, so sliders cannot accumulate errors.
+const bodyDeformers=[];
 function smooth01(x){
   const t=Math.max(0,Math.min(1,x));
   return t*t*(3-2*t);
 }
-function setupWaist(mesh){
+function setupBodyDeformer(mesh){
   if(!mesh.isSkinnedMesh || mesh.geometry.getAttribute("position").count < 30000)return;
   const geometry=mesh.geometry.clone();
   mesh.geometry=geometry;
   const positions=geometry.getAttribute("position");
   const original=new Float32Array(positions.array);
-  const influence=new Float32Array(positions.count);
-  let affected=0;
+  const waistInfluence=new Float32Array(positions.count);
+  const thighInfluence=new Float32Array(positions.count);
   for(let i=0;i<positions.count;i++){
     const x=original[3*i],y=original[3*i+1];
-    // In this GLB the waist sits near Y=0.967 m; the pelvis is lower,
-    // and the ribcage is above. Smooth fade prevents a hard seam.
-    // Keep the deformation narrowly centered on the actual waist:
-    // nonzero only around Y=0.914..1.058; hips below remain unchanged.
-    const v=1-smooth01((Math.abs(y-0.986)-0.018)/0.054);
-    // Confine the effect to the torso, not arms passing nearby in Y.
-    const h=1-smooth01((Math.abs(x)-0.23)/0.085);
-    const w=v*h;
-    influence[i]=w;
-    if(w>0.001)affected++;
+    // Narrow waist band, fading out entirely above the pelvis.
+    const waistY=1-smooth01((Math.abs(y-0.986)-0.018)/0.054);
+    const waistX=1-smooth01((Math.abs(x)-0.23)/0.085);
+    waistInfluence[i]=waistY*waistX;
+    // Upper thigh region in model coordinates: strongest at ~0.63 m
+    // with a gradual fade to zero below ~0.445 and above ~0.815 m.
+    const thighY=1-smooth01((Math.abs(y-0.630)-0.055)/0.130);
+    // At these heights the legs are left/right of x=0. Fullness
+    // pushes the outer thigh away from the body's midline; the
+    // inner contours stay in place rather than crossing each other.
+    const thighX=1-smooth01((Math.abs(x)-0.205)/0.055);
+    thighInfluence[i]=thighY*thighX;
   }
-  waistDeformers.push({geometry,positions,original,influence,affected});
+  bodyDeformers.push({geometry,positions,original,waistInfluence,thighInfluence});
 }
-function applyWaist(){
-  const pct=Number(waistInput.value);
-  waistValue.textContent=pct+"%";
-  presetButtons.forEach(button=>button.setAttribute("aria-pressed",String(Number(button.dataset.waist)===pct)));
-  if(!waistDeformers.length)return;
-  const delta=pct/100-1;
-  for(const item of waistDeformers){
-    const {geometry,positions,original,influence}=item;
-    const array=positions.array;
-    for(let i=0;i<influence.length;i++){
-      const k=i*3;
-      // Broader waist shaping in X, plus a lighter depth adjustment in Z
-      // so the change is also apparent in the side view.
-      const w=influence[i];
-      array[k]=original[k]*(1+delta*w);
-      array[k+2]=0.045+(original[k+2]-0.045)*(1+delta*0.65*w);
+function applyMorphs(){
+  const waistPct=Number(waistInput.value);
+  const thighPct=Number(thighInput.value);
+  waistValue.textContent=waistPct+"%";
+  thighValue.textContent=thighPct+"%";
+  presetButtons.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.waist)===waistPct)));
+  thighPresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.thigh)===thighPct)));
+  const waistDelta=waistPct/100-1,thighDelta=thighPct/100-1;
+  for(const item of bodyDeformers){
+    const {geometry,positions,original,waistInfluence,thighInfluence}=item;
+    const arr=positions.array;
+    for(let i=0;i<waistInfluence.length;i++){
+      const k=3*i, x=original[k], z=original[k+2];
+      const w=waistInfluence[i], t=thighInfluence[i];
+      const outward=Math.sign(x)*Math.max(0,Math.abs(x)-0.065);
+      arr[k]=x*(1+waistDelta*w)+thighDelta*t*outward;
+      arr[k+1]=original[k+1];
+      // For the thighs, front/back volume grows about the
+      // approximate leg-depth center, without touching the pelvis.
+      const waistZ=0.045+(z-0.045)*(1+waistDelta*0.65*w);
+      arr[k+2]=waistZ+thighDelta*t*0.60*(z-0.050);
     }
     positions.needsUpdate=true;
     geometry.computeVertexNormals();
@@ -158,14 +177,27 @@ presetButtons.forEach(button=>{
     waistInput.dispatchEvent(new Event("input"));
   });
 });
-let waistFrame=0;
+thighPresets.forEach(button=>{
+  button.addEventListener("click",()=>{
+    thighInput.value=button.dataset.thigh;
+    thighInput.dispatchEvent(new Event("input"));
+  });
+});
+let morphFrame=0;
+function requestMorph(){
+  if(morphFrame)return;
+  morphFrame=requestAnimationFrame(()=>{
+    morphFrame=0;
+    applyMorphs();
+  });
+}
 waistInput.addEventListener("input",()=>{
   waistValue.textContent=waistInput.value+"%";
-  if(waistFrame)return;
-  waistFrame=requestAnimationFrame(()=>{
-    waistFrame=0;
-    applyWaist();
-  });
+  requestMorph();
+});
+thighInput.addEventListener("input",()=>{
+  thighValue.textContent=thighInput.value+"%";
+  requestMorph();
 });
 
 function fail(e){
@@ -225,14 +257,14 @@ try{
       if(node.isMesh){
         count++;
         if(node.isSkinnedMesh)skinned++;
-        setupWaist(node);
+        setupBodyDeformer(node);
         const materials=Array.isArray(node.material)?node.material:[node.material];
         materials.filter(Boolean).forEach(m=>mats.add(m));
         node.frustumCulled=false;
       }
       if(node.isBone)boneCount++;
     });
-    applyWaist();
+    applyMorphs();
     skeleton=new THREE.SkeletonHelper(object);
     skeleton.visible=false;
     scene.add(skeleton);
@@ -246,7 +278,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones";
-    status.textContent="Ready! Tap Very narrow or Very wide to see a dramatic comparison.";
+    status.textContent="Ready! Try the thigh controls, then rotate to inspect both legs.";
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
