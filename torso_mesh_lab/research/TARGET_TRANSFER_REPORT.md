@@ -36,3 +36,13 @@ chest wall, and validate face orientation/under-breast folds.
 - https://github.com/makehumancommunity/makehuman/blob/master/makehuman/data/3dobjs/base.obj
 - https://github.com/makehumancommunity/mpfb2/blob/master/docs/fileformats/target.md
 
+
+## Experimental approximate transfer preview
+- GLB primitive with 63750 vertices: 1155 moved; max displacement 0.01507 m; flipped faces 1; safety scale 0.262
+- GLB primitive with 457 vertices: 457 moved; max displacement 0.0576 m; flipped faces 0; safety scale 1.0
+- GLB primitive with 2210 vertices: 0 moved; max displacement 0.0 m; flipped faces 0; safety scale 1.0
+- GLB primitive with 639 vertices: 0 moved; max displacement 0.0 m; flipped faces 0; safety scale 1.0
+- GLB primitive with 1195 vertices: 0 moved; max displacement 0.0 m; flipped faces 0; safety scale 1.0
+- GLB primitive with 3444 vertices: 0 moved; max displacement 0.0 m; flipped faces 0; safety scale 1.0
+- GLB primitive with 1076 vertices: 0 moved; max displacement 0.0 m; flipped faces 0; safety scale 1.0
+- Preview data: torso_mesh_lab/assets/makehuman_firmness_approx.json
