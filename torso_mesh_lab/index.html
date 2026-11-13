@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Continuous Body Curve</title>
+<title>Torso Mesh Lab — Body Curve and Bust</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 09</small>
+<small>3D HUMAN STUDY / TEST 10</small>
 <h1>One continuous curve.</h1>
-<p>One smooth morph connects the waist, outer hips and thighs. See how the whole silhouette changes together.</p>
+<p>A connected waist–hip–thigh curve, plus a separate breast-fullness control using the model's existing breast rig weights.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V9</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V10</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -71,12 +71,21 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-curve="50" aria-pressed="false">Gentle</button>
   <button data-curve="100" aria-pressed="false">Dramatic</button>
 </div>
-<p class="waist-hint">Move right for a more defined waist and fuller outer hips and thighs together. A single continuous curve keeps the transitions connected. 0% restores the original mesh.</p>
+<p class="waist-hint">The waist is slightly more defined now, while the smooth transition through the hips and thighs remains. 0% restores the original lower-body silhouette.</p>
+<h2>Breast fullness</h2>
+<div class="waist-row"><label for="bust">Bust size</label><output id="bustValue" for="bust">145%</output></div>
+<input id="bust" type="range" min="100" max="180" step="1" value="145" aria-label="Breast fullness relative to original body">
+<div class="views" style="margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr))" id="bustPresets">
+  <button data-bust="100" aria-pressed="false">Original</button>
+  <button data-bust="145" aria-pressed="true">Fuller</button>
+  <button data-bust="180" aria-pressed="false">Very full</button>
+</div>
+<p class="waist-hint">A separate soft-tissue morph follows the breast bone weights, gradually increasing projection and a little width. 100% restores the original breasts.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">This experimental morph edits the vertices, not the bones. The slider controls one shared anatomical silhouette rather than three isolated body parts.</p>
+<p class="note">Both morphs edit the surface vertices, not the bones. The lower-body curve and breasts can be adjusted independently.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -96,6 +105,9 @@ const viewButtons=[...document.querySelectorAll("[data-view]")];
 const curveInput=document.getElementById("curve");
 const curveValue=document.getElementById("curveValue");
 const curvePresets=[...document.querySelectorAll("[data-curve]")];
+const bustInput=document.getElementById("bust");
+const bustValue=document.getElementById("bustValue");
+const bustPresets=[...document.querySelectorAll("[data-bust]")];
 let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
 const mats=new Set();
 
@@ -111,9 +123,9 @@ const silhouetteControlPoints=[
   [0.87,  0.62],   // fuller hip, connected to upper thigh
   [0.92,  0.48],
   [0.96,  0.15],   // gradual transition from hip into waist
-  [1.005,-0.29],
-  [1.045,-0.43],   // narrowest upper waist influence
-  [1.095,-0.24],
+  [1.005,-0.34],
+  [1.045,-0.50],   // narrowest upper waist influence
+  [1.095,-0.28],
   [1.16,  0.00]    // unchanged ribcage
 ];
 function smooth01(x){
@@ -135,43 +147,75 @@ function silhouetteAt(y){
 }
 const bodyDeformers=[];
 function setupBodyDeformer(mesh){
-  if(!mesh.isSkinnedMesh || mesh.geometry.getAttribute("position").count<30000)return;
-  const geometry=mesh.geometry.clone();
+  if(!mesh.isSkinnedMesh)return;
+  const source=mesh.geometry;
+  const originalPositions=source.getAttribute("position");
+  const skinIndex=source.getAttribute("skinIndex");
+  const skinWeight=source.getAttribute("skinWeight");
+  if(!originalPositions || !skinIndex || !skinWeight)return;
+
+  const bodySurface=originalPositions.count>=30000;
+  // These correspond to the existing breast.L and breast.R bones
+  // in this GLB, not arbitrary X/Y rectangular selections.
+  const left=mesh.skeleton.bones.findIndex(b=>b.name==="breast.L");
+  const right=mesh.skeleton.bones.findIndex(b=>b.name==="breast.R");
+  const breastInfluence=new Float32Array(originalPositions.count);
+  let breastVertices=0;
+  for(let i=0;i<originalPositions.count;i++){
+    const indices=[skinIndex.getX(i),skinIndex.getY(i),skinIndex.getZ(i),skinIndex.getW(i)];
+    const weights=[skinWeight.getX(i),skinWeight.getY(i),skinWeight.getZ(i),skinWeight.getW(i)];
+    let w=0;
+    for(let j=0;j<4;j++){
+      if(indices[j]===left||indices[j]===right)w+=weights[j];
+    }
+    // The breast weights peak near 0.67 in this GLB.
+    // Feather near the root, keep detail meshes (e.g. nipples) aligned.
+    const t=smooth01((w-0.015)/0.645);
+    breastInfluence[i]=t;
+    if(t>0.001)breastVertices++;
+  }
+  if(!bodySurface && !breastVertices)return;
+
+  const geometry=source.clone();
   mesh.geometry=geometry;
   const positions=geometry.getAttribute("position");
   const original=new Float32Array(positions.array);
   const lateral=new Float32Array(positions.count);
   const depth=new Float32Array(positions.count);
-  for(let i=0;i<positions.count;i++){
-    const k=3*i,x=original[k],y=original[k+1],ax=Math.abs(x);
-    const curve=silhouetteAt(y);
-    // The hands/forearms sometimes cross pelvis height in the A-pose:
-    // exclude those distant X positions without affecting the torso.
-    const armGuard=1-smooth01((ax-0.215)/0.09);
-    // Keep the inner thigh / crotch relatively unchanged.
-    const outerSide=smooth01((ax-0.060)/0.105);
-    const mask=outerSide*armGuard;
-    // Positive curve adds soft tissue laterally. Negative curve draws
-    // the sides inward. Both use the *same* height profile.
-    lateral[i]=curve*mask*Math.max(0,ax-0.048);
-    depth[i]=curve*mask;
+  if(bodySurface){
+    for(let i=0;i<positions.count;i++){
+      const k=3*i,x=original[k],y=original[k+1],ax=Math.abs(x);
+      const curve=silhouetteAt(y);
+      // Keep hands and forearms out of the waist/hip morph.
+      const armGuard=1-smooth01((ax-0.215)/0.09);
+      const outerSide=smooth01((ax-0.060)/0.105);
+      const mask=outerSide*armGuard;
+      lateral[i]=curve*mask*Math.max(0,ax-0.048);
+      depth[i]=curve*mask;
+    }
   }
-  bodyDeformers.push({geometry,positions,original,lateral,depth});
+  bodyDeformers.push({geometry,positions,original,lateral,depth,breastInfluence});
 }
 function applyMorph(){
   const strength=Number(curveInput.value)/100;
+  const bustPct=Number(bustInput.value);
+  const bustStrength=(bustPct-100)/80;
   curveValue.textContent=Math.round(strength*100)+"%";
+  bustValue.textContent=bustPct+"%";
   curvePresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.curve)===strength*100)));
+  bustPresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.bust)===bustPct)));
   for(const item of bodyDeformers){
-    const {geometry,positions,original,lateral,depth}=item;
+    const {geometry,positions,original,lateral,depth,breastInfluence}=item;
     const arr=positions.array;
     for(let i=0;i<lateral.length;i++){
       const k=3*i,x=original[k],z=original[k+2];
-      arr[k]=x+Math.sign(x)*strength*lateral[i];
+      const breast=breastInfluence[i]*bustStrength;
+      // Lateral body curve and breast shape are independent:
+      // main volume projects forward (+Z); small sideways expansion
+      // rounds the outer breast without shifting the ribcage.
+      arr[k]=x+Math.sign(x)*(strength*lateral[i]+0.010*breast);
       arr[k+1]=original[k+1];
-      // Shallower front/back response preserves the sagittal shape,
-      // while making the shared curve visible from the side too.
-      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050);
+      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050)+0.072*breast;
     }
     positions.needsUpdate=true;
     geometry.computeVertexNormals();
@@ -185,11 +229,24 @@ curvePresets.forEach(button=>{
     curveInput.dispatchEvent(new Event("input"));
   });
 });
+bustPresets.forEach(button=>{
+  button.addEventListener("click",()=>{
+    bustInput.value=button.dataset.bust;
+    bustInput.dispatchEvent(new Event("input"));
+  });
+});
 let morphFrame=0;
-curveInput.addEventListener("input",()=>{
-  curveValue.textContent=curveInput.value+"%";
+function requestMorph(){
   if(morphFrame)return;
   morphFrame=requestAnimationFrame(()=>{morphFrame=0;applyMorph();});
+}
+curveInput.addEventListener("input",()=>{
+  curveValue.textContent=curveInput.value+"%";
+  requestMorph();
+});
+bustInput.addEventListener("input",()=>{
+  bustValue.textContent=bustInput.value+"%";
+  requestMorph();
 });
 
 function fail(e){
@@ -270,7 +327,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones";
-    status.textContent="Ready! Try Gentle, then Dramatic: the waist, hips and thighs now reshape together.";
+    status.textContent="Ready! Adjust the connected curve and the fuller bust independently.";
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
