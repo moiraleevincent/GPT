@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Higher Hip and Thigh Morphs</title>
+<title>Torso Mesh Lab — Smooth Hip-to-Thigh Morph</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 07</small>
+<small>3D HUMAN STUDY / TEST 08</small>
 <h1>Shape the body.</h1>
 <p>Two independent experiments: reshape her waist and add volume to her thighs. Rotate the body to inspect the transitions.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V7</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V8</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -80,7 +80,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-thigh="145" aria-pressed="false">Fuller</button>
   <button data-thigh="180" aria-pressed="false">Very full</button>
 </div>
-<p class="waist-hint">Keeps the outer thighs you liked, but carries the fullness higher along the outer hips before fading into the waist. Inner thighs and knees remain mostly unchanged.</p>
+<p class="waist-hint">One continuous outer silhouette from the upper hip through the thigh, with a longer, gentler fade toward the waist. The original thigh shape remains the foundation.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
@@ -139,18 +139,21 @@ function setupBodyDeformer(mesh){
     const thighX=1-smooth01((Math.abs(x)-0.205)/0.055);
     const originalThigh=thighY*thighX;
 
-    // Keep the lower hip and thigh shape as before. Extend the upper
-    // outer-hip influence past Y=0.9, then fade to zero by Y=0.985,
-    // around the upper pelvis / lower waist. The waist morph is separate.
-    const hipY=smooth01((y-0.735)/0.080)*(1-smooth01((y-0.925)/0.060));
+    // A long, continuous lateral volume envelope from thigh into hip:
+    // begin the rise within the existing fuller thigh, stay broad over
+    // the outer pelvis, then fade gently before the higher torso.
+    const hipY=smooth01((y-0.605)/0.165)*(1-smooth01((y-0.885)/0.160));
     // Outer hip only: spare the inner crotch and exclude hands/arms that
     // can pass through this height at much larger X coordinates.
     const hipOuter=smooth01((Math.abs(x)-0.055)/0.085);
     const hipArmGuard=1-smooth01((Math.abs(x)-0.205)/0.045);
-    const hipInfluence=0.72*hipY*hipOuter*hipArmGuard;
+    const hipInfluence=0.80*hipY*hipOuter*hipArmGuard;
 
-    // Blend overlapping zones without adding them (no bulging seams).
-    thighInfluence[i]=Math.max(originalThigh,hipInfluence);
+    // Smooth union: no hard switch where the thigh and hip influences
+    // cross, and no artificial influence where both zones are zero.
+    // This is continuously differentiable because both envelopes use
+    // smoothstep, avoiding the sharp shoulder produced by Math.max().
+    thighInfluence[i]=1-(1-originalThigh)*(1-hipInfluence);
   }
   bodyDeformers.push({geometry,positions,original,waistInfluence,thighInfluence});
 }
@@ -289,7 +292,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones";
-    status.textContent="Ready! Compare Very full with Original: the outer-hip transition now reaches higher.";
+    status.textContent="Ready! Compare Original and Very full to inspect the smooth hip-to-thigh contour.";
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
