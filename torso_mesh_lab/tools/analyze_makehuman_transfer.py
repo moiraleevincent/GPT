@@ -180,9 +180,14 @@ for mid,m in enumerate(gltf["meshes"]):
         A=coo_matrix((np.ones(len(edge0)),(edge0,edge1)),
                      shape=(len(pos),len(pos))).tocsr()
         degree=np.asarray(A.sum(axis=1)).ravel().clip(min=1)
-        for _ in range(4):
-            mapped=.75*mapped+.25*(A@mapped)/degree[:,None]
-        mapped*=gate[:,None]
+        # Smooth the displacement AND mask over the actual triangle
+        # connectivity before enforcing the breast attachment region.
+        for _ in range(12):
+            mapped=.60*mapped+.40*(A@mapped)/degree[:,None]
+        gate_smooth=gate.copy()
+        for _ in range(8):
+            gate_smooth=.65*gate_smooth+.35*(A@gate_smooth)/degree
+        mapped*=gate_smooth[:,None]
         def inversion_count(field):
             old=np.cross(pos[faces[:,1]]-pos[faces[:,0]],pos[faces[:,2]]-pos[faces[:,0]])
             newpos=pos+field
@@ -192,7 +197,7 @@ for mid,m in enumerate(gltf["meshes"]):
             return int(np.sum((cosine<0)&(area>1e-9)))
         inv=inversion_count(mapped)
         attenuate=1.0
-        while inv>2 and attenuate>0.16:
+        while inv>0 and attenuate>0.055:
             attenuate*=0.8
             inv=inversion_count(mapped*attenuate)
         mapped*=attenuate
@@ -203,6 +208,21 @@ for mid,m in enumerate(gltf["meshes"]):
     key=str(len(pos))
     entries[key]=[[int(i)]+[round(float(n),6) for n in mapped[i]] for i in good]
     metrics.append((key,int(len(good)),round(float(np.linalg.norm(mapped,axis=1).max()),5),inv,attenuate))
+# Detail meshes (including nipple/areola surfaces) must not outpace the
+# main breast surface. Apply the same conservative total amplitude.
+main_safety=next(x[4] for x in metrics if x[0]=="63750")
+for key,rows in entries.items():
+    if key=="63750":continue
+    for row in rows:
+        for axis in (1,2,3):
+            row[axis]=round(row[axis]*main_safety,6)
+new_metrics=[]
+for key,count,maximum,flips,atten in metrics:
+    if key!="63750":
+        maximum=round(maximum*main_safety,5)
+        atten*=main_safety
+    new_metrics.append((key,count,maximum,flips,atten))
+metrics=new_metrics
 output={
  "source":"MakeHuman hm08 CC0 target soft-minus-firm, spatially interpolated",
  "license":"CC0",
