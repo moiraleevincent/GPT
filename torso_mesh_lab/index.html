@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Breast Shape and Fullness</title>
+<title>Torso Mesh Lab — Experimental MakeHuman Softness</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -36,7 +36,7 @@ a{color:#ffcfb5}
 #reset{width:100%;margin-top:12px}
 .waist-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
 .waist-row output{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
-#curve,#bust,#shape{width:100%;display:block;margin:15px 0 6px;accent-color:var(--accent)}
+#curve,#bust,#shape,#mhSoft{width:100%;display:block;margin:15px 0 6px;accent-color:var(--accent)}
 .waist-hint{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 0 0}
 footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 @media(min-width:850px){main{padding:24px 20px 60px}.layout{grid-template-columns:minmax(0,1fr) 288px}#stage{height:min(77vh,790px);min-height:520px}}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 13</small>
-<h1>Shape the curves.</h1>
-<p>Our connected waist–hip–thigh curve, plus independent breast size and upper-versus-lower fullness controls.</p>
+<small>3D HUMAN STUDY / TEST 14</small>
+<h1>Shape and softness.</h1>
+<p>Our waist–hip–thigh curve and breast controls, now with an experimental softness morph transferred from MakeHuman's original sculpted targets.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V13</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V14</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -89,12 +89,22 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-shape="70" aria-pressed="true">Natural</button>
   <button data-shape="100" aria-pressed="false">Lower-full</button>
 </div>
-<p class="waist-hint">At 0%, enlargement stays rounded above and below. Moving right flattens the upper projection and preserves a fuller lower contour. Compare at Bust 170% or higher. This reshapes geometry; it isn't a physics simulation.</p>
+<p class="waist-hint">At 0%, enlargement stays rounded above and below. Moving right flattens the upper projection and preserves a fuller lower contour. Compare at Bust 170% or higher.</p>
+<h2>MakeHuman · experimental</h2>
+<div class="waist-row"><label for="mhSoft">Softness transfer</label><output id="mhSoftValue" for="mhSoft">0%</output></div>
+<input id="mhSoft" type="range" min="0" max="100" step="1" value="0" disabled aria-label="Experimental transferred MakeHuman breast firmness difference">
+<div class="views" style="margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr))" id="mhPresets">
+  <button data-mh="0" aria-pressed="true" disabled>Off</button>
+  <button data-mh="50" aria-pressed="false" disabled>Half</button>
+  <button data-mh="100" aria-pressed="false" disabled>Full</button>
+</div>
+<p class="waist-hint" id="mhStatus">Loading MakeHuman reference displacement…</p>
+<p class="waist-hint">This is an approximate, conservative transfer of the original softer-minus-firmer target, not an exact MakeHuman shape key or a physics simulation. It changes breast position and contours without replacing our existing sliders.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">All three controls edit the mesh surface, not its bones. Breast shape modifies the enlargement profile; with Bust 100%, that shape slider has little visible effect.</p>
+<p class="note">All controls edit mesh vertices, not the skeleton. The MakeHuman target is an additional optional experiment; Off preserves the familiar Version 13 appearance.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -120,6 +130,10 @@ const bustPresets=[...document.querySelectorAll("[data-bust]")];
 const shapeInput=document.getElementById("shape");
 const shapeValue=document.getElementById("shapeValue");
 const shapePresets=[...document.querySelectorAll("[data-shape]")];
+const mhInput=document.getElementById("mhSoft");
+const mhValue=document.getElementById("mhSoftValue");
+const mhPresets=[...document.querySelectorAll("[data-mh]")];
+const mhStatus=document.getElementById("mhStatus");
 let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
 const mats=new Set();
 
@@ -261,6 +275,9 @@ function applyMorph(){
   const bustPct=Number(bustInput.value);
   const bustStrength=(bustPct-100)/120;
   const shapeFraction=Number(shapeInput.value)/100;
+  const mhStrength=Number(mhInput.value)/100;
+  mhValue.textContent=mhInput.value+"%";
+  mhPresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.mh)===Number(mhInput.value))));
   curveValue.textContent=sliderValue+"%";
   bustValue.textContent=bustPct+"%";
   shapeValue.textContent=shapeInput.value+"%";
@@ -269,17 +286,18 @@ function applyMorph(){
   shapePresets.forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.shape)===Number(shapeInput.value))));
   for(const item of bodyDeformers){
     const {geometry,positions,original,lateral,depth,bustDx,bustDy,bustDz,upperPole,lowerPole}=item;
+    const extra=item.mhDelta;
     const arr=positions.array;
     for(let i=0;i<lateral.length;i++){
       const k=3*i,x=original[k],z=original[k+2];
       // A true volume-style morph around the breast mound, preserving
       // the base connection and spreading tissue laterally and vertically.
-      arr[k]=x+Math.sign(x)*strength*lateral[i]+bustStrength*bustDx[i];
-      arr[k+1]=original[k+1]+bustStrength*bustDy[i];
+      arr[k]=x+Math.sign(x)*strength*lateral[i]+bustStrength*bustDx[i]+(extra?mhStrength*extra[k]:0);
+      arr[k+1]=original[k+1]+bustStrength*bustDy[i]+(extra?mhStrength*extra[k+1]:0);
       // A fuller lower pole with reduced upper projection, without
       // moving the nipple directly or making a crease at the breast root.
       const shapeProfile=1+shapeFraction*(0.10*lowerPole[i]-0.50*upperPole[i]);
-      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050)+bustStrength*bustDz[i]*shapeProfile;
+      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050)+bustStrength*bustDz[i]*shapeProfile+(extra?mhStrength*extra[k+2]:0);
     }
     positions.needsUpdate=true;
     geometry.computeVertexNormals();
@@ -305,6 +323,12 @@ shapePresets.forEach(button=>{
     shapeInput.dispatchEvent(new Event("input"));
   });
 });
+mhPresets.forEach(button=>{
+  button.addEventListener("click",()=>{
+    mhInput.value=button.dataset.mh;
+    mhInput.dispatchEvent(new Event("input"));
+  });
+});
 let morphFrame=0;
 function requestMorph(){
   if(morphFrame)return;
@@ -320,6 +344,10 @@ bustInput.addEventListener("input",()=>{
 });
 shapeInput.addEventListener("input",()=>{
   shapeValue.textContent=shapeInput.value+"%";
+  requestMorph();
+});
+mhInput.addEventListener("input",()=>{
+  mhValue.textContent=mhInput.value+"%";
   requestMorph();
 });
 
@@ -401,7 +429,32 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones<br>Breast vertices: "+activeBreastVertices+" · Arm vertices protected: "+protectedArmVertices;
-    status.textContent=activeBreastVertices>0?"Ready! Compare Round and Lower-full at the same bust size to see the upper and lower contours change.":"Breast weights not found — please tell me what you see.";
+    status.textContent=activeBreastVertices>0?"Ready! Our original controls still work; try the optional MakeHuman softness slider.":"Breast weights not found — please tell me what you see.";
+    // An optional asset generated by a checked GitHub Actions mesh transfer.
+    // Main controls stay usable even if this extra file cannot load.
+    fetch("./assets/makehuman_firmness_approx.json")
+      .then(response=>{if(!response.ok)throw Error("reference data unavailable");return response.json();})
+      .then(data=>{
+        if(!data.parts || data.version!==1)throw Error("unexpected reference format");
+        let active=0;
+        for(const item of bodyDeformers){
+          const rows=data.parts[String(item.positions.count)]||[];
+          const field=new Float32Array(item.positions.count*3);
+          for(const row of rows){
+            const i=row[0];
+            if(!Number.isInteger(i)||i<0||i>=item.positions.count)continue;
+            field[3*i]=row[1];field[3*i+1]=row[2];field[3*i+2]=row[3];
+            active++;
+          }
+          item.mhDelta=field;
+        }
+        if(active===0)throw Error("no matching vertices");
+        mhInput.disabled=false;
+        mhPresets.forEach(button=>button.disabled=false);
+        mhStatus.textContent="Loaded "+active.toLocaleString()+" reference-influenced vertices. Compare Off and Full from the side.";
+        applyMorph();
+      })
+      .catch(e=>{mhStatus.textContent="MakeHuman transfer unavailable: "+(e.message||e)+". Existing controls still work.";});
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
