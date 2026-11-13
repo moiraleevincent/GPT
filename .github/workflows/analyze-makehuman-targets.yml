@@ -1,4 +1,4 @@
-name: Analyze and transfer MakeHuman breast targets
+name: Validate synchronized MakeHuman breast transfer
 on:
   push:
     branches: [main]
