@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Hip and Thigh Morphs</title>
+<title>Torso Mesh Lab — Higher Hip and Thigh Morphs</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 06</small>
+<small>3D HUMAN STUDY / TEST 07</small>
 <h1>Shape the body.</h1>
 <p>Two independent experiments: reshape her waist and add volume to her thighs. Rotate the body to inspect the transitions.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V6</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V7</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -80,7 +80,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-thigh="145" aria-pressed="false">Fuller</button>
   <button data-thigh="180" aria-pressed="false">Very full</button>
 </div>
-<p class="waist-hint">Keeps the fuller outer thighs you liked and blends the same control upward into the outer hips. The waist, inner crotch and knees remain mostly unchanged.</p>
+<p class="waist-hint">Keeps the outer thighs you liked, but carries the fullness higher along the outer hips before fading into the waist. Inner thighs and knees remain mostly unchanged.</p>
 <h2>Inspect geometry</h2>
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
@@ -139,9 +139,10 @@ function setupBodyDeformer(mesh){
     const thighX=1-smooth01((Math.abs(x)-0.205)/0.055);
     const originalThigh=thighY*thighX;
 
-    // Separate, higher side-hip influence. Starts overlapping the upper
-    // thigh and fades to zero by Y=0.905, before the waist deformation.
-    const hipY=smooth01((y-0.735)/0.080)*(1-smooth01((y-0.865)/0.040));
+    // Keep the lower hip and thigh shape as before. Extend the upper
+    // outer-hip influence past Y=0.9, then fade to zero by Y=0.985,
+    // around the upper pelvis / lower waist. The waist morph is separate.
+    const hipY=smooth01((y-0.735)/0.080)*(1-smooth01((y-0.925)/0.060));
     // Outer hip only: spare the inner crotch and exclude hands/arms that
     // can pass through this height at much larger X coordinates.
     const hipOuter=smooth01((Math.abs(x)-0.055)/0.085);
@@ -288,7 +289,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones";
-    status.textContent="Ready! Try Very full and check how the outer hip now joins the thigh.";
+    status.textContent="Ready! Compare Very full with Original: the outer-hip transition now reaches higher.";
   },xhr=>{
     if(xhr.total&&xhr.loaded)status.textContent="Loading 3D model… "+Math.round(xhr.loaded/xhr.total*100)+"%";
   },fail);
