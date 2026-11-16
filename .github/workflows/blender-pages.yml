@@ -86,6 +86,10 @@ jobs:
           if [ -f character_lab/output/poster.png ]; then cp character_lab/output/poster.png site/character_lab/output/; fi
           mkdir -p site/marquee_film
           cp marquee_film/index.html site/marquee_film/index.html
+          if [ -f marquee_film/audio/dialogue.mp3 ]; then
+            mkdir -p site/marquee_film/audio
+            cp marquee_film/audio/dialogue.mp3 site/marquee_film/audio/dialogue.mp3
+          fi
           mkdir -p site/rook_episode_01
           cp rook_episode_01/index.html site/rook_episode_01/index.html
           mkdir -p site/face_expression_lab
