@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rook — A Very Unfortunate Theft · rough animatic</title>
+<style>
+:root{color-scheme:dark;--ink:#151822;--fg:#f1e8d8;--muted:#aaa6a2;--accent:#d1a579}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#30303d,#14151d 75%);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--fg)}
+main{max-width:1060px;margin:0 auto;padding:18px 12px 35px}h1{font-size:clamp(20px,3.3vw,32px);margin:0 0 5px;font-weight:650;letter-spacing:-.03em}
+p{margin:0}.sub{font-size:12px;color:var(--muted);margin-bottom:16px}.frame{position:relative;overflow:hidden;border-radius:12px;background:#181926;box-shadow:0 14px 50px #0007;aspect-ratio:16/9}
+.frame svg{width:100%;height:100%;display:block}.filmtag{position:absolute;top:11px;left:12px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#ffebb7;text-shadow:0 1px 5px #000}
+.captions{margin-top:10px;padding:16px 16px 12px;min-height:96px;background:#22242f;border:1px solid #434252;border-radius:12px}
+.kicker{font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase}.line{margin-top:7px;font-family:Georgia,serif;font-size:clamp(16px,2.6vw,25px);line-height:1.25}
+.controls{display:flex;gap:10px;align-items:center;margin-top:13px;flex-wrap:wrap}button{font:inherit;border:1px solid #666477;border-radius:9px;padding:10px 16px;background:#373748;color:#fff;cursor:pointer}
+button.primary{background:#b99470;color:#1b1720;border-color:#d2ac86;font-weight:700}button:focus-visible,input:focus-visible{outline:2px solid #f4cf9f;outline-offset:3px}
+input[type=range]{width:100%;accent-color:#d6ae83;margin:12px 0 4px;height:18px}#clock{color:#c6beb9;font-size:12px;min-width:78px}
+.notes{font-size:12px;line-height:1.6;color:#afa9aa;max-width:720px;margin-top:14px}.notes strong{color:#e5d5bf}
+</style></head><body><main>
+<h1>Rook · A Very Unfortunate Theft</h1>
+<p class="sub">Episode 1 · deliberately rough 2D blocking animatic · 84 seconds · silent with onscreen dialogue</p>
+<div id="frame" class="frame" role="img" aria-label="Animated sketch of Rook, a thief, and Quill at a masquerade ball"></div>
+<div class="captions"><div class="kicker" id="beat">01 · Arrival</div><div class="line" id="caption">The trouble began with a horse.</div></div>
+<input id="seek" type="range" min="0" max="84" step=".05" value="0" aria-label="Scrub film">
+<div class="controls"><button class="primary" id="play">Pause</button><button id="restart">Replay</button><span id="clock">00:00 / 01:24</span></div>
+<p class="notes"><strong>This is a blocking test, not finished character art.</strong> Character poses, camera framing, object positions, reveals, and visual comedy are being tested here. The full written episode is in <a style="color:#eac390" href="../rook_episode_01/EPISODE_01_STORY.md">the story file</a>. The eventual episode can have more dialogue, actual performances, and a longer running time.</p>
+<script>
+(function(){
+'use strict';
+var duration=84, t=0, playing=true, last=0;
+var frame=document.getElementById('frame'), cap=document.getElementById('caption'), beat=document.getElementById('beat'), seek=document.getElementById('seek'), clock=document.getElementById('clock'), play=document.getElementById('play');
+var shots=[
+{a:0,b:7,title:'01 · The ballroom',line:'Rook came for a sapphire. She left with rather more than she intended.'},
+{a:7,b:15,title:'02 · An imitation',line:'ROOK: Your brooch is magnificent. ... How disappointing.'},
+{a:15,b:24,title:'03 · A very possessive gentleman',line:'QUILL: The horse. Give it back.  /  ROOK: You are accusing me of stealing a horse?'},
+{a:24,b:31,title:'04 · Everything goes wrong',line:'The key disappears. A shin is kicked. A servant drops his tray.'},
+{a:31,b:39,title:'05 · The horse breaks',line:'ROOK: Oh, you clever little worm.  /  QUILL: Be quiet.'},
+{a:39,b:47,title:'06 · The doors close',line:'LORD BELLAMY: Someone has replaced my wife’s sapphire with GLASS! LOCK THE DOORS!'},
+{a:47,b:56,title:'07 · An arrangement',line:'QUILL: Half each.  /  ROOK: Seventy-thirty? ... Sixty-forty?'},
+{a:56,b:66,title:'08 · A delicate constitution',line:'ROOK: Oh, darling! My poor, poor heart! ... FRESH AIR!'},
+{a:66,b:74,title:'09 · The garden gate',line:'QUILL: My half.  /  ROOK: Your half of what?'},
+{a:74,b:84,title:'10 · The strawberry',line:'QUILL: You put it in a STRAWBERRY?  /  ROOK: I may have overcomplicated that.'}
+];
+function defs(){return '<defs><linearGradient id="wall" y1="0" y2="1"><stop stop-color="#353045"/><stop offset="1" stop-color="#1e1e30"/></linearGradient><linearGradient id="night" y1="0" y2="1"><stop stop-color="#1b243b"/><stop offset="1" stop-color="#3e3d48"/></linearGradient><linearGradient id="floor" y1="0" y2="1"><stop stop-color="#806457"/><stop offset="1" stop-color="#332934"/></linearGradient><radialGradient id="j"><stop stop-color="#a6f1ff"/><stop offset=".4" stop-color="#3078d9"/><stop offset="1" stop-color="#0c215e"/></radialGradient><radialGradient id="glow"><stop stop-color="#f6c78d" stop-opacity=".5"/><stop offset="1" stop-color="#f6c78d" stop-opacity="0"/></radialGradient></defs>'}
+function ballroom(){var s='<rect width="960" height="540" fill="url(#wall)"/><rect y="367" width="960" height="173" fill="url(#floor)"/><path d="M0 369H960" stroke="#c5a176" stroke-width="5"/>';
+for(var i=0;i<4;i++){var x=40+i*260;s+='<rect x="'+x+'" y="86" width="161" height="252" rx="75" fill="#171a30" stroke="#987958" stroke-width="11"/><path d="M'+(x+10)+' 283Q'+(x+81)+' 225 '+(x+151)+' 283" stroke="#ddba77" opacity=".13" stroke-width="14" fill="none"/><path d="M'+(x+80)+' 100V334" stroke="#bb9757" stroke-width="3" opacity=".55"/>'}
+s+='<g opacity=".85"><ellipse cx="481" cy="50" rx="150" ry="85" fill="url(#glow)"/><path d="M480 0V65M420 50Q480 98 540 50M445 70Q480 103 515 70" fill="none" stroke="#d2ac72" stroke-width="5"/>';
+for(i=-2;i<=2;i++){var cx=480+i*30;s+='<path d="M'+cx+' 73v25" stroke="#cca56f" stroke-width="4"/><ellipse cx="'+cx+'" cy="97" rx="5" ry="13" fill="#ffe3ae"/>'}
+s+='</g>';s+='<rect y="402" width="960" height="138" fill="#3f3039" opacity=".32"/>';return s}
+function exterior(){var s='<rect width="960" height="540" fill="url(#night)"/><circle cx="779" cy="104" r="44" fill="#aeb6c2" opacity=".65"/><path d="M0 302L150 280L290 300L405 275L585 298L730 278L960 300V540H0" fill="#28333a"/><rect y="381" width="960" height="159" fill="#384044"/><path d="M0 395Q200 375 420 403T960 398" stroke="#728078" opacity=".38" fill="none" stroke-width="4"/>';
+for(var i=0;i<20;i++){var x=(i*73+17)%960;s+='<path d="M'+x+' '+(30+i*17)%420+'l-13 23" stroke="#b0b8cd" opacity=".23" stroke-width="2"/>'}
+s+='<path d="M700 200V425M850 200V425M700 203H850" stroke="#927970" stroke-width="16"/>';
+for(i=0;i<8;i++){s+='<path d="M'+(710+i*19)+' 220V421" stroke="#c1a28b" stroke-width="5"/>'}
+return s}
+function eyePair(y,spacing,blink){var ry=blink?1.1:3.5;return '<ellipse cx="'+(-spacing)+'" cy="'+y+'" rx="3.8" ry="'+ry+'" fill="#211c25"/><ellipse cx="'+spacing+'" cy="'+y+'" rx="3.8" ry="'+ry+'" fill="#211c25"/>'}
+function rook(x,y,s,expression,arm){var blink=(Math.floor(t*1.5)%13===0);var mouth=expression==='smile'?'M-7 16Q0 23 8 16':expression==='shock'?'M0 17m-4 0a4 6 0 1 0 8 0a4 6 0 1 0 -8 0':'M-5 17Q0 18 5 17';
+return '<g transform="translate('+x+' '+y+') scale('+s+')"><ellipse cx="0" cy="19" rx="31" ry="49" fill="#1c1721"/><path d="M-26 76Q-57 95-72 195Q0 223 72 195Q59 97 24 76Z" fill="#435372" stroke="#9ea3b3" stroke-width="2"/><path d="M-22 79L0 125 23 78" stroke="#b6bfd0" stroke-width="3" fill="none"/><path d="M-35 101Q-62 129-48 152" stroke="#d4a890" stroke-width="15" fill="none" stroke-linecap="round"/><path d="M33 100Q'+(arm?76:54)+' '+(arm?78:142)+' '+(arm?78:165)+' '+(arm?58:165)+'" stroke="#d4a890" stroke-width="15" fill="none" stroke-linecap="round"/><rect x="-10" y="64" width="20" height="29" rx="8" fill="#cf9c82"/><ellipse cx="0" cy="11" rx="28" ry="39" fill="#e3b394"/><path d="M-30 8Q-37-41-1-45Q31-44 32 14Q21-20 1-23Q-15-9-30 8" fill="#24202c"/><path d="M-29-3Q-31 62-12 71L-23 73Q-49 30-29-3" fill="#24202c"/><path d="M28-6Q40 50 17 73L29 72Q47 32 28-6" fill="#24202c"/><path d="M-16-7Q-8-14 -2-9M4-9Q12-14 19-7" stroke="#382a31" stroke-width="3" fill="none"/>'+eyePair(3,11,blink)+'<path d="'+mouth+'" stroke="#8d4e50" stroke-width="2.8" fill="none" stroke-linecap="round"/><circle cx="-21" cy="-14" r="2" fill="#ffddb6"/><path d="M-37 5Q-18-1-8-12" stroke="#a26f59" stroke-width="2" opacity=".4" fill="none"/></g>'}
+function quill(x,y,s,pose){var lean=pose==='lean'?8:0;return '<g transform="translate('+x+' '+y+') rotate('+lean+') scale('+s+')"><path d="M-16 76L-28 201 25 201 15 76Z" fill="#4c4e4a" stroke="#c0b297" stroke-width="2"/><path d="M-20 100L-35 148M20 100L35 148" stroke="#bba58c" stroke-width="10" stroke-linecap="round"/><path d="M-15 200V242M15 200V242" stroke="#2d292f" stroke-width="11"/><ellipse cx="0" cy="24" rx="23" ry="39" fill="#d8b8a5"/><path d="M-24 5Q-25-24-3-25L14-19 22 4Q-6-9-24 5" fill="#49444a"/><ellipse cx="-9" cy="20" rx="14" ry="13" stroke="#e0c894" stroke-width="3" fill="none"/><ellipse cx="17" cy="20" rx="14" ry="13" stroke="#e0c894" stroke-width="3" fill="none"/><path d="M5 20H3M-25 20L-31 15M31 20L38 16" stroke="#e0c894" stroke-width="3"/><circle cx="-8" cy="20" r="2.5" fill="#272330"/><circle cx="17" cy="20" r="2.5" fill="#272330"/><path d="M-2 41Q8 40 12 43" stroke="#66484b" stroke-width="2" fill="none"/><path d="M-13-1L-4-2M8-3L21 0" stroke="#3d3540" stroke-width="3"/><path d="M0 68V135" stroke="#b7a88d" stroke-width="4"/><circle cx="0" cy="111" r="3" fill="#d6b678"/></g>'}
+function lady(x,y,s){return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M-38 83L-75 205H75L37 83Z" fill="#a47770" stroke="#edcb9c" stroke-width="3"/><rect x="-9" y="59" width="18" height="35" fill="#eed0b5"/><ellipse cy="20" rx="29" ry="38" fill="#e8c9b2"/><path d="M-32 12Q-30-27 0-25Q32-23 31 14L19-18-19-15Z" fill="#a28a6c"/><circle cx="-10" cy="15" r="2.5" fill="#453844"/><circle cx="12" cy="15" r="2.5" fill="#453844"/><path d="M-6 38Q1 42 8 38" stroke="#8e6669" fill="none" stroke-width="2"/><circle cy="95" r="9" fill="#89cce3" stroke="#eac98c" stroke-width="5"/></g>'}
+function horse(x,y,s,broken){return '<g transform="translate('+x+' '+y+') scale('+s+')">'+(broken?'<path d="M-24-2L11 0" stroke="#fff8e0" stroke-width="3"/>':'')+'<path d="M-30-22L-42-48-28-40-19-51-12-32Q18-33 27-10L20 0L8-7L11 20L1 20-3-5-19-4-20 20-29 20-28-9Z" fill="#e4d8c7" stroke="#aea59d" stroke-width="3"/><circle cx="-32" cy="-32" r="3.2" fill="#4d4650"/><path d="M-43-21L-30-17" stroke="#a19a96" stroke-width="2"/></g>'}
+function jewel(x,y,s){return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M0-27L22-11L19 18L0 32-19 18-22-11Z" fill="url(#j)" stroke="#efc77a" stroke-width="5"/><path d="M0-27L0 32M-22-11L22-11M-19 18L19 18" stroke="#ccedff" opacity=".57" stroke-width="2"/></g>'}
+function strawberry(x,y,s,open){return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M0-22Q-27-36-29-3Q-18 34 0 46Q18 34 29-3Q27-36 0-22Z" fill="#9c322e" stroke="#e0a878" stroke-width="2"/><path d="M-30-10Q0-38 30-10" stroke="#5d2c29" stroke-width="18" opacity=".8"/><path d="M-18-23L-6-32 0-20 13-33 19-23" fill="#6f8863"/>'+(open?jewel(0,5,.6):'')+'</g>'}
+function sceneAt(t){var i=shots.findIndex(function(s){return t<s.b});if(i<0)i=9;var s=shots[i],u=Math.max(0,Math.min(1,(t-s.a)/(s.b-s.a))),wave=Math.sin(t*2.2)*2;
+beat.textContent=s.title;cap.textContent=s.line;
+var v=defs(),bx=ballroom(),ex=exterior();var fg='';
+if(i===0){fg=bx+'<ellipse cx="730" cy="455" rx="160" ry="32" fill="#11121b" opacity=".27"/>'+lady(700,208,1.1)+quill(820,206,1.03)+rook(125+u*200,204+wave,1.08,'smile',1)+horse(590,324,1.1,false)}
+if(i===1){fg=bx+lady(630,153,1.64)+rook(292,168,1.5,u>.65?'shock':'smile',1)+jewel(630,328,1.1)}
+if(i===2){fg=bx+rook(270,190+wave,1.3,'smile',0)+quill(670-u*80,176,1.45)+horse(315,390,.9,false)+'<ellipse cx="482" cy="441" rx="140" ry="29" fill="#201b26" opacity=".3"/>'}
+if(i===3){fg=bx+rook(350-u*100,175,1.28,u>.75?'shock':'smile',1)+quill(580,176,1.36,'lean')+horse(535+u*110,300+u*230,1.3,false)+'<path d="M520 480L680 490" stroke="#d7cfbf" stroke-width="3" opacity=".7"/>'}
+if(i===4){fg=bx+'<ellipse cx="481" cy="464" rx="250" ry="40" fill="#191521" opacity=".4"/>'+horse(445,290+u*110,3.5,true)+jewel(535,345-u*20,1.9)+'<g transform="translate(720 170)">'+rook(0,0,1.1,'shock',0)+'</g>'}
+if(i===5){fg=bx+'<path d="M0 380H960" stroke="#bba68a" stroke-width="5"/><rect x="400" y="305" width="150" height="95" fill="#58444c" stroke="#cab18a" stroke-width="4"/>'+quill(150,207,1.15)+rook(640,185,1.15,'shock',0)+'<g transform="translate(480 174)"><ellipse cx="0" cy="4" rx="25" ry="38" fill="#e7c0a5"/><path d="M-38 68L-75 195H75L38 68" fill="#7a5d50"/><path d="M-30-20L28-20" stroke="#d9c19e" stroke-width="14"/></g><text x="480" y="125" text-anchor="middle" font-size="29" fill="#f3d29f" font-family="Georgia">LOCK THE DOORS!</text>'}
+if(i===6){fg=bx+'<rect x="35" y="393" width="880" height="130" rx="12" fill="#4e3941" stroke="#af8065" stroke-width="5"/><g fill="#e3c8a4"><ellipse cx="145" cy="402" rx="34" ry="13"/><ellipse cx="787" cy="401" rx="36" ry="14"/></g>'+rook(245,144,1.53,'smile',1)+quill(720,144,1.53,'lean')+'<text x="480" y="485" text-anchor="middle" font-size="25" fill="#f0d7a9" font-family="Georgia">HALF EACH.</text>'}
+if(i===7){fg=bx+'<rect x="760" y="70" width="155" height="350" fill="#192839" stroke="#bda37b" stroke-width="12"/><path d="M850 74V415" stroke="#bda37b" stroke-width="8"/>'+quill(555,178,1.35,'lean')+'<g transform="rotate('+(u>.3?-50*u:0)+' 460 290)">'+rook(438,183+(u>.3?u*115:0),1.3,u>.6?'smile':'shock',1)+'</g>'+'<ellipse cx="762" cy="456" rx="92" ry="22" fill="#1b1d26" opacity=".45"/>'}
+if(i===8){fg=ex+rook(455+u*55,192+wave,1.15,'smile',1)+quill(322+u*23,182,1.17,'lean')+'<g transform="translate(753 341)"><circle r="14" fill="#c4a46c"/><rect x="-6" y="13" width="12" height="36" fill="#aa8d6c"/></g>'}
+if(i===9){fg=ex+quill(250,174,1.2,'lean')+rook(630,176,1.26,u>.6?'shock':'smile',1)+strawberry(595,300,1.23,u>.3)+ (u>.35?jewel(730,318,1.2):'')+horse(410,454,1.15,true)}
+v+=fg;v+='<rect x="4" y="4" width="952" height="532" rx="4" stroke="#bfa887" stroke-opacity=".15" stroke-width="7" fill="none"/>';
+return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid meet" role="presentation">'+v+'</svg>'}
+function stamp(){var m=Math.floor(t/60),ss=Math.floor(t%60);clock.textContent=String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')+' / 01:24';seek.value=t;frame.innerHTML=sceneAt(t)}
+function tick(now){if(!last)last=now;var dt=Math.min(.07,(now-last)/1000);last=now;if(playing){t+=dt;if(t>=duration){t=duration;playing=false;play.textContent='Play'}}stamp();requestAnimationFrame(tick)}
+play.onclick=function(){if(t>=duration)t=0;playing=!playing;play.textContent=playing?'Pause':'Play';last=0};
+document.getElementById('restart').onclick=function(){t=0;playing=true;play.textContent='Pause';last=0;stamp()};
+seek.oninput=function(){t=Number(seek.value);playing=false;play.textContent='Play';stamp()};
+document.addEventListener('keydown',function(e){if(e.code==='Space'&&!/INPUT|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();play.click()}});
+stamp();requestAnimationFrame(tick);
+})();
+</script></main></body></html>
