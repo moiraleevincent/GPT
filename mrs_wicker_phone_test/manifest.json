@@ -1,0 +1,101 @@
+{
+  "duration": 46.0,
+  "lines": [
+    {
+      "id": "n01",
+      "role": "NARRATOR",
+      "text": "This is Mrs. Wicker.",
+      "start": 1.15,
+      "duration": 2.575,
+      "wav": "n01.wav"
+    },
+    {
+      "id": "w01",
+      "role": "WICKER",
+      "text": "They're lilies.",
+      "start": 4.15,
+      "duration": 1.775,
+      "wav": "w01.wav"
+    },
+    {
+      "id": "b01",
+      "role": "BERNARD",
+      "text": "Yes, Mrs. Wicker.",
+      "start": 6.1,
+      "duration": 2.0,
+      "wav": "b01.wav"
+    },
+    {
+      "id": "w02",
+      "role": "WICKER",
+      "text": "I hate lilies.",
+      "start": 7.94,
+      "duration": 2.05,
+      "wav": "w02.wav"
+    },
+    {
+      "id": "b02",
+      "role": "BERNARD",
+      "text": "I'm terribly sorry.",
+      "start": 10.02,
+      "duration": 2.1,
+      "wav": "b02.wav"
+    },
+    {
+      "id": "w03",
+      "role": "WICKER",
+      "text": "They smell like cat piss.",
+      "start": 12.05,
+      "duration": 2.425,
+      "wav": "w03.wav"
+    },
+    {
+      "id": "b03",
+      "role": "BERNARD",
+      "text": "Yes, Mrs. Wicker.",
+      "start": 14.88,
+      "duration": 2.025,
+      "wav": "b03.wav"
+    },
+    {
+      "id": "n02",
+      "role": "NARRATOR",
+      "text": "Mrs. Wicker was not pleased with the arrangements for her funeral.",
+      "start": 17.01,
+      "duration": 5.025,
+      "wav": "n02.wav"
+    },
+    {
+      "id": "w04",
+      "role": "WICKER",
+      "text": "And another thing. I'm not dead.",
+      "start": 22.55,
+      "duration": 2.65,
+      "wav": "w04.wav"
+    },
+    {
+      "id": "n03",
+      "role": "NARRATOR",
+      "text": "Nor, for that matter, with being dead.",
+      "start": 26.42,
+      "duration": 3.25,
+      "wav": "n03.wav"
+    },
+    {
+      "id": "b04",
+      "role": "BERNARD",
+      "text": "I'm afraid you are, Mrs. Wicker.",
+      "start": 30.05,
+      "duration": 2.8,
+      "wav": "b04.wav"
+    },
+    {
+      "id": "w05",
+      "role": "WICKER",
+      "text": "Well. That's a bloody inconvenience.",
+      "start": 38.02,
+      "duration": 2.95,
+      "wav": "w05.wav"
+    }
+  ]
+}
