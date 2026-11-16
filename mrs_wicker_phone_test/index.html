@@ -206,18 +206,18 @@ const DURATION=46, stage=document.getElementById('stage'), room=document.getElem
 const audio=document.getElementById('audio'), play=document.getElementById('play'), restart=document.getElementById('restart'), seek=document.getElementById('seek'), clock=document.getElementById('clock'), sub=document.getElementById('subtitle'), captions=document.getElementById('captions'), shade=document.getElementById('shade'), endtitle=document.getElementById('endtitle'), status=document.getElementById('status');
 const wm=document.getElementById('w-mouth'), bm=document.getElementById('b-mouth'), recv=document.getElementById('receiver'), eyes=document.getElementById('eyes');
 const L=[
-['NARRATOR','This is Mrs. Wicker.',1.15,2.9],
-['MRS. WICKER',"They're lilies.",4.15,5.65],
-['BERNARD','Yes, Mrs. Wicker.',6.10,7.57],
-['MRS. WICKER','I hate lilies.',7.94,9.5],
-['BERNARD',"I'm terribly sorry.",10.02,11.62],
-['MRS. WICKER','They smell like cat piss.',12.05,14.44],
-['BERNARD','Yes, Mrs. Wicker.',14.88,16.45],
-['NARRATOR','Mrs. Wicker was not pleased with the arrangements for her funeral.',17.01,21.96],
-['MRS. WICKER',"And another thing. I'm not dead.",22.55,26.04],
-['NARRATOR','Nor, for that matter, with being dead.',26.42,29.5],
-['BERNARD',"I'm afraid you are, Mrs. Wicker.",30.05,33.4],
-['MRS. WICKER',"Well. That's a bloody inconvenience.",38.02,40.95]
+['NARRATOR','This is Mrs. Wicker.',1.15,3.725],
+['MRS. WICKER',"They're lilies.",4.15,5.925],
+['BERNARD','Yes, Mrs. Wicker.',6.10,8.10],
+['MRS. WICKER','I hate lilies.',7.94,9.99],
+['BERNARD',"I'm terribly sorry.",10.02,12.12],
+['MRS. WICKER','They smell like cat piss.',12.05,14.475],
+['BERNARD','Yes, Mrs. Wicker.',14.88,16.905],
+['NARRATOR','Mrs. Wicker was not pleased with the arrangements for her funeral.',17.01,22.035],
+['MRS. WICKER',"And another thing. I'm not dead.",22.55,25.20],
+['NARRATOR','Nor, for that matter, with being dead.',26.42,29.67],
+['BERNARD',"I'm afraid you are, Mrs. Wicker.",30.05,32.85],
+['MRS. WICKER',"Well. That's a bloody inconvenience.",38.02,40.97]
 ];
 let t=0,playing=false,ccon=true,last=0,audioOK=false,raf=0;
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
