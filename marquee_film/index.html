@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
+<title>The Last Name on the Marquee — Opening Sequence</title>
+<style>
+:root{color-scheme:dark;--ink:#0d0d14;--paper:#f1e8db;--gold:#d0a980;--muted:#aaa5aa}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 10%,#222330,#0b0c13 85%);color:var(--paper);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{width:min(100%,1200px);margin:0 auto;padding:18px max(10px,env(safe-area-inset-right)) 38px max(10px,env(safe-area-inset-left))}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:15px}
+h1{font-family:Georgia,serif;font-weight:normal;font-size:clamp(22px,3.1vw,36px);letter-spacing:-.025em;margin:0}
+small{font-size:12px;color:var(--muted)}.stage{position:relative;background:black;aspect-ratio:16/9;border-radius:12px;overflow:hidden;box-shadow:0 22px 75px #000b}
+canvas{display:block;width:100%;height:100%}.overlay{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:18px;background:radial-gradient(ellipse,#34343bde,#0e0b16f6);z-index:7;text-align:center;padding:30px}
+.overlay h2{font:normal clamp(28px,5vw,58px)/1.05 Georgia,serif;max-width:720px;margin:0}
+.overlay p{font:italic clamp(13px,2vw,21px) Georgia,serif;color:#d2c1b4;max-width:540px;margin:0}
+.overlay button{font-size:16px;padding:15px 31px;background:#c9a785;border-color:#c9a785;color:#1e1820;font-weight:650}
+.overlay.hidden{display:none}
+.subs{position:absolute;bottom:6%;left:5%;width:90%;text-align:center;font:500 clamp(13px,2.2vw,23px)/1.35 Georgia,serif;text-shadow:0 2px 4px #000,0 0 13px #000,0 0 21px #000;pointer-events:none;z-index:4;min-height:1.3em}
+.subs span{padding:.08em .35em;background:#07080b70;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.subs i{font-style:normal;color:#e8caa3}
+.topmeta{position:absolute;top:4%;left:3%;font-size:10px;letter-spacing:.2em;color:#f2d7bb;text-shadow:0 1px 4px #000;z-index:3;text-transform:uppercase}
+.bottom{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}button{font:inherit;border:1px solid #63616a;border-radius:8px;padding:10px 14px;background:#30303a;color:#eee4db;cursor:pointer}button.primary{background:#b89777;color:#171219;border-color:#c3a280;font-weight:700}
+button:focus-visible,input:focus-visible{outline:2px solid #e9c8a9;outline-offset:3px}
+#seek{width:100%;accent-color:#c4a082;height:18px;margin:10px 0 0}#clock{font-variant-numeric:tabular-nums;font-size:12px;color:#c3bdba;min-width:88px;margin-left:auto}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px;color:#aca6a6;font-size:12px;line-height:1.5}.foot a{color:#debb9a}
+#chapter{font:italic 14px Georgia,serif;color:#dbc4a9}
+@media(max-width:600px){main{padding-top:12px}.bottom{gap:7px}.bottom button{padding:8px 10px;font-size:12px}.foot{font-size:11px}.topmeta{font-size:8px}}
+</style></head><body>
+<main>
+<header><h1>The Last Name on the Marquee</h1><small>Opening sequence · a directed 2D animatic · 3:12</small></header>
+<div class="stage" id="stage"><canvas id="screen" width="1200" height="675" role="img" aria-label="Cinematic animated sequence: Esther sees her daughter Rowan's name on the theatre marquee, enters backstage, and confronts Rowan"></canvas>
+<div class="topmeta">Bellweather Theatre · The final week</div>
+<div class="subs" id="subtitles" aria-live="off"></div>
+<div class="overlay" id="start"><h2>The Last Name<br>on the Marquee</h2><p>One theatre. Two magicians. Thirty-six years of applause.</p><button id="startBtn">Watch with sound</button><small>Original soundscape, no recorded dialogue yet. Spoken lines appear as subtitles.</small></div>
+</div>
+<input id="seek" type="range" min="0" max="192" step=".1" value="0" aria-label="Film timeline">
+<div class="bottom"><button class="primary" id="toggle">Pause</button><button id="restart">From beginning</button><button id="sound">Sound on</button><button id="captions">Captions on</button><span id="clock">00:00 / 03:12</span></div>
+<div class="foot"><span id="chapter">The theatre, the sign, the woman.</span><span>Rough staging · original vector artwork, animated camera and gestures · <a href="https://github.com/moiraleevincent/GPT/tree/main/marquee_film">Source</a></span></div>
+</main>
+<script>
+(function(){
+"use strict";
+const W=1200,H=675,D=192,canvas=document.getElementById("screen"),c=canvas.getContext("2d"),subs=document.getElementById("subtitles"),slider=document.getElementById("seek"),toggle=document.getElementById("toggle"),soundBtn=document.getElementById("sound"),start=document.getElementById("start"),chapter=document.getElementById("chapter");
+let t=0,running=false,lastFrame=0,muted=false,showCaps=true,lastSoundT=0,AC=null,amb=null,hum=null,voicesReady=false;
+const shots=[
+{a:0,b:9,sc:"ext",cam:[930,375,.67],to:[950,368,.71],name:"The Bellweather Theatre"},
+{a:9,b:19,sc:"ext",cam:[1200,235,1.32],to:[1210,253,1.57],name:"The wrong name"},
+{a:19,b:28,sc:"ext",cam:[527,408,1.82],to:[525,405,1.97],name:"Esther"},
+{a:28,b:39,sc:"ext",cam:[399,457,1.03],to:[391,454,1.08],name:"Good morning"},
+{a:39,b:52,sc:"ext",cam:[338,437,1.36],to:[340,436,1.48],name:"The daughter"},
+{a:52,b:65,sc:"ext",cam:[517,418,1.58],to:[515,409,1.72],name:"The horse"},
+{a:65,b:77,sc:"ext",cam:[690,444,.96],to:[1225,439,1.11],name:"A woman on a mission"},
+{a:77,b:91,sc:"back",cam:[760,404,.7],to:[884,404,.77],name:"Backstage"},
+{a:91,b:105,sc:"back",cam:[1035,446,1.18],to:[1022,447,1.28],name:"The Delacourt cabinet"},
+{a:105,b:117,sc:"back",cam:[566,432,1.32],to:[552,419,1.48],name:"Onstage, of course"},
+{a:117,b:130,sc:"stage",cam:[910,392,.73],to:[994,394,.85],name:"The stage"},
+{a:130,b:142,sc:"stage",cam:[1100,424,1.59],to:[1107,414,1.7],name:"Rowan"},
+{a:142,b:154,sc:"stage",cam:[502,416,1.62],to:[524,420,1.78],name:"Mother and daughter"},
+{a:154,b:166,sc:"stage",cam:[806,446,1.04],to:[808,444,1.12],name:"My stage"},
+{a:166,b:179,sc:"stage",cam:[508,418,1.74],to:[520,414,1.83],name:"The question"},
+{a:179,b:192,sc:"stage",cam:[1082,415,1.72],to:[1094,399,1.97],name:"The answer"}
+];
+const cues=[
+[19.7,23,"ESTHER","Well."],
+[28.5,32.5,"BOY","Good morning, Mrs. Vale."],
+[33,35.7,"ESTHER","Is it?"],
+[36,38.8,"BOY","That's unfortunate."],
+[39.4,43.3,"BOY","Your daughter, isn't it?"],
+[43.6,46.1,"ESTHER","Allegedly."],
+[46.5,51.7,"BOY","My mum says she's wonderful."],
+[52.3,57.5,"ESTHER","Your mother has always been susceptible to spectacle."],
+[57.7,62.5,"BOY","She made an entire horse disappear in London."],
+[62.6,67.3,"ESTHER","Anybody can make a horse disappear."],
+[67.4,75.0,"ESTHER","Keeping one in a box for forty-five minutes is the difficult part."],
+[91.7,96.0,"ESTHER","Careful! That's an original Delacourt cabinet!"],
+[96.8,100.2,"WORKER","Twenty pounds?"],
+[100.4,104.5,"ESTHER","Where is Mr. Bell?"],
+[105.2,108.3,"WORKER","In the office."],
+[108.7,111.4,"ESTHER","Where is my daughter?"],
+[112.0,114.0,"WORKER","Onstage."],
+[114.3,116.8,"ESTHER","Of course she is."],
+[119.7,128.4,"ROWAN","No. If I pull the line from there, you'll see my shoulder move. It needs to come from behind the frame."],
+[131.1,137.3,"ROWAN","We won't use the cabinet."],
+[142.4,146.2,"ESTHER","Excuse me?"],
+[147.0,150.1,"ROWAN","Hello, Mother."],
+[150.8,153.9,"ESTHER","You've cut your hair."],
+[154.2,156.0,"ROWAN","Yes."],
+[156.4,159.0,"ESTHER","It looked better long."],
+[159.3,163.0,"ROWAN","Lovely to see you too."],
+[163.2,167.0,"ESTHER","Why are you standing on my stage?"],
+[167.0,170.3,"ROWAN","Technically, it's Mr. Bell's stage."],
+[170.6,172.3,"ESTHER","Don't start."],
+[173.0,178.8,"ROWAN","Mr. Bell called me. The theatre's closing."],
+[179.1,181.9,"ESTHER","You left."],
+[182.1,185.0,"ROWAN","I know."],
+[185.1,187.5,"ESTHER","Why did you?"],
+[187.5,191.4,"ROWAN","Because you nearly killed me."]
+];
+const events=[[7,"bell"],[14,"metal"],[23,"match"],[65,"foot"],[69,"foot"],[74,"door"],[81,"wheel"],[89,"wheel"],[93,"bang"],[100,"short"],[116,"curtain"],[142,"beat"],[180,"low"],[187.5,"low"]];
+function smooth(n){n=Math.max(0,Math.min(1,n));return n*n*(3-2*n)}
+function lerp(a,b,k){return a+(b-a)*k}function pulse(a,b,x){return smooth((x-a)/Math.max(.01,b-a))}
+function fill(col){c.fillStyle=col}function stroke(col,w){c.strokeStyle=col;c.lineWidth=w}
+function rect(x,y,w,h,color){fill(color);c.fillRect(x,y,w,h)}
+function line(x1,y1,x2,y2,color,w){stroke(color,w);c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()}
+function polygon(p,col){fill(col);c.beginPath();c.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)c.lineTo(p[i],p[i+1]);c.closePath();c.fill()}
+function ellipse(x,y,rx,ry,col){fill(col);c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill()}
+function path(col,points){stroke(col,2);c.beginPath();c.moveTo(points[0],points[1]);for(let i=2;i<points.length;i+=2)c.lineTo(points[i],points[i+1]);c.stroke()}
+function txt(a,x,y,size,color,face,align){fill(color);c.font=(size||20)+"px "+(face||"Georgia,serif");c.textAlign=align||"left";c.fillText(a,x,y)}
+function grad(x,y,w,h,top,bottom){let g=c.createLinearGradient(x,y,x,y+h);g.addColorStop(0,top);g.addColorStop(1,bottom);rect(x,y,w,h,g)}
+function rrect(x,y,w,h,r,col){fill(col);c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
+function texture(seed,count,region,color,alpha){c.save();c.globalAlpha=alpha;fill(color);for(let i=0;i<count;i++){let x=region[0]+((i*73.619+seed*39)%region[2]),y=region[1]+((i*53.813+seed*17)%region[3]);c.fillRect(x,y,1.8+(i%3),1)}c.restore()}
+function theaterExterior(T){
+grad(-250,-200,2350,1120,"#9aaab3","#b7b2ac");
+for(let i=0;i<5;i++){ellipse(i*370+70,210+(i%2)*70,290,115,"#abb4b5a5")}
+rect(-50,495,1900,350,"#827f81");
+rect(0,608,1830,160,"#69696e");line(0,608,1830,608,"#c9bfb6",5);line(0,713,1800,713,"#7e7a7b",4);
+for(let i=0;i<8;i++){let x=i*145-30;rect(x,248+(i%3)*24,142,350,"#70767c");for(let j=0;j<3;j++)rrect(x+20+j*38,280+(i%3)*24,22,36,3,"#aaa8a3")}
+rect(670,70,1020,545,"#5d535f");rect(690,86,980,522,"#77636c");rect(688,95,15,515,"#b89c85");rect(1654,95,15,515,"#b89c85");
+for(let i=0;i<6;i++){let x=735+i*158;rect(x,94,23,506,"#927c82");rect(x-10,122,43,17,"#b6a395");rect(x-6,520,35,12,"#ad9490")}
+for(let i=0;i<4;i++){let x=742+i*258;rrect(x,370,150,173,65,"#393a4b");rrect(x+17,385,115,137,48,"#b2a698");rrect(x+26,393,98,124,42,"#3d4850");line(x+75,397,x+75,511,"#bda69c",5)}
+// Ornamental balcony and architectural texture
+rect(693,347,976,23,"#b9a08c");for(let i=0;i<46;i++){rect(712+i*20,354,7,12,"#77616b")}
+rect(844,182,744,173,"#422f37");rect(867,195,695,142,"#8b3f46");rect(879,204,669,119,"#7d323d");
+for(let i=0;i<40;i++){ellipse(861+i*18,192,2.5,3.8,i%4===0?"#fce2b3":"#dfb68a");ellipse(861+i*18,335,2.2,3.2,"#f1caa0")}
+c.save();c.textAlign="center";txt("ROWAN VALE",1212,259,74,"#f4d1a4","bold Georgia,serif","center");txt("THE IMPOSSIBLE WOMAN RETURNS",1212,305,29,"#e8c3ae","Georgia,serif","center");c.restore();
+txt("BELLWEATHER",1205,144,44,"#dfc4a4","Georgia,serif","center");
+rect(1369,477,235,172,"#382f37");rect(1380,487,220,158,"#614a50");rect(1385,500,96,145,"#342c36");rect(1490,500,105,145,"#342c36");
+txt("STAGE",1480,472,21,"#ead4b0","Georgia,serif","center");
+txt("DOOR",1480,489,14,"#d5b996","Georgia,serif","center");
+rect(1375,640,230,13,"#b19c8d");
+rrect(729,434,105,140,2,"#4b414a");rect(740,446,83,102,"#b99d7f");txt("FAREWELL",781,476,17,"#423440","Georgia,serif","center");txt("WEEK",781,497,23,"#56404a","Georgia,serif","center");
+texture(3,250,[676,99,970,500],"#e1c4b2",.10);
+for(let i=0;i<12;i++){let x=95+i*122;line(x,610,x+36,605,"#91898a",2)}
+// Moving distant street shadows
+ellipse(290,650,260,22,"#36333c3f");ellipse(1325,648,190,20,"#36333c40");
+}
+function backstage(T){
+grad(-180,-120,2140,1000,"#53515b","#2c2931");rect(-100,570,1900,220,"#51474c");rect(-100,629,1900,15,"#9d816f");
+for(let i=0;i<16;i++){let x=i*125;rect(x,40,19,620,i%2?"#3b3a45":"#69616a");line(x+4,70,x+4,630,"#a49892",2)}
+for(let i=0;i<6;i++){let x=100+i*230;rect(x,94,192,200,"#3f3b44");ellipse(x+100,98,75,20,"#7d716f");line(x+44,118,x+44,304,"#9c8e86",3)}
+// Ceiling work lamps
+for(let i=0;i<5;i++){let x=75+i*370;line(x,-20,x,128,"#282932",4);ellipse(x,145,70,36,"#947b66");ellipse(x,159,50,8,"#e4bb83");}
+rect(1400,170,248,455,"#221e2a");rect(1420,195,204,445,"#3e2a33");rect(1508,195,12,445,"#9a6e63");
+for(let i=0;i<7;i++)line(1440+i*25,197,1440+i*25,644,"#704a57",2);
+rect(30,380,300,240,"#3f3c40");rect(60,339,120,50,"#7d6b62");
+for(let i=0;i<7;i++){rect(45+i*35,540,30,82,i%2?"#a79079":"#b7a291");}
+txt("PROP STORAGE",54,426,23,"#bdb2aa","Georgia,serif");
+texture(8,330,[0,0,1670,630],"#d0bdab",.14);
+}
+function cabinet(x,y){
+c.save();c.translate(x,y);
+ellipse(0,7,150,17,"#1c20278c");rrect(-130,-315,250,312,6,"#66535b");rrect(-115,-304,221,290,4,"#372d35");rect(-104,-292,193,256,"#8a6263");rect(-93,-282,173,238,"#453841");rect(-70,-271,129,220,"#4d414c");rect(-67,-275,7,225,"#b99877");rect(49,-275,7,225,"#b99877");ellipse(-2,-5,10,10,"#b49a87");ellipse(87,-5,10,10,"#b49a87");
+for(let i=0;i<5;i++){line(-112,-307+i*70,100,-307+i*70,"#aa8675",2)}txt("D E L A C O U R T",-90,-327,19,"#e0bd9b","Georgia,serif");c.restore()
+}
+function theaterStage(T){
+grad(-250,-120,2140,950,"#1a1c2b","#3b303d");rect(-100,597,1950,190,"#78605b");rect(0,638,1800,12,"#c49b79");
+for(let i=0;i<14;i++){ellipse(180+i*108,612,14,6,"#deac77")}
+rect(220,35,1320,562,"#332b39");rect(265,61,1225,523,"#181b2a");
+for(let i=0;i<20;i++){let x=240+i*64;rect(x,42,24,555,"#6a384d");line(x+23,42,x+23,595,"#9b586a",3)}
+rrect(399,80,948,498,25,"#261d2d");grad(418,80,904,480,"#342d40","#3c3640");
+for(let i=0;i<7;i++){let x=500+i*122;line(x,90,x,550,"#655760",1);ellipse(x,552,30,6,"#c4977a")}
+rect(482,525,700,23,"#7d5860");rect(605,210,22,320,"#6b686d");rect(1170,160,18,400,"#6b626b");rect(615,232,570,8,"#a69890");
+for(let i=0;i<15;i++)line(420+i*69,80,420+i*69,280,"#555464",1);
+ellipse(1050,556,290,38,"#e5ab8140");
+rect(0,55,180,572,"#1e1e2a");rect(170,44,47,583,"#5c384b");rect(1630,55,180,572,"#1e1e2a");
+rect(0,600,1800,28,"#291e27");
+}
+function shadows(){let g=c.createRadialGradient(600,380,70,600,362,780);g.addColorStop(0,"#00000000");g.addColorStop(1,"#00000075");c.fillStyle=g;c.fillRect(0,0,W,H)}
+function hair(ctx,variant){
+if(variant==="E"){
+ellipse(0,-208,38,50,"#34303b");ellipse(27,-196,19,37,"#34303b");
+ellipse(-12,-243,31,16,"#48414b");ellipse(-15,-244,18,5,"#958d91");
+}else{
+ellipse(0,-215,31,46,"#272632");polygon([-34,-215,-27,-261,13,-263,32,-230,30,-194,17,-240,-25,-216],"#25252e");
+ellipse(0,-269,26,15,"#25252e")
+}
+}
+function character(x,y,s,who,opt){
+opt=opt||{};let T=t,walk=opt.walk||0,gesture=opt.gesture||0,expr=opt.expr||"neutral",speed=opt.speed||2.5,ang=opt.ang||0;let stride=Math.sin(T*speed*5)*walk,breath=Math.sin(T*1.8)*1.9,headTurn=opt.turn||0;
+c.save();c.translate(x,y);c.scale(s,s);
+ellipse(0,2,47,9,"#11131e45");
+if(who==="E"){
+const hem=-8+breath,co="#302c40";
+c.save();c.rotate(ang);
+stroke("#24232d",13);c.beginPath();c.moveTo(-17,-65);c.lineTo(-18+stride*12,-2);c.moveTo(14,-65);c.lineTo(20-stride*12,-2);c.stroke();
+ellipse(-18+stride*12,-1,22,7,"#27252e");ellipse(20-stride*12,-1,23,7,"#27252e");
+polygon([-34,-136,30,-136,60,-28,30,-27,5,-100,-20,-27,-55,-27],co);
+polygon([-19,-153,21,-153,28,-85,-23,-83],"#53475b");
+polygon([-25,-155,-40,-92,-16,-101,0,-138,19,-101,42,-94,26,-158],"#342e40");
+polygon([-4,-151,15,-151,4,-110],"#b5a7a4");
+line(-35,-128,-40+(gesture?12:0),-76-(gesture?24:0),"#c69d8f",14);
+let armX=gesture?66:36,armY=gesture?-181:-78;line(30,-132,armX,armY,"#b18e82",13);
+ellipse(armX,armY,7,8,"#ddbaaa");
+if(opt.cig!==false){line(armX,armY,armX+19,armY-9,"#e9dcc7",3);ellipse(armX+20,armY-9,2.9,2.2,"#da6d42");}
+line(-36,-132,-40+(gesture?12:0),-76-(gesture?24:0),"#403443",6);
+rect(-14,-172,28,26,"#c49a8e");hair(c,"E");
+ellipse(0,-207+headTurn,30,39,"#d2ad9e");
+ellipse(-23,-208,7,13,"#bd9487");ellipse(25,-207,6,12,"#ceaa9b");
+ellipse(-8,-213+headTurn,3,2.5,"#27232b");ellipse(12,-214+headTurn,3,2.5,"#27232b");
+line(-17,-226+headTurn,-4,-230+headTurn,"#52414b",expr==="angry"?3.6:2.8);
+line(5,-230+headTurn,18,-227+headTurn,"#52414b",expr==="angry"?3.6:2.8);
+line(2,-212+headTurn,-2,-196+headTurn,"#b88b82",1.7);
+if(expr==="smirk"||expr==="smile"){stroke("#824d53",2.4);c.beginPath();c.moveTo(-5,-189+headTurn);c.quadraticCurveTo(7,-182+headTurn,14,-193+headTurn);c.stroke()}
+else if(expr==="shock"){ellipse(5,-188+headTurn,3.5,6,"#894b58")}
+else line(-4,-187+headTurn,14,-188+headTurn,"#794e58",2);
+line(-25,-189+headTurn,-18,-185+headTurn,"#b1837c",1);line(18,-189+headTurn,25,-187+headTurn,"#b1837c",1);
+ellipse(-9,-234,12,6,"#49434e");ellipse(14,-234,16,10,"#403943");
+c.restore();
+}else if(who==="R"){
+c.save();c.rotate(ang);
+stroke("#29272d",12);c.beginPath();c.moveTo(-12,-65);c.lineTo(-15+stride*10,-3);c.moveTo(13,-65);c.lineTo(15-stride*10,-3);c.stroke();
+ellipse(-15+stride*10,-1,18,5,"#29272d");ellipse(15-stride*10,-1,18,5,"#29272d");
+polygon([-34,-148,-22,-82,22,-82,35,-149,10,-165,-10,-165],"#e4dcd1");polygon([-15,-155,4,-125,12,-157],"#c4bbaf");
+rect(-24,-87,48,8,"#3d3435");rect(-13,-174,26,25,"#b69b88");
+line(-29,-143,-33-(gesture?18:0),-95-(gesture?45:0),"#c0a896",13);line(29,-143,36+(gesture?22:0),-94-(gesture?42:0),"#c0a896",13);
+ellipse(-33-(gesture?18:0),-95-(gesture?45:0),7,6,"#c6ae9b");ellipse(36+(gesture?22:0),-94-(gesture?42:0),7,6,"#c6ae9b");
+hair(c,"R");ellipse(0,-212+headTurn,28,40,"#dbbca5");
+polygon([-27,-234,-22,-246,-9,-250,19,-242,25,-224,13,-242,-8,-229],"#262630");
+ellipse(-10,-214+headTurn,2.7,2.8,"#272733");ellipse(10,-214+headTurn,2.7,2.8,"#272733");
+line(-20,-227+headTurn,-5,-229+headTurn,"#6a5351",2.2);
+line(3,-229+headTurn,18,-227+headTurn,"#6a5351",2.2);
+line(-1,-210+headTurn,-1,-198+headTurn,"#bb9786",1.5);
+if(expr==="tense")line(-7,-190+headTurn,8,-189+headTurn,"#985e5a",2.8);
+else if(expr==="smile"){stroke("#975c5c",2);c.beginPath();c.moveTo(-9,-192+headTurn);c.quadraticCurveTo(0,-181+headTurn,11,-193+headTurn);c.stroke()}
+else line(-7,-190+headTurn,8,-191+headTurn,"#96595b",1.8);
+c.restore();
+}else{
+c.save();c.rotate(ang);let boy=who==="B";stroke("#4d4649",boy?10:13);c.beginPath();c.moveTo(-12,-56);c.lineTo(-17+stride*10,0);c.moveTo(11,-56);c.lineTo(17-stride*10,0);c.stroke();
+polygon([-30,-139,28,-139,22,-56,-22,-56],boy?"#7c7b78":"#69646a");
+polygon([-25,-157,25,-153,27,-111,-30,-112],boy?"#6e6f70":"#77737b");
+line(-28,-139,-40,-78,"#cba894",boy?10:13);line(27,-137,39,-80,"#cba894",boy?10:13);
+rect(-10,-169,20,25,"#c4a18f");ellipse(0,-197,25,36,"#d4b5a0");
+ellipse(0,-226,26,14,boy?"#67514b":"#5b514e");
+ellipse(-9,-204,2.6,2.6,"#24232a");ellipse(11,-204,2.6,2.6,"#24232a");
+line(-6,-188,8,-188,"#744f52",1.8);c.restore()
+}c.restore()
+}
+function orangeCart(x,y){c.save();c.translate(x,y);rect(-95,-81,170,79,"#795143");rect(-102,-88,184,10,"#b18564");
+for(let i=0;i<16;i++){let ox=-81+(i%6)*27+((i*17)%10),oy=-89-Math.floor(i/6)*22;ellipse(ox,oy,15,14,i%3?"#d28c4c":"#e3a35d");}
+ellipse(-67,14,23,23,"#383944");ellipse(65,14,23,23,"#383944");ellipse(-67,14,7,7,"#b4aca4");ellipse(65,14,7,7,"#b4aca4");c.restore()}
+function crew(x,y,type){character(x,y,1.07,type==="boy"?"B":"W",{gesture:0});}
+function world(scene,sh,u,T){
+if(scene==="ext"){
+theaterExterior(T);
+let eX= T<65?534:T<77?lerp(534,1350,pulse(65,76,T)):1350;
+let eY=656+(T>65&&T<77?Math.sin(T*6)*2:0);
+orangeCart(195,656);
+character(269,656,.94,"B",{walk:T<24?0:T<34?.11:0});
+character(eX,eY,1.15,"E",{expr:T>19&&T<39?"angry":T>39&&T<67?"smirk":"neutral",cig:true,gesture:T>52&&T<64?1:0,walk:T>=65&&T<77?.77:0,speed:1.9,turn:Math.sin(T*.8)*.7});
+if(T>65&&T<77){rect(eX-6,635,12,13,"#322a36");}
+if(sh===0){c.save();c.globalAlpha=.13;ellipse(1000,350,570,290,"#ffebd4");c.restore()}
+}else if(scene==="back"){
+backstage(T);cabinet(1010,652);crew(866,655,"worker");crew(1225,655,"worker");character(530,654,1.17,"E",{cig:false,expr:T>91&&T<105?"angry":"neutral",gesture:T>91&&T<97?1:0,walk:T>109?.12:0});}
+else{
+theaterStage(T);
+for(let i=0;i<4;i++){let x=450+i*250;ellipse(x,540,170,180,"#e1b58e13");}
+crew(1375,646,"worker");
+character(1100,648,1.2,"R",{expr:T>179?"tense":T>147&&T<159?"smile":"neutral",gesture:T>117&&T<141?1:0,turn:Math.sin(T*.8)*.7});
+character(480,650,1.16,"E",{cig:false,expr:T>164?"angry":T>142?"neutral":"shock",gesture:T>159&&T<169?1:0});
+if(T>117&&T<142){line(1134,517,1198,352,"#c7b9a2",4);ellipse(1198,352,9,9,"#c3b69f");}
+if(sh===13){ // framed doorway, establishes social distance
+rect(680,35,18,560,"#211c28");ellipse(480,655,150,18,"#0f12216b");
+}
+if(sh===15){ // distant stage falls away while Rowan's face stays bright
+c.save();c.globalAlpha=.17;ellipse(1102,415,140,140,"#fff0cc");c.restore()
+}
+}
+}
+function frame(T){
+let ix=shots.findIndex(s=>T<s.b);if(ix<0)ix=shots.length-1;let sh=shots[ix],u=smooth((T-sh.a)/(sh.b-sh.a)),camX=lerp(sh.cam[0],sh.to[0],u),camY=lerp(sh.cam[1],sh.to[1],u),z=lerp(sh.cam[2],sh.to[2],u);
+rect(0,0,W,H,"#080810");
+c.save();c.beginPath();c.rect(0,45,1200,585);c.clip();c.translate(W/2-camX*z,H/2-camY*z);c.scale(z,z);
+world(sh.sc,ix,u,T);c.restore();
+shadows();
+rect(0,0,W,45,"#06050a");rect(0,630,W,45,"#06050a");
+c.save();c.globalAlpha=.12;for(let j=0;j<55;j++){let xx=((j*197+T*4)%1210),yy=(j*71)%590+42;rect(xx,yy,1,1,j%2?"#fff":"#222")}c.restore();
+if(T>183){let q=pulse(183,191.8,T);rect(0,45,W,585,"rgba(5,5,12,"+(.04+.65*q)+")");}
+if(T>190.2)txt("THE LAST NAME ON THE MARQUEE",600,337,27,"#f4dcc8","Georgia,serif","center");
+const cue=cues.find(q=>T>=q[0]&&T<q[1]);
+subs.innerHTML=showCaps&&cue?'<span><i>'+cue[2]+' ·</i> '+cue[3]+'</span>':'';
+chapter.textContent=sh.name;
+slider.value=T;document.getElementById("clock").textContent=String(Math.floor(T/60)).padStart(2,"0")+":"+String(Math.floor(T%60)).padStart(2,"0")+" / 03:12";
+}
+function audioInit(){
+if(AC)return;let C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();
+let sr=AC.sampleRate,buff=AC.createBuffer(1,sr*3,sr),a=buff.getChannelData(0);
+for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*.65;
+let src=AC.createBufferSource();src.buffer=buff;src.loop=true;
+let l=AC.createBiquadFilter();l.type="lowpass";l.frequency.value=310;amb=AC.createGain();amb.gain.value=.044;src.connect(l);l.connect(amb);amb.connect(AC.destination);src.start();
+hum=AC.createOscillator();hum.type="sine";hum.frequency.value=58;let hg=AC.createGain();hg.gain.value=.008;hum.connect(hg);hg.connect(AC.destination);hum.start();
+}
+function tone(freq,dur,amp,shape,delay){if(!AC||muted)return;let a=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();o.type=shape||"sine";o.frequency.setValueAtTime(freq,a);g.gain.setValueAtTime(.001,a);g.gain.exponentialRampToValueAtTime(amp,a+.02);g.gain.exponentialRampToValueAtTime(.001,a+dur);o.connect(g);g.connect(AC.destination);o.start(a);o.stop(a+dur+.05)}
+function sfx(kind){if(!AC||muted)return;
+if(kind==="bell"){tone(622,1.5,.025,"sine");tone(931,1.25,.013,"sine",.06);tone(1244,1.9,.006,"sine",.09)}
+if(kind==="metal"){tone(465,.28,.025,"triangle");tone(678,.36,.012,"sine",.03)}
+if(kind==="match"){tone(177,.08,.019,"triangle");tone(1021,.13,.005,"sawtooth",.01)}
+if(kind==="foot"){tone(84,.1,.022,"triangle");tone(225,.07,.006,"sine")}
+if(kind==="door"){tone(173,.8,.027,"sawtooth");tone(92,1.2,.018,"sine",.3)}
+if(kind==="wheel"){tone(101,.5,.014,"sawtooth");tone(286,.13,.008,"triangle",.25)}
+if(kind==="bang"){tone(72,.35,.05,"triangle");tone(121,.5,.026,"sawtooth",.08)}
+if(kind==="curtain"){tone(163,1.1,.02,"sawtooth");tone(403,.7,.005,"triangle",.25)}
+if(kind==="beat"){tone(108,1.9,.022,"sine");tone(162,1.8,.013,"sine",.12)}
+if(kind==="low"){tone(58,2.5,.028,"sine");tone(87,2.8,.008,"triangle",.4)}
+if(kind==="short"){tone(204,.11,.018,"triangle")}}
+function score(T,old){if(!AC||muted)return;for(let ev of events){if(ev[0]>old&&ev[0]<=T)sfx(ev[1])}
+const notes=[[2,293.66],[5,349.23],[8,440],[18,293.66],[22,261.63],[40,349.23],[43,329.63],[58,293.66],[61,261.63],[78,220],[81,261.63],[83,293.66],[88,329.63],[118,261.63],[121,329.63],[124,392],[143,293.66],[148,261.63],[163,220],[167,196],[176,174.61],[183,146.83]];
+for(let note of notes){if(note[0]>old&&note[0]<=T)tone(note[1],2.45,.009,"sine")}
+if(amb){let tgt=T<77?.047:T<117?.027:.014;amb.gain.setTargetAtTime(tgt,AC.currentTime,.45)}}
+function seekTo(n){t=Math.max(0,Math.min(D,Number(n)));lastSoundT=t;frame(t)}
+let accumulator=0;
+function loop(ts){if(!lastFrame)lastFrame=ts;let dt=Math.min(.075,(ts-lastFrame)/1000);lastFrame=ts;
+if(running){let prev=t;t=Math.min(D,t+dt);score(t,prev);if(t>=D){running=false;toggle.textContent="Play";if(AC)AC.suspend()}frame(t)}
+requestAnimationFrame(loop)}
+function begin(){start.classList.add("hidden");audioInit();if(AC)AC.resume();running=true;toggle.textContent="Pause";lastFrame=0}
+document.getElementById("startBtn").onclick=begin;
+toggle.onclick=function(){if(t>=D)seekTo(0);if(!start.classList.contains("hidden")){begin();return}running=!running;toggle.textContent=running?"Pause":"Play";if(AC)(running?AC.resume():AC.suspend());lastFrame=0};
+document.getElementById("restart").onclick=function(){seekTo(0);begin()};
+soundBtn.onclick=function(){muted=!muted;soundBtn.textContent=muted?"Sound off":"Sound on";if(AC){if(muted)AC.suspend();else if(running)AC.resume()}};
+document.getElementById("captions").onclick=function(){showCaps=!showCaps;document.getElementById("captions").textContent=showCaps?"Captions on":"Captions off";frame(t)};
+slider.oninput=function(){running=false;toggle.textContent="Play";if(AC)AC.suspend();seekTo(slider.value)};
+document.addEventListener("keydown",function(e){if(e.code==="Space"&&e.target.tagName!=="BUTTON"&&e.target.tagName!=="INPUT"){e.preventDefault();toggle.click()}});
+frame(0);requestAnimationFrame(loop);
+})();
+</script></body></html>
