@@ -1,4 +1,4 @@
-# THE HOUSE OF ALMOST
+# ROOK
 ## Episode One — A Very Unfortunate Theft
 **Story draft · 16 November 2026**
 
@@ -406,7 +406,7 @@ He put it carefully in his coat pocket.
 
 ## Animation handoff — first rough pass
 
-**Format:** self-contained 2D animated comedy; approximately 5–7 minutes depending on performance and pauses. No supernatural reveal is required for this episode. The title `The House of Almost` is provisional as a series umbrella; the episode itself stands alone.
+**Format:** self-contained 2D animated comedy; approximately 5–7 minutes depending on performance and pauses. No supernatural reveal is required for this episode. The House of Almost remains a possible later storyline, not a premise imposed on this pilot. This episode stands alone.
 
 **Locations:** one ballroom (reuse as wide and close-ups); terrace and garden gate (one night backdrop).
 
