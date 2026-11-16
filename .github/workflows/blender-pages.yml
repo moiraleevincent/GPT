@@ -19,6 +19,8 @@ on:
       - "character_lab/index.html"
       - "face_expression_lab/index.html"
       - "rook_episode_01/index.html"
+      - "mrs_wicker_phone_test/index.html"
+      - "mrs_wicker_phone_test/scene.mp3"
       - "marquee_film/**"
       - "wave_avatar_lab/index.html"
       - "body_study_01/index.html"
@@ -90,6 +92,9 @@ jobs:
             mkdir -p site/marquee_film/audio
             cp marquee_film/audio/dialogue.mp3 site/marquee_film/audio/dialogue.mp3
           fi
+          mkdir -p site/mrs_wicker_phone_test
+          cp mrs_wicker_phone_test/index.html site/mrs_wicker_phone_test/index.html
+          if [ -f mrs_wicker_phone_test/scene.mp3 ]; then cp mrs_wicker_phone_test/scene.mp3 site/mrs_wicker_phone_test/scene.mp3; fi
           mkdir -p site/rook_episode_01
           cp rook_episode_01/index.html site/rook_episode_01/index.html
           mkdir -p site/face_expression_lab
