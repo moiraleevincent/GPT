@@ -60,7 +60,8 @@ const shots=[
 {a:142,b:154,sc:"stage",cam:[502,416,1.62],to:[524,420,1.78],name:"Mother and daughter"},
 {a:154,b:166,sc:"stage",cam:[806,446,1.04],to:[808,444,1.12],name:"My stage"},
 {a:166,b:179,sc:"stage",cam:[508,418,1.74],to:[520,414,1.83],name:"The question"},
-{a:179,b:192,sc:"stage",cam:[1082,415,1.72],to:[1094,399,1.97],name:"The answer"}
+{a:179,b:187.5,sc:"stage",cam:[1082,415,1.72],to:[1094,399,1.87],name:"The answer begins"},
+{a:187.5,b:192,sc:"stage",cam:[502,415,1.82],to:[510,407,2.02],name:"The answer lands"}
 ];
 const cues=[
 [19.7,23,"ESTHER","Well."],
@@ -258,7 +259,7 @@ theaterStage(T);
 for(let i=0;i<4;i++){let x=450+i*250;ellipse(x,540,170,180,"#e1b58e13");}
 crew(1375,646,"worker");
 character(1100,648,1.2,"R",{expr:T>179?"tense":T>147&&T<159?"smile":"neutral",gesture:T>117&&T<141?1:0,turn:Math.sin(T*.8)*.7});
-character(480,650,1.16,"E",{cig:false,expr:T>164?"angry":T>142?"neutral":"shock",gesture:T>159&&T<169?1:0});
+character(480,650,1.16,"E",{cig:false,expr:T>187.5?"neutral":T>164?"angry":T>142?"neutral":"shock",gesture:T>159&&T<169?1:0});
 if(T>117&&T<142){line(1134,517,1198,352,"#c7b9a2",4);ellipse(1198,352,9,9,"#c3b69f");}
 if(sh===13){ // framed doorway, establishes social distance
 rect(680,35,18,560,"#211c28");ellipse(480,655,150,18,"#0f12216b");
@@ -276,8 +277,8 @@ world(sh.sc,ix,u,T);c.restore();
 shadows();
 rect(0,0,W,45,"#06050a");rect(0,630,W,45,"#06050a");
 c.save();c.globalAlpha=.12;for(let j=0;j<55;j++){let xx=((j*197+T*4)%1210),yy=(j*71)%590+42;rect(xx,yy,1,1,j%2?"#fff":"#222")}c.restore();
-if(T>183){let q=pulse(183,191.8,T);rect(0,45,W,585,"rgba(5,5,12,"+(.04+.65*q)+")");}
-if(T>190.2)txt("THE LAST NAME ON THE MARQUEE",600,337,27,"#f4dcc8","Georgia,serif","center");
+if(T>190.2){let q=pulse(190.2,191.9,T);rect(0,45,W,585,"rgba(5,5,12,"+q+")");}
+if(T>191.5)txt("THE LAST NAME ON THE MARQUEE",600,337,27,"#f4dcc8","Georgia,serif","center");
 const cue=cues.find(q=>T>=q[0]&&T<q[1]);
 subs.innerHTML=showCaps&&cue?'<span><i>'+cue[2]+' ·</i> '+cue[3]+'</span>':'';
 chapter.textContent=sh.name;
