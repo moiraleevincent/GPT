@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mrs. Wicker — The Lilies (opening animatic)</title>
+<style>
+:root{color-scheme:dark;--cream:#e7dac0;--muted:#aaad9e;--ink:#131c1b}
+*{box-sizing:border-box}body{margin:0;background:#101b1b;color:var(--cream);font-family:Georgia,'Times New Roman',serif}
+main{max-width:1180px;margin:0 auto;padding:24px 18px 42px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-size:clamp(23px,4vw,37px);font-weight:normal;letter-spacing:.05em;margin:0 0 4px}
+.eyebrow{font:11px system-ui,sans-serif;letter-spacing:.22em;color:#c9a979;text-transform:uppercase}
+p{color:var(--muted);margin:9px 0 20px;font:14px/1.6 system-ui,sans-serif}
+.film{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden;border:1px solid #607166;box-shadow:0 24px 70px #0009}
+svg{display:block;width:100%;height:100%}
+#subtitle{position:absolute;left:12%;bottom:6%;width:76%;text-align:center;color:#fff6e6;font:clamp(14px,2.4vw,27px)/1.35 Georgia,serif;text-shadow:1px 2px 5px #000,0 0 22px #000;pointer-events:none}
+#subtitle small{display:block;font:clamp(8px,1vw,12px) system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#edce9d;margin-bottom:3px}
+#shade{position:absolute;inset:0;background:#101818;opacity:0;pointer-events:none}
+#endtitle{display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:clamp(20px,5vw,60px);letter-spacing:.13em;text-align:center;background:#1c2725}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:15px 0 8px;font:13px system-ui,sans-serif}
+button{border:1px solid #91a295;background:#293b35;color:#fff7df;padding:11px 17px;cursor:pointer;border-radius:4px;font:600 13px system-ui,sans-serif}
+button:focus-visible,input:focus-visible{outline:2px solid #e0bb77;outline-offset:4px}
+button:hover{background:#384d43}
+input[type=range]{flex:1;min-width:140px;accent-color:#c3a276}
+#clock{font-variant-numeric:tabular-nums;color:#d8c6a8;min-width:85px;text-align:right}
+.meta{display:flex;justify-content:space-between;flex-wrap:wrap;font:12px system-ui,sans-serif;color:#9aa8a0;gap:12px}
+a{color:#ead29d}
+@media(max-width:600px){main{padding:14px 10px}.controls{gap:8px}button{padding:10px}#subtitle{bottom:4%}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><h1>Mrs. Wicker <span style="font-style:italic;color:#c6a671">— The Lilies</span></h1><span class="eyebrow">Opening scene / first animatic</span></div>
+<p>A roughly 46-second camera, dialogue and music test. Character acting and editing first; the illustration is intentionally provisional.</p>
+<div class="film" aria-label="Animated opening scene of Mrs Wicker arguing with an undertaker over the telephone">
+<svg id="stage" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#4d5b51"/><stop offset="1" stop-color="#35483f"/></linearGradient>
+  <linearGradient id="window" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff2cb"/><stop offset=".65" stop-color="#e4b987"/><stop offset="1" stop-color="#ae9770"/></linearGradient>
+  <linearGradient id="chair" x1="0" x2="1"><stop stop-color="#4b2435"/><stop offset=".55" stop-color="#8b4d55"/><stop offset="1" stop-color="#4f2937"/></linearGradient>
+  <linearGradient id="face" x1="0" y1="0" x2="1"><stop stop-color="#f0cfad"/><stop offset=".6" stop-color="#d6a988"/><stop offset="1" stop-color="#ac796d"/></linearGradient>
+  <pattern id="paper" width="35" height="35" patternUnits="userSpaceOnUse"><path d="M 10 10 l2 -1 m15 12 l2 3" stroke="#e4d0a8" opacity=".045"/></pattern>
+  <pattern id="floral" width="170" height="190" patternUnits="userSpaceOnUse"><path d="M80 190Q53 99 92 6 M78 104Q36 83 20 45 M77 123Q120 80 151 91" fill="none" stroke="#a9b18c" stroke-width="2" opacity=".16"/><path d="M58 66q-20 -12 -23 -24q18 -1 24 24M102 64q8 -22 26 -21q-5 21 -26 21M62 145q-29 -7 -30 -29q23 5 30 29" fill="#b5a77f" opacity=".14"/><circle cx="78" cy="100" r="9" fill="#bf8e7a" opacity=".20"/></pattern>
+  <filter id="shadow"><feGaussianBlur stdDeviation="11"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".28" numOctaves="3" seed="7"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".07"/></feComponentTransfer></filter>
+</defs>
+
+<!-- Mrs Wicker's living room -->
+<g id="room">
+  <rect width="1280" height="720" fill="url(#wall)"/>
+  <rect width="1280" height="515" fill="url(#floral)"/>
+  <path d="M0 512H1280V720H0Z" fill="#58443b"/>
+  <path d="M0 515H1280" stroke="#b29a7b" stroke-width="14"/><path d="M0 532H1280" stroke="#382c2e" stroke-width="5"/>
+  <path d="M0 630Q570 590 1280 640V720H0Z" fill="#713d48" opacity=".6"/>
+  <path d="M15 15h1250v690H15Z" stroke="#d2c297" stroke-width="5" fill="none" opacity=".2"/>
+  <!-- window, curtains, daylight -->
+  <rect x="910" y="60" width="280" height="395" rx="8" fill="#241e24" stroke="#b29d78" stroke-width="18"/>
+  <rect x="926" y="77" width="246" height="357" fill="url(#window)"/>
+  <path d="M1047 75V430M927 250H1170" stroke="#674a42" stroke-width="13"/>
+  <path d="M922 67Q960 200 911 454L967 440Q1011 251 965 75Z" fill="#c8bca0" opacity=".77"/>
+  <path d="M1174 67Q1132 200 1197 454L1155 440Q1104 252 1134 75Z" fill="#b6a786" opacity=".7"/>
+  <ellipse cx="1054" cy="440" rx="105" ry="16" fill="#f4d0a0" opacity=".12" filter="url(#shadow)"/>
+  <!-- bookcase and mementos -->
+  <rect x="44" y="120" width="245" height="400" fill="#362d2c" stroke="#b99f72" stroke-width="9"/>
+  <path d="M53 228H280M53 346H280M53 465H280" stroke="#947454" stroke-width="13"/>
+  <g id="books" fill="#aa816b" stroke="#342e30" stroke-width="3">
+    <rect x="66" y="138" width="24" height="83"/><rect x="95" y="145" width="30" height="75" fill="#798c7c"/><rect x="130" y="132" width="18" height="87" fill="#c1a876"/><rect x="154" y="153" width="29" height="67" fill="#896e74"/><rect x="190" y="138" width="18" height="82"/><rect x="215" y="143" width="31" height="76" fill="#758a7b"/>
+    <rect x="66" y="255" width="30" height="84" fill="#76666a"/><rect x="101" y="259" width="20" height="80"/><rect x="128" y="249" width="29" height="90" fill="#899278"/><rect x="164" y="258" width="32" height="80" fill="#bda079"/><rect x="204" y="251" width="21" height="88" fill="#79565a"/><rect x="232" y="265" width="29" height="74" fill="#a37c65"/>
+    <rect x="70" y="371" width="21" height="86"/><rect x="98" y="380" width="27" height="76" fill="#819386"/><rect x="131" y="370" width="22" height="86" fill="#aa866f"/><rect x="161" y="379" width="30" height="76" fill="#7b5a60"/><rect x="197" y="364" width="26" height="92" fill="#c2a779"/><rect x="232" y="380" width="31" height="77" fill="#819386"/>
+  </g>
+  <rect x="329" y="92" width="230" height="190" rx="5" fill="#483f34" stroke="#bb9872" stroke-width="15"/>
+  <rect x="349" y="110" width="193" height="154" fill="#807765"/>
+  <path d="M349 245L416 158L447 195L474 145L542 255Z" fill="#52675d"/><circle cx="494" cy="142" r="17" fill="#ead1a4"/>
+  <g stroke="#dfc69b" stroke-width="6" fill="#423b33"><rect x="392" y="311" width="80" height="91"/><rect x="308" y="332" width="62" height="80"/></g>
+  <path d="M415 350q15 -20 33 0" stroke="#d0bba1" stroke-width="6" fill="none"/>
+  <!-- dresser with porcelain -->
+  <rect x="323" y="475" width="220" height="130" fill="#4b3733" stroke="#856f58" stroke-width="6"/>
+  <rect x="330" y="458" width="218" height="20" rx="4" fill="#ae8b69"/><path d="M436 484V602" stroke="#ac8566" stroke-width="4"/>
+  <circle cx="402" cy="546" r="5" fill="#d6bb7e"/><circle cx="475" cy="546" r="5" fill="#d6bb7e"/>
+  <path d="M350 455Q337 423 357 410Q367 405 380 425Q395 418 406 434Q404 454 385 455Z" fill="#e1c9a5" stroke="#b49a84" stroke-width="4"/>
+  <path d="M462 461Q450 440 455 417Q472 420 478 436Q486 426 500 432Q504 456 488 461Z" fill="#cbc2a1" stroke="#b49a84" stroke-width="3"/>
+  <!-- armchair -->
+  <ellipse cx="748" cy="622" rx="208" ry="40" fill="#1c2221" opacity=".48" filter="url(#shadow)"/>
+  <path d="M593 399Q577 277 665 268L850 270Q935 280 919 404L901 597H612Z" fill="url(#chair)" stroke="#34252b" stroke-width="10"/>
+  <path d="M622 387Q610 319 677 313L833 312Q896 327 881 395L867 547H639Z" fill="#8b6260" opacity=".45"/>
+  <path d="M596 414Q537 412 538 467Q540 509 598 524L617 586L655 578L645 447Z" fill="#703c49" stroke="#392932" stroke-width="9"/>
+  <path d="M902 414Q969 411 971 469Q966 513 915 525L895 587L855 579L866 451Z" fill="#703c49" stroke="#392932" stroke-width="9"/>
+  <rect x="612" y="545" width="298" height="80" rx="23" fill="#5b3040" stroke="#33252a" stroke-width="7"/>
+  <path d="M637 622L624 688H652L674 624M864 624L881 688H909L897 622" fill="#372927"/>
+  <!-- Mrs Wicker -->
+  <g id="wicker" transform="translate(0 0)">
+    <path d="M690 404Q736 389 800 393Q863 390 890 417L904 588Q811 615 681 592Z" fill="#533143" stroke="#30262f" stroke-width="5"/>
+    <path d="M735 404L754 514Q783 529 801 499L834 406" fill="#dfc9aa" stroke="#a68c7b" stroke-width="3"/>
+    <path d="M725 418Q751 445 763 470M854 414Q834 449 837 467" fill="none" stroke="#bc8193" stroke-width="5"/>
+    <path d="M718 594Q786 611 872 592L889 642H708Z" fill="#77505b" stroke="#362a30" stroke-width="5"/>
+    <path d="M742 640v32h36v-29M824 640v33h33v-31" fill="#d0b599"/>
+    <path d="M728 669q15 -17 48 0v18h-56q-5 -11 8 -18M821 669q18 -17 44 0l5 18h-56Z" fill="#251f25" stroke="#ba9c78" stroke-width="3"/>
+    <!-- shoulders / hands -->
+    <path d="M701 421Q669 436 657 497Q659 511 680 513L728 482" fill="#583344" stroke="#34262e" stroke-width="6"/>
+    <path d="M679 503q19 -17 33 -10q13 7 8 18q-12 14 -38 10" fill="url(#face)" stroke="#906e63" stroke-width="3"/>
+    <path d="M858 421Q904 430 911 467L894 489" fill="#5a3446" stroke="#34262e" stroke-width="6"/>
+    <path d="M891 467Q907 444 917 417Q924 394 909 386Q894 385 889 399L880 451" fill="url(#face)" stroke="#8f6b61" stroke-width="4"/>
+    <path d="M778 390v31h47v-30Z" fill="url(#face)"/>
+    <!-- head and grey hair -->
+    <ellipse cx="803" cy="304" rx="78" ry="101" fill="#a8a5a0" stroke="#454549" stroke-width="5"/>
+    <ellipse cx="865" cy="244" rx="44" ry="41" fill="#bcb6ae" stroke="#5f5a5a" stroke-width="5"/>
+    <path d="M742 275Q739 207 792 199Q843 182 868 252L851 287Q847 244 826 235Q787 261 752 254Z" fill="#c0bcb4" stroke="#5b5a5c" stroke-width="5"/>
+    <ellipse cx="803" cy="320" rx="65" ry="82" fill="url(#face)" stroke="#8f6d63" stroke-width="3"/>
+    <path d="M739 305Q728 299 729 324Q731 338 745 335M865 310Q875 308 871 327Q864 345 858 329" fill="#d3ab92" stroke="#8f6d63" stroke-width="3"/>
+    <!-- expressive brows -->
+    <path id="leftBrow" d="M763 294Q779 287 789 296M817 299Q832 287 847 292" stroke="#59504c" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <g id="eyes"><path d="M760 309Q777 303 792 312M816 314Q831 306 847 309" fill="none" stroke="#4b3939" stroke-width="4"/><circle cx="779" cy="313" r="4" fill="#2d2d2b"/><circle cx="831" cy="314" r="4" fill="#2d2d2b"/></g>
+    <path d="M808 308Q794 342 804 347L814 348" stroke="#aa7c6c" stroke-width="3" fill="none"/>
+    <path d="M787 364Q808 359 827 363" stroke="#7c424a" stroke-width="3" fill="none"/>
+    <path id="w-mouth" d="M786 370Q808 373 830 366" stroke="#5a3039" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- glasses -->
+    <path d="M751 296Q758 290 797 301M807 302Q828 292 856 297" stroke="#d4b68a" stroke-width="4" fill="none"/>
+    <ellipse cx="777" cy="313" rx="23" ry="19" stroke="#a88f6c" stroke-width="3" fill="none"/>
+    <ellipse cx="834" cy="313" rx="23" ry="19" stroke="#a88f6c" stroke-width="3" fill="none"/>
+    <path d="M800 312q6 -4 11 0" fill="none" stroke="#a88f6c" stroke-width="3"/>
+    <circle cx="798" cy="430" r="12" fill="#c3a478" stroke="#594531" stroke-width="4"/>
+    <path d="M800 419L800 440M789 430h22" stroke="#704e55" stroke-width="2"/>
+    <!-- ear receiver -->
+    <g id="receiver" transform="translate(0 0)">
+      <path d="M861 294Q893 299 894 336" stroke="#13191a" stroke-width="19" fill="none" stroke-linecap="round"/>
+      <ellipse cx="860" cy="286" rx="20" ry="15" transform="rotate(-28 860 286)" fill="#182021" stroke="#9a8c7e" stroke-width="3"/>
+      <ellipse cx="896" cy="344" rx="20" ry="15" transform="rotate(-28 896 344)" fill="#182021" stroke="#9a8c7e" stroke-width="3"/>
+    </g>
+  </g>
+  <!-- phone table and curling cable -->
+  <path d="M920 386Q994 391 940 466Q922 507 1015 524" fill="none" stroke="#20282a" stroke-width="6"/>
+  <path d="M920 404Q967 397 937 448M935 466Q950 488 976 472" stroke="#786c62" stroke-width="2" fill="none"/>
+  <ellipse cx="1032" cy="625" rx="130" ry="25" fill="#101b1b" opacity=".35" filter="url(#shadow)"/>
+  <path d="M926 514H1128L1157 545H907Z" fill="#a78b68" stroke="#4c3833" stroke-width="7"/>
+  <path d="M948 541H970V688H942ZM1105 540H1126V688H1098Z" fill="#5a4037"/>
+  <path d="M999 507Q1017 482 1047 484Q1082 486 1090 508Z" fill="#1b2829" stroke="#101818" stroke-width="5"/>
+  <ellipse cx="1044" cy="506" rx="33" ry="14" fill="#2b3839"/><g fill="none" stroke="#c5b89b" stroke-width="3">
+  <circle cx="1044" cy="503" r="20"/><circle cx="1044" cy="503" r="6"/></g>
+  <ellipse cx="1044" cy="553" rx="65" ry="11" fill="#d9ba91" opacity=".18"/>
+  <rect width="1280" height="720" fill="url(#paper)" opacity=".65"/>
+</g>
+
+<!-- Finch's office -->
+<g id="office" style="display:none">
+  <rect width="1280" height="720" fill="#4d5b54"/>
+  <rect x="0" y="470" width="1280" height="250" fill="#4a3832"/>
+  <rect x="63" y="74" width="450" height="355" fill="#303a38" stroke="#b1a180" stroke-width="15"/>
+  <rect x="86" y="98" width="406" height="309" fill="#a2a18d"/>
+  <path d="M290 98V407M86 255H492" stroke="#454943" stroke-width="12"/>
+  <path d="M86 375L135 279L211 341L323 250L492 380Z" fill="#6d7567" opacity=".45"/>
+  <rect x="552" y="46" width="300" height="126" fill="#697166" stroke="#bba481" stroke-width="8"/>
+  <text x="700" y="96" text-anchor="middle" fill="#e9d7ad" font-family="Georgia" font-size="31" letter-spacing="4">FINCH &amp; SONS</text>
+  <text x="700" y="135" text-anchor="middle" fill="#ded5bf" font-family="Georgia" font-size="17" letter-spacing="3">FUNERAL SERVICES</text>
+  <rect x="951" y="72" width="252" height="374" fill="#26312f" stroke="#b09b7b" stroke-width="13"/>
+  <path d="M966 240H1186" stroke="#7c7861" stroke-width="10"/>
+  <g fill="#ae9781" stroke="#35433e" stroke-width="5"><rect x="980" y="125" width="30" height="103"/><rect x="1017" y="145" width="42" height="82"/><rect x="1066" y="107" width="28" height="120"/><rect x="1100" y="132" width="31" height="95"/><rect x="1139" y="122" width="33" height="103"/></g>
+  <ellipse cx="743" cy="668" rx="350" ry="42" fill="#111b1b" opacity=".48"/>
+  <!-- Bernard, a narrow tired undertaker -->
+  <path d="M661 380Q687 341 736 342Q789 342 827 388L873 560H611Z" fill="#232d31" stroke="#192022" stroke-width="9"/>
+  <path d="M718 367L748 448L783 367" fill="#d2ccc1" stroke="#857a73" stroke-width="3"/>
+  <path d="M747 398L733 441L747 497L763 442Z" fill="#5e4950" stroke="#2e2d35" stroke-width="3"/>
+  <rect x="723" y="325" width="46" height="43" fill="#bf9d84"/>
+  <ellipse cx="747" cy="256" rx="73" ry="92" fill="#a89c90" stroke="#35403c" stroke-width="5"/>
+  <path d="M683 248Q668 157 741 159Q824 160 812 247L794 214L700 216Z" fill="#3a383b" stroke="#1f2728" stroke-width="4"/>
+  <ellipse cx="745" cy="268" rx="65" ry="81" fill="#d6b49b" stroke="#947c70" stroke-width="3"/>
+  <path d="M712 269q12 -5 24 1M763 271q12 -5 23 1" stroke="#443b3a" stroke-width="4" fill="none"/>
+  <path d="M744 267l-6 38 10 4" stroke="#9f796f" stroke-width="3" fill="none"/>
+  <path id="b-mouth" d="M728 328Q750 326 767 327" stroke="#765752" stroke-width="4" fill="none"/>
+  <g fill="none" stroke="#4b4d4a" stroke-width="5"><rect x="690" y="250" width="50" height="36" rx="10"/><rect x="753" y="250" width="48" height="36" rx="10"/><path d="M740 260h13"/></g>
+  <path d="M703 373Q691 386 676 435L666 499M800 374Q825 405 835 494" stroke="#d0a48d" stroke-width="24" fill="none" stroke-linecap="round"/>
+  <!-- desk and paper, foreground -->
+  <path d="M187 502L1115 502L1181 587L123 587Z" fill="#947353" stroke="#382d2c" stroke-width="8"/>
+  <path d="M208 587h50v133h-50M1031 587h50v133h-50" fill="#634a39"/>
+  <path d="M598 456L857 445L928 543L615 561Z" fill="#efe5ce" stroke="#8b7660" stroke-width="5"/>
+  <g id="certificate" transform="translate(0 0)">
+    <path d="M614 468L847 458L898 534L630 543Z" fill="none" stroke="#b0a08b" stroke-width="2"/>
+    <text x="752" y="482" text-anchor="middle" font-family="Georgia" font-size="15" fill="#4b4741">CERTIFICATE OF DEATH</text>
+    <path d="M678 499H821M677 515H858M680 532H836" stroke="#878077" stroke-width="2"/>
+    <circle cx="854" cy="519" r="22" fill="none" stroke="#9d6259" stroke-width="3"/>
+    <text x="853" y="522" text-anchor="middle" fill="#9d6259" font-family="Georgia" font-size="8">FILED</text>
+  </g>
+  <ellipse cx="400" cy="537" rx="72" ry="29" fill="#252f31"/>
+  <path d="M360 535Q350 499 390 495Q447 491 457 531Z" fill="#334140" stroke="#1c2427" stroke-width="7"/>
+  <rect width="1280" height="720" fill="url(#paper)" opacity=".7"/>
+</g>
+<rect width="1280" height="720" fill="#ffecd0" opacity=".035" filter="url(#grain)"/>
+</svg>
+<div id="subtitle" aria-live="polite"></div>
+<div id="shade"></div><div id="endtitle">THE TROUBLE<br>WITH MRS. WICKER</div>
+</div>
+<div class="controls">
+<button id="play" type="button">▶ Play scene</button>
+<button id="restart" type="button">↺ Restart</button>
+<input id="seek" type="range" min="0" max="46" value="0" step=".05" aria-label="Seek in scene">
+<span id="clock">0:00 / 0:46</span>
+<button id="captions" type="button">CC on</button>
+</div>
+<div class="meta"><span id="status">Loading soundtrack…</span><span>Directed timing test · British dialogue · original music sketch</span></div>
+<audio id="audio" preload="auto" src="scene.mp3"></audio>
+</main>
+<script>
+(function(){
+"use strict";
+const DURATION=46, stage=document.getElementById('stage'), room=document.getElementById('room'), office=document.getElementById('office');
+const audio=document.getElementById('audio'), play=document.getElementById('play'), restart=document.getElementById('restart'), seek=document.getElementById('seek'), clock=document.getElementById('clock'), sub=document.getElementById('subtitle'), captions=document.getElementById('captions'), shade=document.getElementById('shade'), endtitle=document.getElementById('endtitle'), status=document.getElementById('status');
+const wm=document.getElementById('w-mouth'), bm=document.getElementById('b-mouth'), recv=document.getElementById('receiver'), eyes=document.getElementById('eyes');
+const L=[
+['NARRATOR','This is Mrs. Wicker.',1.15,2.9],
+['MRS. WICKER',"They're lilies.",4.15,5.65],
+['BERNARD','Yes, Mrs. Wicker.',6.10,7.57],
+['MRS. WICKER','I hate lilies.',7.94,9.5],
+['BERNARD',"I'm terribly sorry.",10.02,11.62],
+['MRS. WICKER','They smell like cat piss.',12.05,14.44],
+['BERNARD','Yes, Mrs. Wicker.',14.88,16.45],
+['NARRATOR','Mrs. Wicker was not pleased with the arrangements for her funeral.',17.01,21.96],
+['MRS. WICKER',"And another thing. I'm not dead.",22.55,26.04],
+['NARRATOR','Nor, for that matter, with being dead.',26.42,29.5],
+['BERNARD',"I'm afraid you are, Mrs. Wicker.",30.05,33.4],
+['MRS. WICKER',"Well. That's a bloody inconvenience.",38.02,40.95]
+];
+let t=0,playing=false,ccon=true,last=0,audioOK=false,raf=0;
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const smooth=v=>{v=clamp(v);return v*v*(3-2*v)};
+const between=(a,b,u)=>a+(b-a)*u;
+function view(x,y,w){stage.setAttribute('viewBox',[x.toFixed(2),y.toFixed(2),w.toFixed(2),(w*9/16).toFixed(2)].join(' '))}
+function shot(t){
+  // Deliberate cuts: the shot holds on Wicker for the 'not dead' revelation.
+  if(t<3.7)return [80,16,1145];
+  if(t<11.7)return [490,136,695];
+  if(t<17)return [650,213,525];
+  if(t<22.3)return [570,150,625];
+  if(t<29.8)return [480,124,735];
+  if(t<33.0)return [515,390,610]; // death certificate insert
+  if(t<37.4){let u=smooth((t-33)/3.8);return [between(515,451,u),between(390,111,u),between(610,720,u)]} // tilt up to Finch's face
+  if(t<41.85)return [480,128,735];
+  return [190,8,1040];
+}
+function render(){
+  room.style.display=t>=29.8&&t<37.4?'none':'';
+  office.style.display=t>=29.8&&t<37.4?'':'none';
+  const a=shot(t);view(a[0],a[1],a[2]);
+  const wick=L.some(l=>l[0]==='MRS. WICKER'&&t>=l[2]&&t<l[3]);
+  const bern=L.some(l=>l[0]==='BERNARD'&&t>=l[2]&&t<l[3]);
+  const mouth=wick ? (Math.sin(t*22)+1)*2.4 : 0;
+  wm.setAttribute('d',wick?'M786 370Q808 '+(366+mouth).toFixed(1)+' 830 366':'M786 370Q808 373 830 366');
+  bm.setAttribute('d',bern?'M728 327Q747 '+(330+(Math.sin(t*19)+1)*3).toFixed(1)+' 769 326':'M728 328Q750 326 767 327');
+  eyes.style.opacity=((t*1.3)%7.8<.13)?.13:1;
+  const bob=Math.sin(t*1.7)*.85;
+  document.getElementById('wicker').setAttribute('transform','translate(0 '+bob.toFixed(2)+')');
+  if(t>41.12)recv.setAttribute('transform','translate('+((t-41.12)*15).toFixed(1)+' '+((t-41.12)*88).toFixed(1)+') rotate('+Math.min(64,(t-41.12)*55)+' 882 325)');
+  else recv.setAttribute('transform','');
+  const active=L.find(l=>t>=l[2]&&t<l[3]);
+  sub.innerHTML=ccon&&active?'<small>'+active[0]+'</small>'+active[1].replace(/&/g,'&amp;').replace(/</g,'&lt;'):'';
+  // Extremely short dark cuts, not punctuation after every comic line.
+  let cut=0;
+  for(const c of [29.8,37.4,41.85])cut=Math.max(cut,1-clamp(Math.abs(t-c)/.19));
+  shade.style.opacity=(cut*.9).toFixed(3);
+  endtitle.style.display=t>43.2?'flex':'none';
+  const secs=Math.floor(t);
+  clock.textContent=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0')+' / 0:46';
+  seek.value=t;
+}
+function tick(now){
+  if(playing){
+    if(audioOK&&!audio.paused)t=audio.currentTime;
+    else {t+=Math.min(.08,Math.max(0,(now-last)/1000))}
+    if(t>=DURATION){t=DURATION;playing=false;audio.pause();play.textContent='▶ Play scene'}
+  }
+  last=now;render();raf=requestAnimationFrame(tick);
+}
+function start(){
+  if(t>=DURATION)t=0;
+  playing=!playing;
+  play.textContent=playing?'Ⅱ Pause':'▶ Play scene';
+  if(playing&&audioOK){audio.currentTime=t;audio.play().catch(()=>{audioOK=false;status.textContent='Silent timing preview — soundtrack unavailable';})}
+  else audio.pause();
+}
+play.addEventListener('click',start);
+restart.addEventListener('click',()=>{t=0;audio.currentTime=0;if(playing&&audioOK)audio.play().catch(()=>{});render()});
+seek.addEventListener('input',()=>{t=parseFloat(seek.value);if(audioOK){audio.currentTime=t;if(playing)audio.play().catch(()=>{})}render()});
+captions.addEventListener('click',()=>{ccon=!ccon;captions.textContent=ccon?'CC on':'CC off';render()});
+audio.addEventListener('canplay',()=>{audioOK=true;status.textContent='Soundtrack ready · press Play';});
+audio.addEventListener('error',()=>{audioOK=false;status.textContent='Silent visual timing preview — soundtrack not available yet';});
+audio.addEventListener('ended',()=>{playing=false;play.textContent='▶ Play scene';t=DURATION;render()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing){playing=false;audio.pause();play.textContent='▶ Play scene'}});
+render();raf=requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
