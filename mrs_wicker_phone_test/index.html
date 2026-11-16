@@ -280,7 +280,7 @@ play.addEventListener('click',start);
 restart.addEventListener('click',()=>{t=0;audio.currentTime=0;if(playing&&audioOK)audio.play().catch(()=>{});render()});
 seek.addEventListener('input',()=>{t=parseFloat(seek.value);if(audioOK){audio.currentTime=t;if(playing)audio.play().catch(()=>{})}render()});
 captions.addEventListener('click',()=>{ccon=!ccon;captions.textContent=ccon?'CC on':'CC off';render()});
-audio.addEventListener('canplay',()=>{audioOK=true;status.textContent='Soundtrack ready · press Play';});
+audio.addEventListener('canplay',()=>{audioOK=true;status.textContent='Soundtrack ready';if(playing&&audio.paused){audio.currentTime=t;audio.play().catch(()=>{});}});
 audio.addEventListener('error',()=>{audioOK=false;status.textContent='Silent visual timing preview — soundtrack not available yet';});
 audio.addEventListener('ended',()=>{playing=false;play.textContent='▶ Play scene';t=DURATION;render()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing){playing=false;audio.pause();play.textContent='▶ Play scene'}});
