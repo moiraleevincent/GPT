@@ -1,0 +1,32 @@
+name: Render Mrs Wicker phone-scene voices
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "mrs_wicker_phone_test/generate_audio.py"
+      - ".github/workflows/mrs-wicker-phone.yml"
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Audio dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg espeak-ng
+          pip install kokoro soundfile numpy
+      - run: python mrs_wicker_phone_test/generate_audio.py
+      - name: Commit rendered soundtrack and line assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mrs_wicker_phone_test/*.mp3 mrs_wicker_phone_test/*.wav mrs_wicker_phone_test/manifest.json
+          git commit -m "Render Mrs Wicker dialogue [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
