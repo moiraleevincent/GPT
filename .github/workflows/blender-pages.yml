@@ -19,6 +19,7 @@ on:
       - "character_lab/index.html"
       - "face_expression_lab/index.html"
       - "rook_episode_01/index.html"
+      - "marquee_film/**"
       - "wave_avatar_lab/index.html"
       - "body_study_01/index.html"
       - "body_study_01/figure.svg"
@@ -83,6 +84,8 @@ jobs:
           cp character_lab/index.html site/character_lab/index.html
           if [ -f character_lab/output/star_keeper.mp4 ]; then cp character_lab/output/star_keeper.mp4 site/character_lab/output/; fi
           if [ -f character_lab/output/poster.png ]; then cp character_lab/output/poster.png site/character_lab/output/; fi
+          mkdir -p site/marquee_film
+          cp marquee_film/index.html site/marquee_film/index.html
           mkdir -p site/rook_episode_01
           cp rook_episode_01/index.html site/rook_episode_01/index.html
           mkdir -p site/face_expression_lab
