@@ -1,0 +1,334 @@
+{
+  "sample_rate": 24000,
+  "duration": 192,
+  "casting": {
+    "ESTHER": [
+      "bf_emma",
+      1.06,
+      -0.15
+    ],
+    "ROWAN": [
+      "bf_isabella",
+      1.06,
+      0.15
+    ],
+    "BOY": [
+      "bm_george",
+      1.09,
+      -0.04
+    ],
+    "WORKER": [
+      "bm_daniel",
+      1.08,
+      0.08
+    ]
+  },
+  "events": [
+    {
+      "id": 1,
+      "at": 19.7,
+      "end": 23,
+      "speaker": "ESTHER",
+      "text": "Well.",
+      "voice": "bf_emma",
+      "actual_seconds": 0.85
+    },
+    {
+      "id": 2,
+      "at": 28.5,
+      "end": 32.5,
+      "speaker": "BOY",
+      "text": "Good morning, Mrs. Vale.",
+      "voice": "bm_george",
+      "actual_seconds": 2.48
+    },
+    {
+      "id": 3,
+      "at": 33,
+      "end": 35.7,
+      "speaker": "ESTHER",
+      "text": "Is it?",
+      "voice": "bf_emma",
+      "actual_seconds": 1.1
+    },
+    {
+      "id": 4,
+      "at": 36,
+      "end": 38.8,
+      "speaker": "BOY",
+      "text": "That's unfortunate.",
+      "voice": "bm_george",
+      "actual_seconds": 1.98
+    },
+    {
+      "id": 5,
+      "at": 39.4,
+      "end": 43.3,
+      "speaker": "BOY",
+      "text": "Your daughter, isn't it?",
+      "voice": "bm_george",
+      "actual_seconds": 2.25
+    },
+    {
+      "id": 6,
+      "at": 43.6,
+      "end": 46.1,
+      "speaker": "ESTHER",
+      "text": "Allegedly.",
+      "voice": "bf_emma",
+      "actual_seconds": 1.45
+    },
+    {
+      "id": 7,
+      "at": 46.5,
+      "end": 51.7,
+      "speaker": "BOY",
+      "text": "My mum says she's wonderful.",
+      "voice": "bm_george",
+      "actual_seconds": 2.67
+    },
+    {
+      "id": 8,
+      "at": 52.3,
+      "end": 57.5,
+      "speaker": "ESTHER",
+      "text": "Your mother has always been susceptible to spectacle.",
+      "voice": "bf_emma",
+      "actual_seconds": 3.58
+    },
+    {
+      "id": 9,
+      "at": 57.7,
+      "end": 62.5,
+      "speaker": "BOY",
+      "text": "She made an entire horse disappear in London.",
+      "voice": "bm_george",
+      "actual_seconds": 3.58
+    },
+    {
+      "id": 10,
+      "at": 62.6,
+      "end": 67.3,
+      "speaker": "ESTHER",
+      "text": "Anybody can make a horse disappear.",
+      "voice": "bf_emma",
+      "actual_seconds": 2.8
+    },
+    {
+      "id": 11,
+      "at": 67.4,
+      "end": 75.0,
+      "speaker": "ESTHER",
+      "text": "Keeping one in a box for forty-five minutes is the difficult part.",
+      "voice": "bf_emma",
+      "actual_seconds": 4.12
+    },
+    {
+      "id": 12,
+      "at": 91.7,
+      "end": 96.0,
+      "speaker": "ESTHER",
+      "text": "Careful! That's an original Delacourt cabinet!",
+      "voice": "bf_emma",
+      "actual_seconds": 3.3
+    },
+    {
+      "id": 13,
+      "at": 96.8,
+      "end": 100.2,
+      "speaker": "WORKER",
+      "text": "Twenty pounds?",
+      "voice": "bm_daniel",
+      "actual_seconds": 1.6
+    },
+    {
+      "id": 14,
+      "at": 100.4,
+      "end": 104.5,
+      "speaker": "ESTHER",
+      "text": "Where is Mr. Bell?",
+      "voice": "bf_emma",
+      "actual_seconds": 1.93
+    },
+    {
+      "id": 15,
+      "at": 105.2,
+      "end": 108.3,
+      "speaker": "WORKER",
+      "text": "In the office.",
+      "voice": "bm_daniel",
+      "actual_seconds": 1.52
+    },
+    {
+      "id": 16,
+      "at": 108.7,
+      "end": 111.4,
+      "speaker": "ESTHER",
+      "text": "Where is my daughter?",
+      "voice": "bf_emma",
+      "actual_seconds": 2.0
+    },
+    {
+      "id": 17,
+      "at": 112.0,
+      "end": 114.0,
+      "speaker": "WORKER",
+      "text": "Onstage.",
+      "voice": "bm_daniel",
+      "actual_seconds": 1.48
+    },
+    {
+      "id": 18,
+      "at": 114.3,
+      "end": 116.8,
+      "speaker": "ESTHER",
+      "text": "Of course she is.",
+      "voice": "bf_emma",
+      "actual_seconds": 1.82
+    },
+    {
+      "id": 19,
+      "at": 119.7,
+      "end": 128.4,
+      "speaker": "ROWAN",
+      "text": "No. If I pull the line from there, you'll see my shoulder move. It needs to come from behind the frame.",
+      "voice": "bf_isabella",
+      "actual_seconds": 5.8
+    },
+    {
+      "id": 20,
+      "at": 131.1,
+      "end": 137.3,
+      "speaker": "ROWAN",
+      "text": "We won't use the cabinet.",
+      "voice": "bf_isabella",
+      "actual_seconds": 2.23
+    },
+    {
+      "id": 21,
+      "at": 142.4,
+      "end": 146.2,
+      "speaker": "ESTHER",
+      "text": "Excuse me?",
+      "voice": "bf_emma",
+      "actual_seconds": 1.65
+    },
+    {
+      "id": 22,
+      "at": 147.0,
+      "end": 150.1,
+      "speaker": "ROWAN",
+      "text": "Hello, Mother.",
+      "voice": "bf_isabella",
+      "actual_seconds": 1.65
+    },
+    {
+      "id": 23,
+      "at": 150.8,
+      "end": 153.9,
+      "speaker": "ESTHER",
+      "text": "You've cut your hair.",
+      "voice": "bf_emma",
+      "actual_seconds": 1.9
+    },
+    {
+      "id": 24,
+      "at": 154.2,
+      "end": 156.0,
+      "speaker": "ROWAN",
+      "text": "Yes.",
+      "voice": "bf_isabella",
+      "actual_seconds": 1.12
+    },
+    {
+      "id": 25,
+      "at": 156.4,
+      "end": 159.0,
+      "speaker": "ESTHER",
+      "text": "It looked better long.",
+      "voice": "bf_emma",
+      "actual_seconds": 1.93
+    },
+    {
+      "id": 26,
+      "at": 159.3,
+      "end": 163.0,
+      "speaker": "ROWAN",
+      "text": "Lovely to see you too.",
+      "voice": "bf_isabella",
+      "actual_seconds": 2.2
+    },
+    {
+      "id": 27,
+      "at": 163.2,
+      "end": 167.0,
+      "speaker": "ESTHER",
+      "text": "Why are you standing on my stage?",
+      "voice": "bf_emma",
+      "actual_seconds": 2.5
+    },
+    {
+      "id": 28,
+      "at": 167.0,
+      "end": 170.3,
+      "speaker": "ROWAN",
+      "text": "Technically, it's Mr. Bell's stage.",
+      "voice": "bf_isabella",
+      "actual_seconds": 2.8
+    },
+    {
+      "id": 29,
+      "at": 170.6,
+      "end": 172.3,
+      "speaker": "ESTHER",
+      "text": "Don't start.",
+      "voice": "bf_emma",
+      "actual_seconds": 1.55
+    },
+    {
+      "id": 30,
+      "at": 173.0,
+      "end": 178.8,
+      "speaker": "ROWAN",
+      "text": "Mr. Bell called me. The theatre's closing.",
+      "voice": "bf_isabella",
+      "actual_seconds": 3.33
+    },
+    {
+      "id": 31,
+      "at": 179.1,
+      "end": 181.9,
+      "speaker": "ESTHER",
+      "text": "You left.",
+      "voice": "bf_emma",
+      "actual_seconds": 1.25
+    },
+    {
+      "id": 32,
+      "at": 182.1,
+      "end": 185.0,
+      "speaker": "ROWAN",
+      "text": "I know.",
+      "voice": "bf_isabella",
+      "actual_seconds": 1.35
+    },
+    {
+      "id": 33,
+      "at": 185.1,
+      "end": 187.5,
+      "speaker": "ESTHER",
+      "text": "Why did you?",
+      "voice": "bf_emma",
+      "actual_seconds": 1.55
+    },
+    {
+      "id": 34,
+      "at": 187.5,
+      "end": 191.4,
+      "speaker": "ROWAN",
+      "text": "Because you nearly killed me.",
+      "voice": "bf_isabella",
+      "actual_seconds": 2.42
+    }
+  ]
+}
