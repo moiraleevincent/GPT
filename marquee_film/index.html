@@ -35,11 +35,15 @@ button:focus-visible,input:focus-visible{outline:2px solid #e9c8a9;outline-offse
 <div class="bottom"><button class="primary" id="toggle">Pause</button><button id="restart">From beginning</button><button id="sound">Sound on</button><button id="captions">Captions on</button><span id="clock">00:00 / 03:12</span></div>
 <div class="foot"><span id="chapter">The theatre, the sign, the woman.</span><span>Rough staging · original vector artwork, animated camera and gestures · <a href="https://github.com/moiraleevincent/GPT/tree/main/marquee_film">Source</a></span></div>
 </main>
+<audio id="dialogueAudio" preload="auto" src="audio/dialogue.mp3"></audio>
 <script>
 (function(){
 "use strict";
 const W=1200,H=675,D=192,canvas=document.getElementById("screen"),c=canvas.getContext("2d"),subs=document.getElementById("subtitles"),slider=document.getElementById("seek"),toggle=document.getElementById("toggle"),soundBtn=document.getElementById("sound"),start=document.getElementById("start"),chapter=document.getElementById("chapter");
 let t=0,running=false,lastFrame=0,muted=false,showCaps=true,lastSoundT=0,AC=null,amb=null,hum=null,voicesReady=false;
+const voice=document.getElementById("dialogueAudio");
+voice.addEventListener("loadedmetadata",function(){voicesReady=true;document.querySelector(".overlay small").textContent="Original score, atmospheric sound, and character dialogue.";if(running){voice.currentTime=t;voice.play().catch(function(){});}});
+voice.addEventListener("error",function(){voicesReady=false;});
 const shots=[
 {a:0,b:9,sc:"ext",cam:[930,375,.67],to:[950,368,.71],name:"The Bellweather Theatre"},
 {a:9,b:19,sc:"ext",cam:[1200,235,1.32],to:[1210,253,1.57],name:"The wrong name"},
@@ -304,18 +308,18 @@ function score(T,old){if(!AC||muted)return;for(let ev of events){if(ev[0]>old&&e
 const notes=[[2,293.66],[5,349.23],[8,440],[18,293.66],[22,261.63],[40,349.23],[43,329.63],[58,293.66],[61,261.63],[78,220],[81,261.63],[83,293.66],[88,329.63],[118,261.63],[121,329.63],[124,392],[143,293.66],[148,261.63],[163,220],[167,196],[176,174.61],[183,146.83]];
 for(let note of notes){if(note[0]>old&&note[0]<=T)tone(note[1],2.45,.009,"sine")}
 if(amb){let tgt=T<77?.047:T<117?.027:.014;amb.gain.setTargetAtTime(tgt,AC.currentTime,.45)}}
-function seekTo(n){t=Math.max(0,Math.min(D,Number(n)));lastSoundT=t;frame(t)}
+function seekTo(n){t=Math.max(0,Math.min(D,Number(n)));lastSoundT=t;if(voicesReady)voice.currentTime=t;frame(t)}
 let accumulator=0;
 function loop(ts){if(!lastFrame)lastFrame=ts;let dt=Math.min(.075,(ts-lastFrame)/1000);lastFrame=ts;
-if(running){let prev=t;t=Math.min(D,t+dt);score(t,prev);if(t>=D){running=false;toggle.textContent="Play";if(AC)AC.suspend()}frame(t)}
+if(running){let prev=t;t=voicesReady&&!voice.paused&&!voice.ended?Math.min(D,voice.currentTime):Math.min(D,t+dt);score(t,prev);if(t>=D){running=false;toggle.textContent="Play";if(AC)AC.suspend();voice.pause()}frame(t)}
 requestAnimationFrame(loop)}
-function begin(){start.classList.add("hidden");audioInit();if(AC)AC.resume();running=true;toggle.textContent="Pause";lastFrame=0}
+function begin(){start.classList.add("hidden");audioInit();if(AC&&!muted)AC.resume();running=true;toggle.textContent="Pause";if(voicesReady){voice.currentTime=t;voice.muted=muted;voice.play().catch(function(){});}lastFrame=0}
 document.getElementById("startBtn").onclick=begin;
-toggle.onclick=function(){if(t>=D)seekTo(0);if(!start.classList.contains("hidden")){begin();return}running=!running;toggle.textContent=running?"Pause":"Play";if(AC)(running?AC.resume():AC.suspend());lastFrame=0};
+toggle.onclick=function(){if(t>=D)seekTo(0);if(!start.classList.contains("hidden")){begin();return}running=!running;toggle.textContent=running?"Pause":"Play";if(AC)(running&&!muted?AC.resume():AC.suspend());if(voicesReady){if(running){voice.currentTime=t;voice.play().catch(function(){});}else voice.pause();}lastFrame=0};
 document.getElementById("restart").onclick=function(){seekTo(0);begin()};
-soundBtn.onclick=function(){muted=!muted;soundBtn.textContent=muted?"Sound off":"Sound on";if(AC){if(muted)AC.suspend();else if(running)AC.resume()}};
+soundBtn.onclick=function(){muted=!muted;soundBtn.textContent=muted?"Sound off":"Sound on";voice.muted=muted;if(AC){if(muted)AC.suspend();else if(running)AC.resume()}};
 document.getElementById("captions").onclick=function(){showCaps=!showCaps;document.getElementById("captions").textContent=showCaps?"Captions on":"Captions off";frame(t)};
-slider.oninput=function(){running=false;toggle.textContent="Play";if(AC)AC.suspend();seekTo(slider.value)};
+slider.oninput=function(){running=false;toggle.textContent="Play";if(AC)AC.suspend();voice.pause();seekTo(slider.value)};
 document.addEventListener("keydown",function(e){if(e.code==="Space"&&e.target.tagName!=="BUTTON"&&e.target.tagName!=="INPUT"){e.preventDefault();toggle.click()}});
 frame(0);requestAnimationFrame(loop);
 })();
