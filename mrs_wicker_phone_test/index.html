@@ -197,7 +197,11 @@ a{color:#ead29d}
 <button id="captions" type="button">CC on</button>
 </div>
 <div class="meta"><span id="status">Loading soundtrack…</span><span>Directed timing test · British dialogue · original music sketch</span></div>
-<audio id="audio" preload="auto" src="scene.mp3"></audio>
+<div style="margin-top:15px;max-width:600px">
+  <div class="eyebrow" style="margin-bottom:8px">Audio · Kokoro dialogue and original score</div>
+  <audio id="audio" controls playsinline preload="metadata" src="scene.mp3" style="display:block;width:100%"></audio>
+  <p style="margin:8px 0 0">If playback is silent, <a href="scene.mp3" target="_blank" rel="noopener">open the soundtrack on its own</a> or <a href="https://raw.githubusercontent.com/moiraleevincent/GPT/main/mrs_wicker_phone_test/scene.mp3" target="_blank" rel="noopener">try the direct GitHub audio file</a>.</p>
+</div>
 </main>
 <script>
 (function(){
@@ -262,26 +266,65 @@ function render(){
   seek.value=t;
 }
 function tick(now){
-  if(playing){
-    if(audioOK&&!audio.paused)t=audio.currentTime;
-    else {t+=Math.min(.08,Math.max(0,(now-last)/1000))}
-    if(t>=DURATION){t=DURATION;playing=false;audio.pause();play.textContent='▶ Play scene'}
+  if(playing && !audio.paused){
+    t=Math.min(DURATION,audio.currentTime);
+    if(t>=DURATION){t=DURATION;playing=false;play.textContent='▶ Play scene'}
   }
   last=now;render();raf=requestAnimationFrame(tick);
 }
 function start(){
-  if(t>=DURATION)t=0;
-  playing=!playing;
-  play.textContent=playing?'Ⅱ Pause':'▶ Play scene';
-  if(playing&&audioOK){audio.currentTime=t;audio.play().catch(()=>{audioOK=false;status.textContent='Silent timing preview — soundtrack unavailable';})}
-  else audio.pause();
+  if(playing){audio.pause();playing=false;play.textContent='▶ Play scene';return;}
+  if(t>=DURATION){t=0;try{audio.currentTime=0;}catch(e){}}
+  // Start audio directly in this button's user gesture. iOS Safari can reject
+  // delayed play() calls, so don't wait for a canplay event.
+  try{
+    if(audio.readyState>=1 && Math.abs(audio.currentTime-t)>.4)audio.currentTime=t;
+    const pending=audio.play();
+    playing=true;
+    play.textContent='Ⅱ Pause';
+    status.textContent='Starting soundtrack…';
+    if(pending && typeof pending.catch==='function'){
+      pending.catch(err=>{
+        playing=false;play.textContent='▶ Play scene';
+        status.textContent='Audio was blocked ('+(err&&err.name?err.name:'playback error')+'). Try the visible sound player below.';
+      });
+    }
+  }catch(err){
+    playing=false;play.textContent='▶ Play scene';
+    status.textContent='Could not start audio. Try the soundtrack player below.';
+  }
 }
 play.addEventListener('click',start);
-restart.addEventListener('click',()=>{t=0;audio.currentTime=0;if(playing&&audioOK)audio.play().catch(()=>{});render()});
-seek.addEventListener('input',()=>{t=parseFloat(seek.value);if(audioOK){audio.currentTime=t;if(playing)audio.play().catch(()=>{})}render()});
+restart.addEventListener('click',()=>{
+  t=0;try{audio.currentTime=0;}catch(e){}
+  render();
+});
+seek.addEventListener('input',()=>{
+  t=parseFloat(seek.value);
+  try{if(audio.readyState>=1)audio.currentTime=t;}catch(e){}
+  render();
+});
 captions.addEventListener('click',()=>{ccon=!ccon;captions.textContent=ccon?'CC on':'CC off';render()});
-audio.addEventListener('canplay',()=>{audioOK=true;status.textContent='Soundtrack ready';if(playing&&audio.paused){audio.currentTime=t;audio.play().catch(()=>{});}});
-audio.addEventListener('error',()=>{audioOK=false;status.textContent='Silent visual timing preview — soundtrack not available yet';});
+audio.addEventListener('loadedmetadata',()=>{audioOK=true;status.textContent='Soundtrack loaded · press Play';});
+audio.addEventListener('canplay',()=>{audioOK=true;if(!playing)status.textContent='Soundtrack ready · press Play';});
+audio.addEventListener('playing',()=>{playing=true;play.textContent='Ⅱ Pause';status.textContent='Soundtrack playing';});
+audio.addEventListener('pause',()=>{
+  if(audio.ended)return;
+  playing=false;play.textContent='▶ Play scene';
+});
+audio.addEventListener('timeupdate',()=>{if(!audio.paused)t=Math.min(DURATION,audio.currentTime);});
+let fallbackUsed=false;
+audio.addEventListener('error',()=>{
+  audioOK=false;playing=false;play.textContent='▶ Play scene';
+  if(!fallbackUsed){
+    fallbackUsed=true;
+    status.textContent='Page audio unavailable; trying GitHub audio directly. Tap Play again.';
+    audio.src='https://raw.githubusercontent.com/moiraleevincent/GPT/main/mrs_wicker_phone_test/scene.mp3';
+    audio.load();
+  }else{
+    status.textContent='Audio file could not load. Try opening the soundtrack link below.';
+  }
+});
 audio.addEventListener('ended',()=>{playing=false;play.textContent='▶ Play scene';t=DURATION;render()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing){playing=false;audio.pause();play.textContent='▶ Play scene'}});
 render();raf=requestAnimationFrame(tick);
