@@ -1,0 +1,37 @@
+name: Publish Mara superhero film with Kokoro
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "mara_kokoro_revoice/render_movie.py"
+      - ".github/workflows/mara-kokoro-movie.yml"
+permissions:
+  contents: write
+jobs:
+  movie:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install animation and audio renderer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install numpy scipy soundfile playwright
+          python -m playwright install --with-deps chromium
+      - name: Revoice original movie with Kokoro
+        run: python mara_kokoro_revoice/render_movie.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mara-kokoro-movie
+          path: mara_kokoro_revoice/mara_the_key_to_almost_everything_kokoro.mp4
+      - name: Publish movie
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mara_kokoro_revoice/mara_the_key_to_almost_everything_kokoro.mp4
+          git commit -m "Publish Mara movie with Kokoro voices [skip ci]" || exit 0
+          git push
