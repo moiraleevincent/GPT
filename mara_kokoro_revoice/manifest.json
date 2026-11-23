@@ -1,0 +1,74 @@
+[
+  {
+    "id": "01",
+    "start": 0.5,
+    "duration": 2.925,
+    "speaker": "NARRATOR",
+    "text": "In a city... where every second counts...",
+    "speed": 1.06,
+    "file": "line_01.wav"
+  },
+  {
+    "id": "02",
+    "start": 7.6,
+    "duration": 1.725,
+    "speaker": "NARRATOR",
+    "text": "Emergency!",
+    "speed": 1.0,
+    "file": "line_02.wav"
+  },
+  {
+    "id": "03",
+    "start": 11.3,
+    "duration": 2.525,
+    "speaker": "NARRATOR",
+    "text": "The last cookie... is trapped!",
+    "speed": 1.08,
+    "file": "line_03.wav"
+  },
+  {
+    "id": "04",
+    "start": 16.55,
+    "duration": 2.475,
+    "speaker": "MARA",
+    "text": "Stand back. I have a key.",
+    "speed": 1.02,
+    "file": "line_04.wav"
+  },
+  {
+    "id": "05",
+    "start": 19.96,
+    "duration": 2.25,
+    "speaker": "NARRATOR",
+    "text": "Behold! The master key!",
+    "speed": 1.12,
+    "file": "line_05.wav"
+  },
+  {
+    "id": "06",
+    "start": 25.35,
+    "duration": 2.1,
+    "speaker": "NARRATOR",
+    "text": "The city is saved!",
+    "speed": 1.04,
+    "file": "line_06.wav"
+  },
+  {
+    "id": "07",
+    "start": 27.88,
+    "duration": 2.125,
+    "speaker": "NARRATOR",
+    "text": "It was a twist-off lid.",
+    "speed": 1.08,
+    "file": "line_07.wav"
+  },
+  {
+    "id": "08",
+    "start": 30.03,
+    "duration": 1.525,
+    "speaker": "MARA",
+    "text": "I knew that.",
+    "speed": 0.99,
+    "file": "line_08.wav"
+  }
+]
