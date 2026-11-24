@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — Experimental MakeHuman Softness</title>
+<title>Torso Mesh Lab — V15 Chest Contour Study</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 14</small>
-<h1>Shape and softness.</h1>
-<p>Our waist–hip–thigh curve and breast controls, now with an experimental softness morph transferred from MakeHuman's original sculpted targets.</p>
+<small>3D HUMAN STUDY / TEST 15</small>
+<h1>Volume and contour.</h1>
+<p>Same base mesh and lower-body controls. V15 tests a spatially sculpted chest morph against V14 at identical slider settings.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V14</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V15</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -72,6 +72,9 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-curve="100" aria-pressed="false">Dramatic</button>
 </div>
 <p class="waist-hint">The waist narrows more at the dramatic end, while keeping the smooth transition into the hips and thighs. Arm vertices remain protected. 0% restores the original lower-body shape.</p>
+<h2>Chest contour comparison</h2>
+<div class="views"><button id="v15" aria-pressed="true">V15 · sculpted</button><button id="v14" aria-pressed="false">V14 · previous</button></div>
+<p class="waist-hint">Switch versions without changing size, shape, camera or lower-body sliders. Try the side and ¾ views.</p>
 <h2>Breast fullness</h2>
 <div class="waist-row"><label for="bust">Bust size</label><output id="bustValue" for="bust">170%</output></div>
 <input id="bust" type="range" min="100" max="220" step="1" value="170" aria-label="Breast fullness relative to original body">
@@ -89,7 +92,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-shape="70" aria-pressed="true">Natural</button>
   <button data-shape="100" aria-pressed="false">Lower-full</button>
 </div>
-<p class="waist-hint">At 0%, enlargement stays rounded above and below. Moving right flattens the upper projection and preserves a fuller lower contour. Compare at Bust 170% or higher.</p>
+<p class="waist-hint">In V15, the shape control gradually shifts the broad volume downward, reduces upper projection and preserves a smooth chest attachment. Compare at Bust 170% or higher.</p>
 <h2>MakeHuman · experimental</h2>
 <div class="waist-row"><label for="mhSoft">Softness transfer</label><output id="mhSoftValue" for="mhSoft">0%</output></div>
 <input id="mhSoft" type="range" min="0" max="100" step="1" value="0" disabled aria-label="Experimental transferred MakeHuman breast firmness difference">
@@ -104,7 +107,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">All controls edit mesh vertices, not the skeleton. The MakeHuman target is an additional optional experiment; Off preserves the familiar Version 13 appearance.</p>
+<p class="note">All controls edit mesh vertices, not the skeleton. The MakeHuman target is an additional optional experiment; Off isolates the selected V14 or V15 enlargement.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -134,6 +137,8 @@ const mhInput=document.getElementById("mhSoft");
 const mhValue=document.getElementById("mhSoftValue");
 const mhPresets=[...document.querySelectorAll("[data-mh]")];
 const mhStatus=document.getElementById("mhStatus");
+let sculptedContour=true;
+const v15Button=document.getElementById("v15"),v14Button=document.getElementById("v14");
 let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
 const mats=new Set();
 
@@ -170,6 +175,34 @@ function silhouetteAt(y){
   const t2=t*t,t3=t2*t;
   return (2*t3-3*t2+1)*a[1]+(t3-2*t2+t)*h*m0+
          (-2*t3+3*t2)*b[1]+(t3-t2)*h*m1;
+}
+// V15: spatial displacement field, independent of the existing tip depth.
+ // A broad compact mound adds volume over the surrounding surface, not only
+ // where z is already large. The same rest-space field is evaluated on
+ // adjoining mesh primitives to avoid seams from inconsistent skin weights.
+function sculptChest(x,y,z,shape){
+  const ax=Math.abs(x);
+  if(y<=1.075||y>=1.35||ax>=.225||ax<=.018||z<=.035)return [0,0,0];
+  const cy=1.188-.016*shape;
+  const u=(ax-.101)/.116;
+  const v=(y-cy)/(y>=cy?.147:.117);
+  const r=Math.hypot(u,v);
+  if(r>=1.15)return [0,0,0];
+  const root=1-smooth01((r-.50)/.65);
+  const front=smooth01((z-.035)/.055);
+  const medial=smooth01((ax-.018)/.040);
+  const below=smooth01((y-1.075)/.028);
+  const mask=root*front*medial*below;
+  // Upper slope is gentle, lower volume broad; avoid a sharp apex by using
+  // a shallow central plateau instead of depth-proportional amplification.
+  const upper=smooth01((y-cy)/.090), lower=smooth01((cy-y)/.060);
+  const fullness=1+shape*(.13*lower-.32*upper);
+  const dz=.070*mask*fullness;
+  // Expand from the chest attachment rather than moving the whole mound
+  // forward as a rigid piece. Vertical drift is strongest in the lower pole.
+  const dx=Math.sign(x)*mask*.27*(ax-.101);
+  const dy=mask*(.15*(y-cy)-.013*shape);
+  return [dx,dy,dz];
 }
 const bodyDeformers=[];
 let activeBreastVertices=0;
@@ -292,12 +325,17 @@ function applyMorph(){
       const k=3*i,x=original[k],z=original[k+2];
       // A true volume-style morph around the breast mound, preserving
       // the base connection and spreading tissue laterally and vertically.
-      arr[k]=x+Math.sign(x)*strength*lateral[i]+bustStrength*bustDx[i]+(extra?mhStrength*extra[k]:0);
-      arr[k+1]=original[k+1]+bustStrength*bustDy[i]+(extra?mhStrength*extra[k+1]:0);
-      // A fuller lower pole with reduced upper projection, without
-      // moving the nipple directly or making a crease at the breast root.
+      const y=original[k+1];
       const shapeProfile=1+shapeFraction*(0.10*lowerPole[i]-0.50*upperPole[i]);
-      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050)+bustStrength*bustDz[i]*shapeProfile+(extra?mhStrength*extra[k+2]:0);
+      let dx=bustDx[i],dy=bustDy[i],dz=bustDz[i]*shapeProfile;
+      if(sculptedContour){
+        if(bustStrength!==0 && y>1.075 && y<1.35 && Math.abs(x)<.225 && z>.035){
+          [dx,dy,dz]=sculptChest(x,y,z,shapeFraction);
+        }else{dx=0;dy=0;dz=0;}
+      }
+      arr[k]=x+Math.sign(x)*strength*lateral[i]+bustStrength*dx+(extra?mhStrength*extra[k]:0);
+      arr[k+1]=y+bustStrength*dy+(extra?mhStrength*extra[k+1]:0);
+      arr[k+2]=z+0.58*strength*depth[i]*(z-0.050)+bustStrength*dz+(extra?mhStrength*extra[k+2]:0);
     }
     positions.needsUpdate=true;
     geometry.computeVertexNormals();
@@ -305,6 +343,14 @@ function applyMorph(){
     geometry.computeBoundingBox();
   }
 }
+function selectContour(next){
+  sculptedContour=next;
+  v15Button.setAttribute("aria-pressed",String(next));
+  v14Button.setAttribute("aria-pressed",String(!next));
+  requestMorph();
+}
+v15Button.addEventListener("click",()=>selectContour(true));
+v14Button.addEventListener("click",()=>selectContour(false));
 curvePresets.forEach(button=>{
   button.addEventListener("click",()=>{
     curveInput.value=button.dataset.curve;
@@ -429,7 +475,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones<br>Breast vertices: "+activeBreastVertices+" · Arm vertices protected: "+protectedArmVertices;
-    status.textContent=activeBreastVertices>0?"Ready! Our original controls still work; try the optional MakeHuman softness slider.":"Breast weights not found — please tell me what you see.";
+    status.textContent=activeBreastVertices>0?"Ready! Switch between V15 and V14 at the same settings; keep MakeHuman Off to isolate the new contour.":"Breast weights not found — please tell me what you see.";
     // An optional asset generated by a checked GitHub Actions mesh transfer.
     // Main controls stay usable even if this extra file cannot load.
     fetch("./assets/makehuman_firmness_approx.json")
