@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121b26">
-<title>Torso Mesh Lab — V15 Chest Contour Study</title>
+<title>Torso Mesh Lab — V16 Anchored Chest Contour</title>
 <style>
 :root{color-scheme:dark;--bg:#121b26;--panel:#1e2b38;--line:#465765;--text:#f4ede5;--muted:#acbcc7;--accent:#f3c4a8}
 *{box-sizing:border-box}
@@ -45,13 +45,13 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <body>
 <main>
 <header>
-<small>3D HUMAN STUDY / TEST 15</small>
-<h1>Volume and contour.</h1>
-<p>Same base mesh and lower-body controls. V15 tests a spatially sculpted chest morph against V14 at identical slider settings.</p>
+<small>3D HUMAN STUDY / TEST 16</small>
+<h1>Volume, not chest wall.</h1>
+<p>Same base mesh and lower-body controls. V16 concentrates added volume in the breast tissue, especially the lower pole, while protecting the chest attachment.</p>
 </header>
 <div class="layout">
 <section id="stage" aria-label="Interactive 3D body viewer">
-  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V15</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
+  <div class="stage-label"><b>BODY MORPH EXPERIMENT / V16</b> · one finger to rotate<br>Pinch to zoom · two fingers to pan</div>
   <div id="status" role="status">Loading 3D model…</div>
 </section>
 <aside>
@@ -73,7 +73,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 </div>
 <p class="waist-hint">The waist narrows more at the dramatic end, while keeping the smooth transition into the hips and thighs. Arm vertices remain protected. 0% restores the original lower-body shape.</p>
 <h2>Chest contour comparison</h2>
-<div class="views"><button id="v15" aria-pressed="true">V15 · sculpted</button><button id="v14" aria-pressed="false">V14 · previous</button></div>
+<div class="views"><button id="v16" aria-pressed="true">V16 · anchored</button><button id="v15" aria-pressed="false">V15 · sculpted</button><button id="v14" aria-pressed="false">V14 · previous</button></div>
 <p class="waist-hint">Switch versions without changing size, shape, camera or lower-body sliders. Try the side and ¾ views.</p>
 <h2>Breast fullness</h2>
 <div class="waist-row"><label for="bust">Bust size</label><output id="bustValue" for="bust">170%</output></div>
@@ -92,7 +92,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
   <button data-shape="70" aria-pressed="true">Natural</button>
   <button data-shape="100" aria-pressed="false">Lower-full</button>
 </div>
-<p class="waist-hint">In V15, the shape control gradually shifts the broad volume downward, reduces upper projection and preserves a smooth chest attachment. Compare at Bust 170% or higher.</p>
+<p class="waist-hint">In V16, the shape control increases lower fullness while minimizing changes at the chest attachment. Compare at Bust 170% or higher.</p>
 <h2>MakeHuman · experimental</h2>
 <div class="waist-row"><label for="mhSoft">Softness transfer</label><output id="mhSoftValue" for="mhSoft">0%</output></div>
 <input id="mhSoft" type="range" min="0" max="100" step="1" value="0" disabled aria-label="Experimental transferred MakeHuman breast firmness difference">
@@ -107,7 +107,7 @@ footer{color:#9aafbd;font-size:12px;line-height:1.7;margin-top:15px}
 <label class="toggle"><input id="wire" type="checkbox"> Show polygon wires</label>
 <label class="toggle"><input id="bones" type="checkbox"> Show skeleton</label>
 <div class="meter" id="info">Reading model details…</div>
-<p class="note">All controls edit mesh vertices, not the skeleton. The MakeHuman target is an additional optional experiment; Off isolates the selected V14 or V15 enlargement.</p>
+<p class="note">All controls edit mesh vertices, not the skeleton. The MakeHuman target is an additional optional experiment; Off isolates the selected V14, V15 or V16 enlargement.</p>
 </aside>
 </div>
 <footer>Model: Female Base Mesh, original CC0 asset. The values shown are mesh dimensions, not tape measurements around the body.</footer>
@@ -137,8 +137,8 @@ const mhInput=document.getElementById("mhSoft");
 const mhValue=document.getElementById("mhSoftValue");
 const mhPresets=[...document.querySelectorAll("[data-mh]")];
 const mhStatus=document.getElementById("mhStatus");
-let sculptedContour=true;
-const v15Button=document.getElementById("v15"),v14Button=document.getElementById("v14");
+let contourVersion=16;
+const v16Button=document.getElementById("v16"),v15Button=document.getElementById("v15"),v14Button=document.getElementById("v14");
 let renderer,camera,controls,scene,object,skeleton,fitDistance=2.8;
 const mats=new Set();
 
@@ -202,6 +202,25 @@ function sculptChest(x,y,z,shape){
   // forward as a rigid piece. Vertical drift is strongest in the lower pole.
   const dx=Math.sign(x)*mask*.27*(ax-.101);
   const dy=mask*(.15*(y-cy)-.013*shape);
+  return [dx,dy,dz];
+}
+function sculptChestV16(x,y,z,shape){
+  const ax=Math.abs(x),cx=.105,cy=1.188;
+  const u=(ax-cx)/.092,v=(y-(cy-.020*shape))/.108;
+  const r=Math.hypot(u,v);
+  if(r>=1 || z<=.070)return [0,0,0];
+  const envelope=1-smooth01((r-.30)/.70);
+  const medial=smooth01((ax-.045)/.043);
+  const outer=1-smooth01((ax-.165)/.046);
+  const front=smooth01((z-.070)/.065);
+  const below=smooth01((y-1.075)/.035);
+  const mask=envelope*medial*outer*front*below;
+  const lower=smooth01((cy-y+.010)/.065);
+  const upper=smooth01((y-cy)/.075);
+  // Small local radial expansion, no translation of the entire breast root.
+  const dx=Math.sign(x)*mask*.14*(ax-cx);
+  const dy=-mask*(.004+.010*shape*lower);
+  const dz=mask*(.032+.018*lower+.022*shape*lower-.014*upper)*(1-.40*shape*upper);
   return [dx,dy,dz];
 }
 const bodyDeformers=[];
@@ -328,7 +347,9 @@ function applyMorph(){
       const y=original[k+1];
       const shapeProfile=1+shapeFraction*(0.10*lowerPole[i]-0.50*upperPole[i]);
       let dx=bustDx[i],dy=bustDy[i],dz=bustDz[i]*shapeProfile;
-      if(sculptedContour){
+      if(contourVersion===16){
+        [dx,dy,dz]=bustStrength===0?[0,0,0]:sculptChestV16(x,y,z,shapeFraction);
+      }else if(contourVersion===15){
         if(bustStrength!==0 && y>1.075 && y<1.35 && Math.abs(x)<.225 && z>.035){
           [dx,dy,dz]=sculptChest(x,y,z,shapeFraction);
         }else{dx=0;dy=0;dz=0;}
@@ -344,13 +365,13 @@ function applyMorph(){
   }
 }
 function selectContour(next){
-  sculptedContour=next;
-  v15Button.setAttribute("aria-pressed",String(next));
-  v14Button.setAttribute("aria-pressed",String(!next));
+  contourVersion=next;
+  for(const [version,button] of [[16,v16Button],[15,v15Button],[14,v14Button]])button.setAttribute("aria-pressed",String(next===version));
   requestMorph();
 }
-v15Button.addEventListener("click",()=>selectContour(true));
-v14Button.addEventListener("click",()=>selectContour(false));
+v16Button.addEventListener("click",()=>selectContour(16));
+v15Button.addEventListener("click",()=>selectContour(15));
+v14Button.addEventListener("click",()=>selectContour(14));
 curvePresets.forEach(button=>{
   button.addEventListener("click",()=>{
     curveInput.value=button.dataset.curve;
@@ -475,7 +496,7 @@ try{
     controls.maxDistance=fitDistance*3.3;
     setView("front");
     info.innerHTML="<b>Loaded successfully</b><br>Height: "+size.y.toFixed(2)+" model units<br>Width: "+size.x.toFixed(2)+" model units<br>"+count+" mesh parts · "+skinned+" skinned meshes<br>"+boneCount+" bones<br>Breast vertices: "+activeBreastVertices+" · Arm vertices protected: "+protectedArmVertices;
-    status.textContent=activeBreastVertices>0?"Ready! Switch between V15 and V14 at the same settings; keep MakeHuman Off to isolate the new contour.":"Breast weights not found — please tell me what you see.";
+    status.textContent=activeBreastVertices>0?"Ready! Compare V16, V15 and V14 at the same settings. Keep MakeHuman Off to isolate the contour.":"Breast weights not found — please tell me what you see.";
     // An optional asset generated by a checked GitHub Actions mesh transfer.
     // Main controls stay usable even if this extra file cannot load.
     fetch("./assets/makehuman_firmness_approx.json")
